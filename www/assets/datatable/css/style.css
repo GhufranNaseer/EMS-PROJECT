@@ -1,0 +1,25 @@
+/*Datatables style*/
+.dataTables_length {float:left !important;}
+.dataTables_length select {color:#000;}
+.dataTables_filter input {color:#000;}
+
+.dataTables_filter {float:right !important;}
+.ui-toolbar{padding:5px;}
+.ui-toolbar{padding:5px;}
+.dataTables_paginate .ui-button {    margin-right: -0.1em !important;}
+.paging_full_numbers .ui-button {    color: #333333 !important;    cursor: pointer;    margin: 0;    padding: 2px 6px;}
+.dataTables_info {    float: left;    width: 50%;}
+.dataTables_info {    padding-top: 3px;}
+.dataTables_paginate {    float: right;    text-align: right;}
+.dataTables_paginate {    width: auto;}
+.paging_full_numbers {    width: 350px !important;}
+.dataTables_processing > img {padding-left:20px;}
+.actions{ display:block; padding:3px;  }
+.actions a { margin-left:10px; margin-right: 10px; }
+
+.ui-widget-header
+{
+	background: #3C8DBC;
+	color:#FFF !important;
+	border: 1px solid #367fa9;
+}

@@ -1,0 +1,10 @@
+
+
+.vscode/
+.idea/
+
+/db/*
+!/db/.gitignore
+
+/www/uploads/*
+!/www/uploads/.gitignore
