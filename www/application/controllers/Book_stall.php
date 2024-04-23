@@ -789,7 +789,7 @@ class Book_stall extends MY_Controller {
 
 	function generate_order_invoice() {
 
-		//echo '<pre>'; print_r($this->input->post()); die();
+		// echo '<pre>'; print_r($this->input->post()); die();
 
 		$price_type = $this->input->post('booking_price_type');
 		$price_stalls = $this->input->post('order_stall_total_amount');
@@ -975,7 +975,11 @@ class Book_stall extends MY_Controller {
 		$html .= '</tr>';
 		$html .= '</table>';
 		$html .= '<input type="hidden" name="booking_sub_total" value="'. $sub_total .'">';
-		$html .= '<input type="hidden" name="booking_offer_discount_amount" value="'. ($discount_price - $this->input->post('discount_amount')) .'">';
+		$booking_offer_discount_amount = $discount_price;
+		if ($this->input->post('discount_amount')) {
+			$booking_offer_discount_amount -= $this->input->post('discount_amount');
+		}
+		$html .= '<input type="hidden" name="booking_offer_discount_amount" value="'. ($booking_offer_discount_amount) .'">';
 		$html .= '<input type="hidden" name="booking_tax_total" value="'. $total_tax .'">';
 		$html .= '<input type="hidden" name="final_booking_amount" value="'.(($sub_total - $discount_price) + $total_tax).'">';
 		$html .= '<script>$("#invoice_word_amount").html("'.$this->convertNumberToWord(($sub_total - $discount_price) + $total_tax).'");</script>';
