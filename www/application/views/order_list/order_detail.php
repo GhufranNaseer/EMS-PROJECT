@@ -199,7 +199,7 @@
 
                                 $booking_packages = $this->db
                                     ->select('S.*, P.package_title')
-									->where('booking_id', $this->orderdata->id)
+									->where('S.booking_id', $this->orderdata->id)
                                     ->group_by('S.package_id')
                                     ->join('es_packages as P', 'P.id = S.package_id', 'LEFT')
                                     ->get('es_exhibition_booking_stalls as S')

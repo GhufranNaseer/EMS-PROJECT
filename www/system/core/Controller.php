@@ -77,6 +77,8 @@ class CI_Controller {
 
 		$this->load =& load_class('Loader', 'core');
 		$this->load->initialize();
+
+		$this->db->query("SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
 		log_message('info', 'Controller Class Initialized');
 	}
 
