@@ -11,7 +11,7 @@ function sendMail($ReceiverName, $ReceiverEmail,$Subject,$Message, $SenderName, 
 	//Set PHPMailer to use SMTP.
 	$mail->isSMTP();
 //Set SMTP host name
-	$mail->Host = "mail.exhibit.com.pk";
+	$mail->Host = "ssl://smtp.gmail.com";
 	$mail->SMTPOptions = array(
 		'ssl' => array(
 			'verify_peer' => false,
@@ -22,11 +22,11 @@ function sendMail($ReceiverName, $ReceiverEmail,$Subject,$Message, $SenderName, 
 	//Set this to true if SMTP host requires authentication to send email
 	$mail->SMTPAuth = true;
 	//Provide username and password
-	$mail->Username = "donotreply@exhibit.com.pk";
-	$mail->Password = "badar@123";
+	$mail->Username = "dronzer92@gmail.com";
+	$mail->Password = "safxnfjzlefzwkxm";
 	//If SMTP requires TLS encryption then set it
-	$mail->SMTPSecure = "ssl  ";
-	$mail->Host = 'ssl://mail.exhibit.com.pk:465';
+	$mail->SMTPSecure = "ssl";
+	$mail->Host = 'ssl://smtp.gmail.com';
 
 //Set TCP port to connect to
 	$mail->Port = 465;
@@ -47,8 +47,8 @@ function sendMail($ReceiverName, $ReceiverEmail,$Subject,$Message, $SenderName, 
 		$mail->addCC($CcEmail);
 	}
 
-	$mail->addReplyTo('facilitation@exhibit.com.pk','IDEAS Facilitation');
-	$mail->addBCC('ieeep2018@gmail.com');
+	$mail->addReplyTo('dronzer92@gmail.com','IDEAS Facilitation');
+	// $mail->addBCC('ieeep2018@gmail.com');
 
 
 //Attachments//

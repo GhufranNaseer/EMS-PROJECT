@@ -26,7 +26,6 @@ uploads/*
 !uploads/.gitignore
 !uploads/*/.gitignore
 
-PHPMailer/*
 
 # IDE Files
 #-------------------------
