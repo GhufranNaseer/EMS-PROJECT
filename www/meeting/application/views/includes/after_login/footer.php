@@ -19,6 +19,7 @@
 
 <script src="<?= base_url('../assets') ?>/bootstrap-select/js/bootstrap-select.min.js"></script>
 
+<script src="<?= base_url('../assets') ?>/file-upload-preview/lib/cropper.min.js"></script>
 <script src="<?= base_url('../assets') ?>/file-upload-preview/js/file-upload-preview.js"></script>
 
 <script src="<?= base_url('../assets') ?>/sweetalert/sweetalert.min.js"></script>

@@ -6,6 +6,7 @@
 			selector: null,
 			ajax_src: null,
 			extensions: 'jpg|jpeg|png|gif',
+			enable_crop: true,
 			has_main: false,
 			has_rotation: true,
 			max_upload: 50,
@@ -192,6 +193,27 @@
 
 	FU.prototype.input_change = function (event) {
 		this.set_is_uploading(true, event);
+		
+		if (event.target.files.length > 1 && this.config.enable_crop) {
+			alert('Cropping is not support for multiple files yet!');
+			return;
+		}
+
+		if (this.config.enable_crop) {
+			let fileName = event.target.files[0].name;
+			let ext = fileName.split('.');
+			ext = ext[ext.length - 1];
+
+			if (this.allowed_extensions.indexOf(ext) == -1) {
+				this.set_is_uploading();
+				alert('File type .' + ext + ' is not allowed');
+			} else {
+				this.init_cropper(event.target.files[0]);
+			}
+
+			return;
+		}
+
 		for (var x = 0; x < event.target.files.length; x++) {
 			if (this.check_max_upload()) return;
 
@@ -380,6 +402,115 @@
 			}
 		}
 	};
+
+	FU.prototype.init_cropper = function (file) {
+		console.log('init_cropper', file)
+
+		const self = this;
+		let guid = this.guid();
+
+		let modalHtml = `
+		<div class="modal fade" id="crop_modal_${guid}">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title">Image Cropper</h4>
+					</div>
+					<div class="modal-body">
+						<div class="crop-area">
+							<img id="crop_image_${guid}" class="crop-image img-responsive" src="" alt="Select an image to crop" style="max-width: 100%;">
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary btn-block" id="crop_button_${guid}">Crop Image</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		`;
+
+		$('body').append(modalHtml);
+		setTimeout(() => {
+			$(`#crop_modal_${guid}`).modal({backdrop:'static', keyboard: false, show: true}); // open lightbox
+		}, 100)
+
+		$(`#crop_modal_${guid}`).on('shown.bs.modal', function () {
+			self.load_cropper_image(guid, file)
+		});
+	}
+
+	FU.prototype.load_cropper_image = function (guid, file) {
+		console.log('load_cropper_image', file)
+		const self = this;
+		const reader = new FileReader();
+
+		reader.onload = function () {
+			let image = document.getElementById(`crop_image_${guid}`);
+			image.src = reader.result;
+
+			const cropper = new Cropper(image, {
+				aspectRatio: 1, // Set aspect ratio (optional)
+				viewMode: 1, // Set view mode (optional)
+				zoomable: false, // Allow zooming (optional)
+			});
+
+			document.getElementById(`crop_button_${guid}`).addEventListener('click', function () {
+				const canvas = cropper.getCroppedCanvas();
+				
+				const croppedFile = self.dataURLtoFile(canvas.toDataURL(), `cropped_image_${guid}.png`);
+				console.log({croppedFile});
+
+				const form_data = new FormData();
+				if (self.config.dimension != '') {
+					form_data.append('dimension', self.config.dimension);
+				}
+				if (self.config.file_size != '') {
+					form_data.append('file_size', self.config.file_size);
+				}
+				form_data.append('base_url', self.config.base_url);
+				form_data.append('upload_files', croppedFile);
+				
+				self.uploadFiles(form_data, self.files_count);
+				self.files_count++;
+
+				$(`#crop_modal_${guid}`).modal('hide');
+				setTimeout(() => {
+					cropper.destroy();
+					$(`#crop_modal_${guid}`).remove();
+				}, 300)
+			});
+		}
+
+		reader.readAsDataURL(file);
+	}
+
+
+	FU.prototype.guid = function () {
+		function s4() {
+			return Math.floor((1 + Math.random()) * 0x10000)
+				.toString(16)
+				.substring(1);
+		}
+		return new Date().getTime() + '_' + s4() + s4();
+	}
+
+	// Function to convert data URL to file
+	FU.prototype.dataURLtoFile = function (dataURL, filename) {
+		let arr = dataURL.split(','),
+			mime = arr[0].match(/:(.*?);/)[1],
+			bstr = atob(arr[1]),
+			n = bstr.length,
+			u8arr = new Uint8Array(n);
+
+		while (n--) {
+			u8arr[n] = bstr.charCodeAt(n);
+		}
+
+		return new File([u8arr], filename, { type: mime });
+	}
 
 	window.file_upload_preview = FU;
 })();

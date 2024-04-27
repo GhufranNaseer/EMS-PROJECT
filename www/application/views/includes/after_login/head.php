@@ -26,6 +26,7 @@
 
     <link rel="stylesheet" href="<?= base_url('assets') ?>/datatable/css/style.css">
 	
+	<link rel="stylesheet" href="<?= base_url('assets') ?>/file-upload-preview/lib/cropper.min.css">
 	<link rel="stylesheet" href="<?= base_url('assets') ?>/file-upload-preview/css/file-upload-preview.min.css">
 
     <link rel="stylesheet" href="<?= base_url('assets') ?>/sweetalert/sweetalert.css">

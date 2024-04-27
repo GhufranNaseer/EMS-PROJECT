@@ -228,7 +228,7 @@ class Order_list extends MY_Controller
 		table {
 		border: 1px solid #ccc;
 		width: 430px;
-		font-family: Helvetica, Arial, sans-serif;
+		font-family: FreeSans, Helvetica, Arial, sans-serif;
 		font-size: 14px;
 		border-spacing: 0;
     	border-collapse: collapse;

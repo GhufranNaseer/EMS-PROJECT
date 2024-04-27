@@ -20,9 +20,15 @@ class QRGenerator {
 
 	public function generate() {
 
-		$QRLink = "https://chart.googleapis.com/chart?cht=qr&chs=" . $this->size . "x" . $this->size . "&chl=" . $this->data .
+		
+		// $QRLink = "https://chart.googleapis.com/chart?cht=qr&chs=" . $this->size . "x" . $this->size . "&chl=" . $this->data .
+		// 	"&choe=" . $this->encoding .
+		// 	"&chld=" . $this->errorCorrectionLevel . "|" . $this->marginInRows;
+
+		$QRLink = "https://zxing.org/w/chart?cht=qr&chs=" . $this->size . "x" . $this->size . "&chl=" . $this->data .
 			"&choe=" . $this->encoding .
-			"&chld=" . $this->errorCorrectionLevel . "|" . $this->marginInRows;
+			"&chld=" . $this->errorCorrectionLevel;
+			
 		if ($this->debug) {
 			echo $QRLink;
 		}

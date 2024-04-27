@@ -367,7 +367,8 @@ class Badges_report extends MY_Controller {
 		if ($size > 0) {
 			return true;
 		} else {
-			$this->download_qr($qr, $filename);
+			return false;
+			// $this->download_qr($qr, $filename);
 		}
 	}
 
@@ -408,7 +409,9 @@ END:VCARD';
 		$qr = new QRGenerator($qr_data);
 		$qr = $qr->generate();
 		$output = uniqid(time()) . '.png';
-		$this->download_qr($qr, $output);
+		if (!$this->download_qr($qr, $output)) {
+			echo 'ERROR: Unable to generate QR Code.'; die;
+		}
 
 		if (!is_null($this->badge->barcode_data) && $this->badge->barcode_data != '') {
 			$barcode_data = $this->badge->barcode_data;
