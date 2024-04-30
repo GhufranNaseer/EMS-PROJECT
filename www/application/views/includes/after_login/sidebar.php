@@ -355,6 +355,13 @@
             </li>
         <?php } ?>
 
+            <li data-page="email_template">
+                <a href="<?= base_url('email_template.html'); ?>">
+                    <i class="fa fa-print"></i>
+                    <span>Email Template</span>
+                </a>
+            </li>
+
             <?php if (get_instance()->hasRight('smsnotification')) { ?>
                 <li class="treeview">
                     <a href="javascript:void(0)">

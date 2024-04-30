@@ -194,6 +194,7 @@ class Packages extends MY_Controller {
 			'package_title' => $this->input->post('package_title'),
 			'package_type' => $this->input->post('package_type'),
 			'package_badges' => $this->input->post('package_badges'),
+			'visitor_badges'=> $this->input->post('visitor_badges'),
 			'created_on' => date('Y-m-d H:i:s'),
 		);
 
@@ -334,6 +335,7 @@ class Packages extends MY_Controller {
 			'package_title' => $this->input->post('package_title'),
 			'package_type' => $this->input->post('package_type'),
 			'package_badges' => $this->input->post('package_badges'),
+			'visitor_badges' => $this->input->post('visitor_badges'),
 			'is_active' => $isActive
 		);
 

@@ -227,12 +227,14 @@ class Welcome extends Initialize {
 		$this->dbvars->setVar('fp_' . myid($this->forget_booking->id), $temp_data);
 
 		$login_link = base_url('recover-account/' . myid($this->forget_booking->id));
-		$message = '<p>Hello,</p>';
-		$message .= '<p>You can change your password with the link below:</p>';
-		$message .= '<p><a href="'.$login_link.'" target="_blank">Change Password</a></p><br>';
 
-		$message .= '<p>If you cannot press this link then copy and paste following link to an another tab to do so.</p>';
-		$message .= '<div>'.$login_link.'</div>';
+		$get_email_template = $this->db
+			->where("title" , "Forgotten Password")
+			->get('email_template')
+			->row();
+
+		$message = $get_email_template->message;
+		$message = str_replace('{PASSWORD_LINK}', $login_link, $message);
 
 		$this->funcs->send_email($this->forget_customer->email, 'Forgotten Password', $message, $this->forget_event->exhibition_title);
 

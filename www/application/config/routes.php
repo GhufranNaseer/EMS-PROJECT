@@ -184,6 +184,21 @@ $route['locations-edit-submit.html']['post'] = "locations/crd_edit_submit";
 $route['locations-delete.html']['get'] = "locations/crd_delete";
 #E locations
 
+#S Email template
+$route['email_template.html']['get'] = "email_template/crd_list";
+$route['email_template-datatable.html']['post'] = "email_template/crd_list_datatable";
+
+$route['email_template-add.html']['get'] = "email_template/crd_add";
+$route['email_template-validate.html']['post'] = "email_template/crd_add_validate/doError";
+$route['email_template-submit.html']['post'] = "email_template/crd_add_submit";
+
+$route['email_template-edit.html']['get'] = "email_template/crd_edit";
+$route['email_template-edit-validate.html']['post'] = "email_template/crd_edit_validate/doError";
+$route['email_template-edit-submit.html']['post'] = "email_template/crd_edit_submit";
+
+$route['email_template-delete.html']['get'] = "email_template/crd_delete";
+#E Email template
+
 
 #S packages
 $route['packages-event.html']['get'] = "inventory/packages/crd_event_list";

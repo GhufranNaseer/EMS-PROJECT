@@ -102,6 +102,14 @@
                                                placeholder="Package Badges">
                                     </div>
                                 </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Visitor Badges</label>
+                                        <input type="number" class="form-control" name="visitor_badges"
+                                                value="<?= html_escape($this->packagedata->visitor_badges) ?>"
+                                                placeholder="Visitor Badges">
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="form-group row package_cost_row" style="display: <?= ($this->packagedata->package_type == 'shell') ? 'block' : 'none' ?>">

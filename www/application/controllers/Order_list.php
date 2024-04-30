@@ -998,31 +998,17 @@ class Order_list extends MY_Controller
 			}
 
 			$login_link = base_url('client/login/' . $this->formdata->id . '-' . str_replace(' ', '-', $this->formdata->exhibition_title));
-			$message = '<p>Dear Exhibitor,</p>';
-			$message .= '<p>Team IDEAS 2018 are proud to welcome you as a prestigious exhibitors and contributor of 10th anniversary edition of International Defence Exhibition & Seminar – IDEAS 2018 to be held from 27th to 30th November 2018 at Karachi Expo Centre - Pakistan.</p>';
-			$message .= '<p>Our teams are committed to supporting you through this experience. In order to assist you both before and during the event, we have developed and installed a user friendly online Exhibitor Facilitation Centre (EFC) that shall stay in constant communication with you for all your facilitation needs as and when required. </p>';
-			$message .= '<p>We would request that you please appoint ONE key contact person for your participation and provide all their contact information to enable us to provide you with our best attention and services. </p>';
-			$message .= '<hr>';
-			$message .= '<div>Following are the login details.</div>';
-			$message .= '<div><strong>User ID: </strong>'.$login_name.'</div>';
-			$message .= '<div><strong>Password: </strong>'.$login_pass.'</div><br><br>';
-			$message .= '<div><a href="'.$login_link.'" target="_blank">'.$login_link.'</a></div>';
-			$message .= '<hr>';
 
-			$message .= '<p>Furthermore, we highly recommend that you download Exhibitor Manual, this will allow for an in depth understanding of the event and exhibitor facilitation services. In the meantime please feel free to email or contact the undersigned in case of any query that you may have. Our teams look forward to welcoming you at IDEAS 2018.</p>';
+			$get_email_template = $this->db
+			->where("title" , "Event invitation Email")
+			->get('email_template')
+			->row();
 
-			$message .= '<br>';
-			$message .= '<br>';
-			$message .= '<p>Thanks & Best Regards,</p>';
-			$message .= '<br>';
-			$message .= '<div>BXSS Facilitation Team - IDEAS 2018</div>';
-			$message .= '<div>International Communications & Marketing Manager</div>';
-			$message .= '<div>Badar Expo Solutions (Pvt.) Ltd.</div>';
-			$message .= '<div>Tel: +92-21-34821159-60</div>';
-			$message .= '<div>Fax: +92.21.34821179</div>';
-			$message .= '<div>Cell: +92-300-0228560</div>';
-			$message .= '<div>Email: facilitation@exhibit.com.pk</div>';
+			$message = $get_email_template->message;
 
+			$message = str_replace('{Email}', $login_name, $message);
+			$message = str_replace('{PASSWORD}', $login_pass, $message);
+			$message = str_replace('{LOGIN_URL}', $login_link, $message);
 
 			$email_data[] = array(
 				'type' => 'order_invitation',
