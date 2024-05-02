@@ -19,6 +19,7 @@ if ($tab == 'bare') {
 }
 
 $event_contractors = explode(',', $this->event->stall_builder_contractors);
+
 $all_contractors = $this->db
 	->where('is_active', 1)
 	->where('is_deleted', 0)
@@ -137,7 +138,7 @@ foreach ($all_contractors as $key => $contractor) {
 
 											$old_contractor = array();
 											if (!is_null($this->formdata) && array_key_exists('stall_building_contractor', $this->formdata)) {
-												$old_contractor = $this->formdata->stall_building_contractor;
+												$old_contractor = $this->formdata['stall_building_contractor'];
 											}
 
 											foreach ($all_contractors as $contractor) {

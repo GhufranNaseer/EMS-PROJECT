@@ -368,7 +368,7 @@ $hall_data = $this->db
                                         <div class="business_selected_area">
                                             <table class="table table-bordered" id="selected_business_area">
                                                 <?php
-                                                if ((!is_null($this->formdata)) && count($this->formdata->products->main) > 0) {
+                                               if ((!is_null($this->formdata)) && count((array)$this->formdata->products->main) > 0) {
                                                     foreach ($this->formdata->products->main as $key => $main_business) {
 														echo '<tr>
                                                         <td>'. $main_business->area .'</td>
@@ -412,7 +412,7 @@ $hall_data = $this->db
                                             <div class="other_business_selected_area">
                                                 <table class="table table-bordered" id="other_business_selected_area">
 													<?php
-													if ((!is_null($this->formdata)) && array_key_exists('other', $this->formdata->products) && count($this->formdata->products->other) > 0) {
+													if ((!is_null($this->formdata)) && property_exists($this->formdata->products, 'other') && count((array)$this->formdata->products->other) > 0) {
 														foreach ($this->formdata->products->other as $key => $other_business) {
 															echo '<tr>
                                                             <td>'.$other_business->area.'</td>
@@ -457,7 +457,7 @@ $hall_data = $this->db
                                             <div class="product_selected_area">
                                                 <table class="table table-bordered" id="product_selected_area">
 													<?php
-													if ((!is_null($this->formdata)) && count($this->formdata->products->product) > 0) {
+													if ((!is_null($this->formdata)) && count((array)$this->formdata->products->product) > 0) {
 														foreach ($this->formdata->products->product as $key => $product) {
 															echo '<tr>
                                                             <td>'. $product->name .'</td>

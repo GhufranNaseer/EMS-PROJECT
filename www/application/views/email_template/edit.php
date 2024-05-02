@@ -33,7 +33,7 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Title</label>
-                                        <input type="text" class="form-control" name="title"
+                                        <input type="text" class="form-control" name="email_template_title"
                                                value="<?= html_escape($this->formdata->title) ?>"
                                                placeholder="Title">
                                     </div>

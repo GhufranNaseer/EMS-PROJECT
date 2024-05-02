@@ -32,6 +32,7 @@
 				->join('es_order_forms as O', 'O.id = EF.form_id', 'LEFT')
                 ->get('es_exhibition_forms as EF')
                 ->result();
+
             ?>
 
             <li class="treeview">
@@ -43,6 +44,7 @@
                 <ul class="treeview-menu">
                     <?php
                     foreach ($forms as $form) {
+                       
                         if ($form->is_essential == 1) {
                             $has_data = '<small class="label pull-right bg-red">required</small>';
 
@@ -76,11 +78,12 @@
 									->where('form_id', $form->id)
 									->get('es_exhibition_booking_forms_data')
                                     ->row();
-
-								if ($check_data && array_key_exists('bare_stall_data', json_decode($check_data->form_data))) {
+                                    
+                                
+								if ($check_data && array_key_exists('bare_stall_data', json_decode($check_data->form_data, true))) {
 									$has_bare_data = '<small class="label pull-right bg-green">completed</small>';
                                 }
-                                if ($check_data && array_key_exists('shell_stall_data', json_decode($check_data->form_data))) {
+                                if ($check_data && array_key_exists('shell_stall_data', json_decode($check_data->form_data, true))) {
 									$has_shell_data = '<small class="label pull-right bg-green">completed</small>';
                                 }
 

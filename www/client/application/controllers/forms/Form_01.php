@@ -16,15 +16,17 @@ class Form_01 extends MY_Controller {
 			->row();
 
 		if (isset($check)) {
-			$data = json_decode($check->form_data);
-
+			$data = json_decode($check->form_data, true);
+			
 			if ($this->input->get('tab') && $this->input->get('tab') == 'bare' && array_key_exists('bare_stall_data', $data)) {
-				$this->formdata = $data->bare_stall_data;
+				$this->formdata = $data['bare_stall_data'];
 			} else if ($this->input->get('tab') == 'shell' && array_key_exists('shell_stall_data', $data)) {
-				$this->formdata = $data->shell_stall_data;
+				$this->formdata = $data['shell_stall_data'];
 			}
 
 		}
+
+		
 
 		$this->load->view('includes/after_login/head');
 		$this->load->view('forms/form_01');
@@ -84,7 +86,7 @@ class Form_01 extends MY_Controller {
 				->get('es_exhibition_booking_forms_data')
 				->row();
 
-			$old_data = json_decode($old_form->form_data);
+			$old_data = json_decode($old_form->form_data, true);
 			if ($this->input->post('has_bare_stall') && $this->input->post('has_bare_stall') == 1) {
 				$old_data->bare_stall_data = $this->input->post();
 			} else {
