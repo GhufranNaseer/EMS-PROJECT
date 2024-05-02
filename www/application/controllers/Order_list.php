@@ -251,7 +251,7 @@ class Order_list extends MY_Controller
 		}
 		</style>';
 
-		$html .= '<h2>'.$this->formdata->exhibition_title.'</h2>';
+		$html .= '<h2></h2>';
 
 		$customer_data = $this->db
 			->where('id', $this->orderdata->customer_id)
@@ -267,6 +267,9 @@ class Order_list extends MY_Controller
 			->row();
 
 		$html .= '<table>
+			<tr>
+				<th colspan="6"><h2>'.$this->formdata->exhibition_title.'</h2></th>
+			</tr>
 			<tr>
 				<th colspan="4">Customer Information</th>
 				<th>Order Date</th>

@@ -434,6 +434,7 @@ END:VCARD';
 				->where('id', $this->badge->id)
 				->update('es_exhibition_badges', array(
 					'barcode_data' => $barcode_data
+					// TODO: save qr_data, qr_image and barcode_image in this table also
 				));
 		}
 
