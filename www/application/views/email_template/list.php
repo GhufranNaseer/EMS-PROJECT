@@ -44,7 +44,6 @@
                                 <th class="text-center" width="10%">#</th>
                                 <th>Title</th>
                                 <th>Subject</th>
-                                <th>Message</th>
                                 <th class="text-center" width="10%">Action</th>
                             </tr>
                             </thead>

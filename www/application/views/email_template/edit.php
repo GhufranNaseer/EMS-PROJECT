@@ -35,7 +35,7 @@
                                         <label>Title</label>
                                         <input type="text" class="form-control" name="email_template_title"
                                                value="<?= html_escape($this->formdata->title) ?>"
-                                               placeholder="Title">
+                                               placeholder="Title" disabled>
                                     </div>
                                 </div>
 

@@ -62,8 +62,7 @@ class Email_template extends MY_Controller {
 		$this->datatables
 			->select('id,
 					title,
-					subject,
-					message
+					subject
 				  ', false)
 
 			->add_column('col_action', function ($row) {
@@ -99,8 +98,8 @@ class Email_template extends MY_Controller {
 	function crd_add_submit() {
 		if ($this->crd_add_validate() !== true)
 			show_404();
-
 		$data = array(
+			'system_title' => str_replace(' ', '_', strtoupper($this->input->post('email_template_title'))),
 			'title' => $this->input->post('email_template_title'),
 			'subject' => $this->input->post('email_template_subject'),
 			'message' => $this->input->post('email_template_message'),
@@ -126,7 +125,7 @@ class Email_template extends MY_Controller {
 	function crd_edit_validate() {
 		$this->checkEditId();
 
-		$this->form_validation->set_rules('email_template_title', 'email_template_title*Email Title', 'trim|required');
+		//$this->form_validation->set_rules('email_template_title', 'email_template_title*Email Title', 'trim|required');
 		$this->form_validation->set_rules('email_template_subject', 'email_template_subject*Email Subject', 'trim|required');
 
 		if ($this->form_validation->run() == false)
@@ -141,7 +140,7 @@ class Email_template extends MY_Controller {
 
 
 		$data = array(
-			'title' => $this->input->post('email_template_title'),
+			//'title' => $this->input->post('email_template_title'),
 			'subject' => $this->input->post('email_template_subject'),
 			'message' => $this->input->post('email_template_message'),
 			'updated_on' => date('Y-m-d H:i:s'),
