@@ -560,6 +560,16 @@ class Book_stall extends MY_Controller {
 				));
 		}
 
+		$total_visitor_badges = $package_data->visitor_badges; 
+
+		if($total_visitor_badges > 0){
+			$this->db
+				->where('id', $booking_id)
+				->update('es_exhibition_booking', array(
+					'visitor_badges_limit' => $total_visitor_badges
+				));
+		}
+
 		foreach ($this->input->post('order_items') as $item) {
 			if ($item['is_package_item'] == 1) {
 				if (array_key_exists('has_item', $item)) {
