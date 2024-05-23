@@ -11,6 +11,8 @@ services:
       - 8000:80
     depends_on:
       - mysql-db
+    networks:
+      - ems_network
 
   mysql-db:
     image: mysql:8.0
@@ -24,6 +26,23 @@ services:
       MYSQL_PASSWORD: password
     ports:
       - "3307:3306"
+    networks:
+      - ems_network
+
+  cronjob:
+    container_name: ems_cron
+    build:
+      context: .
+      dockerfile: cron/Dockerfile
+    depends_on:
+      - webserver
+    networks:
+      - ems_network
+
+networks:
+  ems_network:
+    driver: bridge
+
 volumes:
   db:
   www:

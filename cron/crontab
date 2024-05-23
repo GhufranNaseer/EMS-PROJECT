@@ -1,0 +1,2 @@
+# Send emails to customers
+* * * * * root wget -qO- http://webserver/Cron_email/send_messages
