@@ -229,14 +229,17 @@ class Welcome extends Initialize {
 		$login_link = base_url('recover-account/' . myid($this->forget_booking->id));
 
 		$get_email_template = $this->db
-			->where("title" , "Forgotten Password")
+			->where("title" , "RESET_PASSWORD_LINK")
 			->get('email_template')
 			->row();
 
-		$message = $get_email_template->message;
-		$message = str_replace('{PASSWORD_LINK}', $login_link, $message);
+		// {PASSWORD_RESET_LINK},{FIRST_NAME},{LAST_NAME},{EMAIL}
+		$subject = $get_email_template->subject;
 
-		$this->funcs->send_email($this->forget_customer->email, 'Forgotten Password', $message, $this->forget_event->exhibition_title);
+		$message = $get_email_template->message;
+		$message = str_replace('{PASSWORD_RESET_LINK}', $login_link, $message);
+
+		$this->funcs->send_email($this->forget_customer->email, $subject, $message, $this->forget_event->exhibition_title);
 
 
 		$this->session->set_flashdata('message', 'Please check your email ('.$this->forget_customer->email.') where we have sent you the link to change the password');

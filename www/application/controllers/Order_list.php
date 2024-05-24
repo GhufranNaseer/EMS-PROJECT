@@ -1003,21 +1003,28 @@ class Order_list extends MY_Controller
 			$login_link = base_url('client/login/' . $this->formdata->id . '-' . str_replace(' ', '-', $this->formdata->exhibition_title));
 
 			$get_email_template = $this->db
-			->where("title" , "Event invitation Email")
+			->where("title" , "EVENT_INVITATION")
 			->get('email_template')
 			->row();
 
-			$message = $get_email_template->message;
+			$subject = $get_email_template->subject;
+			$subject = str_replace('{EMAIL}', $login_name, $subject);
+			$subject = str_replace('{PASSWORD}', $login_pass, $subject);
+			$subject = str_replace('{LOGIN_URL}', $login_link, $subject);
+			$subject = str_replace('{EVENT_NAME}', $this->formdata->exhibition_title, $subject);
 
-			$message = str_replace('{Email}', $login_name, $message);
+			$message = $get_email_template->message;
+			$message = str_replace('{EMAIL}', $login_name, $message);
 			$message = str_replace('{PASSWORD}', $login_pass, $message);
 			$message = str_replace('{LOGIN_URL}', $login_link, $message);
+			$message = str_replace('{EVENT_NAME}', $this->formdata->exhibition_title, $message);
+
 
 			$email_data[] = array(
 				'type' => 'order_invitation',
 				'data' => json_encode(array('order_id' => $order->id)),
 				'email' => $order->company_email,
-				'subject' => 'Details',
+				'subject' => $subject,
 				'message' => $message,
 				'created_on' => date('Y-m-d H:i:s'),
 			);
