@@ -452,7 +452,7 @@
 			image.src = reader.result;
 
 			const cropper = new Cropper(image, {
-				aspectRatio: 1, // Set aspect ratio (optional)
+				// aspectRatio: 1, // Set aspect ratio (optional)
 				viewMode: 1, // Set view mode (optional)
 				zoomable: false, // Allow zooming (optional)
 			});
