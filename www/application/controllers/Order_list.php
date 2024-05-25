@@ -691,21 +691,6 @@ class Order_list extends MY_Controller
 			));
 
 
-
-		/*$login_link = base_url('client/login/' . $this->formdata->id . '-' . str_replace(' ', '-', $this->formdata->exhibition_title));
-		$message = '<p>Hello,</p>';
-		$message .= '<p>Your order has been approved, you can now login to your portal!</p><br>';
-		$message .= '<p><a href="'.$login_link.'" target="_blank">'.$login_link.'</a></p><br>';
-		$message .= '<div><strong>User Name: </strong>'.$login_name.'</div>';
-		$message .= '<div><strong>Password: </strong>'.$login_pass.'</div><br><br>';
-
-		$this->funcs->send_email($customer->email, 'Login Details', $message, $this->formdata->exhibition_title);*/
-
-		/*$message_text = $this->load->view('email', array(
-			'message' => $message
-		), true);
-		echo $message_text; die();*/
-
 		$this->session->set_flashdata('message', 'Order has been approved successfully');
 		redirect(base_url('event-order-list.html?id=' . myid($this->formdata->id)));
 	}

@@ -100,8 +100,6 @@ class Portal extends MY_Controller {
 
 
 	function index() {
-		//$this->funcs->send_email('dronzer92@gmail.com', 'test', 'test', null);
-		//die();
 		$this->load->view('dashboard', array());
 	}
     function crd_list_datatable() {

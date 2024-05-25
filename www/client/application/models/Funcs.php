@@ -2,30 +2,6 @@
 class Funcs extends CI_Model
 {
 
-	function send_email($to_email, $subject = '', $message = "", $event_name) {
-		$this->load->library('email');
-		$this->email->set_mailtype("html");
-
-		$event_name = (!$event_name) ? PROJECT_NAME : $event_name;
-
-		$message_text = $this->load->view('email', array(
-			'event_name' => $event_name,
-			'message' => $message
-		), true);
-
-		$this->email->clear();
-		$this->email->from('no-reply@'.EMAIL_DOMAIN_NAME );
-		$this->email->to($to_email);
-		$this->email->subject($subject);
-		$this->email->message($message_text);
-
-		//Send mail
-		if ($this->email->send()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
 
 
 	function make_image_string($images_array = array()) {

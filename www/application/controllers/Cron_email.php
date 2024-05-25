@@ -5,7 +5,7 @@ class Cron_email extends Initialize {
 	protected function rule() {
 
 		$crd = array(
-			'send_messages,temp_email,send_text_message,temp_excel_create' => array(
+			'send_messages,send_text_message,temp_excel_create' => array(
 				'rule' => '*'
 			)
 		);
@@ -63,56 +63,6 @@ class Cron_email extends Initialize {
 	}
 
 
-	function temp_email() {
-		$LIVE_DB = $this->load->database('live_db', TRUE);
-
-		$emails = $LIVE_DB
-			->where('is_sent', 0)
-			->limit(10)
-			->get('es_emails_cron')
-			->result();
-
-		foreach ($emails as $email) {
-
-			$data = json_decode($email->data);
-
-			$booking = $LIVE_DB
-				->select('B.*, E.exhibition_title')
-				->where('B.id', $data->order_id)
-				->join('es_exhibitions as E', 'E.id = B.exhibition_id', 'LEFT')
-				->get('es_exhibition_booking as B')
-				->row();
-
-			$title = (isset($booking)) ? $booking->exhibition_title : PROJECT_NAME;
-
-			/*$to      = 'dronzer92@gmail.com';
-			$subject = 'Login Details';
-			$message = 'Hello';
-			$headers = 'From: minimax.api@gmail.com' . "\r\n" .
-				'Reply-To: minimax.api@gmail.com' . "\r\n" .
-				'X-Mailer: PHP/' . phpversion();
-			if (mail($to, $subject, $message, $headers)) {
-				echo strip_tags($email->message);
-			}*/
-
-			$this->funcs->send_email($email->email, $email->subject, $email->message, $title);
-
-			$LIVE_DB
-				->where('id', $email->id)
-				->update('es_emails_cron', array(
-					'is_sent' => 1
-				));
-
-			$LIVE_DB
-				->where('id', $booking->id)
-				->update('es_exhibition_booking', array(
-					'invitation_sent' => 1
-				));
-		}
-
-		echo 'done';
-		exit;
-	}
 
 
 	function send_text_message() {

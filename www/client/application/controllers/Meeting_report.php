@@ -410,7 +410,7 @@ class Meeting_report extends MY_Controller
 			$this->load->helper('phpmailer');
 			$mail = sendMail($ReceiverName,$ReceiverEmail,$Subject,$Message,$SenderName,$SenderEmail,$CcEmail);
 		}
-		//$this->funcs->send_email($ReceiverEmail, $Subject, $Message, $title);
+		
 		if ($phone_number != '') {
 			$this->funcs->send_sms($phone_number, $text_msg);
 		}
