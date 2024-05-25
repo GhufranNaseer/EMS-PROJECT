@@ -227,15 +227,35 @@ class Welcome extends Initialize {
 		$this->dbvars->setVar('fp_' . myid($this->forget_booking->id), $temp_data);
 
 		$login_link = base_url('recover-account/' . myid($this->forget_booking->id));
-		$message = '<p>Hello,</p>';
-		$message .= '<p>You can change your password with the link below:</p>';
-		$message .= '<p><a href="'.$login_link.'" target="_blank">Change Password</a></p><br>';
 
-		$message .= '<p>If you cannot press this link then copy and paste following link to an another tab to do so.</p>';
-		$message .= '<div>'.$login_link.'</div>';
+		$get_email_template = $this->db
+			->where("title" , "RESET_PASSWORD_LINK")
+			->get('email_template')
+			->row();
 
-		$this->funcs->send_email($this->forget_customer->email, 'Forgotten Password', $message, $this->forget_event->exhibition_title);
+		// {PASSWORD_RESET_LINK},{CUSTOMER_COMPANY},{CUSTOMER_NAME},{CUSTOMER_EMAIL},{EVENT_NAME}
+		$subject = $get_email_template->subject;
+		$subject = str_replace('{CUSTOMER_COMPANY}', $this->forget_customer->company, $subject);
+		$subject = str_replace('{CUSTOMER_NAME}', $this->forget_customer->name, $subject);
+		$subject = str_replace('{CUSTOMER_EMAIL}', $this->forget_customer->email, $subject);
+		$subject = str_replace('{EVENT_NAME}', $this->forget_event->exhibition_title, $subject);
 
+		$message = $get_email_template->message;
+		$message = str_replace('{PASSWORD_RESET_LINK}', $login_link, $message);
+		$message = str_replace('{CUSTOMER_COMPANY}', $this->forget_customer->company, $message);
+		$message = str_replace('{CUSTOMER_NAME}', $this->forget_customer->name, $message);
+		$message = str_replace('{CUSTOMER_EMAIL}', $this->forget_customer->email, $message);
+		$message = str_replace('{EVENT_NAME}', $this->forget_event->exhibition_title, $message);
+
+		$this->db->insert('es_emails_cron', array(
+			'type' => 'RESET_PASSWORD_LINK',
+			'data' => null,
+			'from_name' => $this->forget_event->exhibition_title,
+			'email' => $this->forget_customer->email,
+			'subject' => $subject,
+			'message' => $message,
+			'created_on' => date('Y-m-d H:i:s'),
+		));
 
 		$this->session->set_flashdata('message', 'Please check your email ('.$this->forget_customer->email.') where we have sent you the link to change the password');
 		redirect(base_url ('login/' . $this->forget_event->id . '-' . str_replace(' ', '-', $this->forget_event->exhibition_title)));
