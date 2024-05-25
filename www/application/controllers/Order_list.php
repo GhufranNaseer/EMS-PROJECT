@@ -1021,8 +1021,9 @@ class Order_list extends MY_Controller
 
 
 			$email_data[] = array(
-				'type' => 'order_invitation',
+				'type' => 'EVENT_INVITATION',
 				'data' => json_encode(array('order_id' => $order->id)),
+				'from_name' => $this->formdata->exhibition_title,
 				'email' => $order->company_email,
 				'subject' => $subject,
 				'message' => $message,

@@ -22,16 +22,8 @@ class Cron_email extends Initialize {
 		$this->load->helper('phpmailer');
 		foreach ($emails as $email) {
 
-			$data = json_decode($email->data);
-
-			$booking = $this->db
-				->select('B.*, E.exhibition_title')
-				->where('B.id', $data->order_id)
-				->join('es_exhibitions as E', 'E.id = B.exhibition_id', 'LEFT')
-				->get('es_exhibition_booking as B')
-				->row();
-
-			$title = (isset($booking)) ? $booking->exhibition_title : PROJECT_NAME;
+			$title = (isset($email->from_name) && !is_null($email->from_name)) ? $email->from_name : PROJECT_NAME;
+			
 
 			$message_text = $this->load->view('email', array(
 				'event_name' => $title,
@@ -49,7 +41,6 @@ class Cron_email extends Initialize {
 			if($ReceiverEmail !=""){
 				echo $mail = sendMail($ReceiverName,$ReceiverEmail,$Subject,$Message,$SenderName,$SenderEmail,$CcEmail);
 			}
-			//$this->funcs->send_email($email->email, $email->subject, $email->message, $title);
 
 			$this->db
 				->where('id', $email->id)
@@ -58,11 +49,13 @@ class Cron_email extends Initialize {
 					'sent_on' => date('Y-m-d H:i:s')
 				));
 
-			$this->db
-				->where('id', $booking->id)
-				->update('es_exhibition_booking', array(
-					'invitation_sent' => 1
-				));
+			if ($email->type && $email->type == 'EVENT_INVITATION') {
+				$this->db
+					->where('id', $booking->id)
+					->update('es_exhibition_booking', array(
+						'invitation_sent' => 1
+					));
+			}
 		}
 
 		echo 'done';

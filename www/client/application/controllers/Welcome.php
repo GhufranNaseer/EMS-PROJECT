@@ -233,13 +233,30 @@ class Welcome extends Initialize {
 			->get('email_template')
 			->row();
 
-		// {PASSWORD_RESET_LINK},{FIRST_NAME},{LAST_NAME},{EMAIL}
+		// {PASSWORD_RESET_LINK},{CUSTOMER_COMPANY},{CUSTOMER_NAME},{CUSTOMER_EMAIL},{EVENT_NAME}
 		$subject = $get_email_template->subject;
+		$subject = str_replace('{CUSTOMER_COMPANY}', $this->forget_customer->company, $subject);
+		$subject = str_replace('{CUSTOMER_NAME}', $this->forget_customer->name, $subject);
+		$subject = str_replace('{CUSTOMER_EMAIL}', $this->forget_customer->email, $subject);
+		$subject = str_replace('{EVENT_NAME}', $this->forget_event->exhibition_title, $subject);
 
 		$message = $get_email_template->message;
 		$message = str_replace('{PASSWORD_RESET_LINK}', $login_link, $message);
+		$message = str_replace('{CUSTOMER_COMPANY}', $this->forget_customer->company, $message);
+		$message = str_replace('{CUSTOMER_NAME}', $this->forget_customer->name, $message);
+		$message = str_replace('{CUSTOMER_EMAIL}', $this->forget_customer->email, $message);
+		$message = str_replace('{EVENT_NAME}', $this->forget_event->exhibition_title, $message);
 
-		$this->funcs->send_email($this->forget_customer->email, $subject, $message, $this->forget_event->exhibition_title);
+
+		$this->db->insert('es_emails_cron', array(
+			'type' => 'RESET_PASSWORD_LINK',
+			'data' => null,
+			'from_name' => $this->forget_event->exhibition_title,
+			'email' => $this->forget_customer->email,
+			'subject' => $subject,
+			'message' => $message,
+			'created_on' => date('Y-m-d H:i:s'),
+		));
 
 
 		$this->session->set_flashdata('message', 'Please check your email ('.$this->forget_customer->email.') where we have sent you the link to change the password');
