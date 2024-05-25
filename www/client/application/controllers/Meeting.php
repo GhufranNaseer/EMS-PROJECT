@@ -176,6 +176,18 @@ class Meeting extends MY_Controller
 
 			$phone_number = $email_data->officer_phone;
 			
+			$text_msg = $this->userdata->name . ' has requested a meeting for ' . date('M d', strtotime($this->input->post('booking_date'))) . ', ' . date('H:i', strtotime($this->input->post('booking_time')));
+
+			$Subject = str_replace('{NAME}', $email_data->contact_person, $Subject);
+			$Subject = str_replace('{EMAIL}', $email_data->officer_email, $Subject);
+			$Subject = str_replace('{PHONE}', $email_data->officer_phone, $Subject);
+			$Subject = str_replace('{COMPANY}', $email_data->officer_company, $Subject);
+	
+			$message = str_replace('{NAME}', $email_data->contact_person, $message);
+			$message = str_replace('{EMAIL}', $email_data->officer_email, $message);
+			$message = str_replace('{PHONE}', $email_data->officer_phone, $message);
+			$message = str_replace('{COMPANY}', $email_data->officer_company, $message);
+
 		} else {
 			$email_data = $this->db
 				->where('id', $this->input->post('booking_to'))
@@ -185,15 +197,22 @@ class Meeting extends MY_Controller
 			$ReceiverEmail = $email_data->email;
 
 			$phone_number = $email_data->phone;
+
+			$text_msg = $this->userdata->name . ' has requested a meeting for ' . date('M d', strtotime($this->input->post('booking_date'))) . ', ' . date('H:i', strtotime($this->input->post('booking_time')));
+
+			
+			$Subject = str_replace('{NAME}', $email_data->name, $Subject);
+			$Subject = str_replace('{EMAIL}', $email_data->email, $Subject);
+			$Subject = str_replace('{PHONE}', $email_data->phone, $Subject);
+			$Subject = str_replace('{COMPANY}', $email_data->company, $Subject);
+
+			$message = str_replace('{NAME}', $email_data->name, $message);
+			$message = str_replace('{EMAIL}', $email_data->email, $message);
+			$message = str_replace('{PHONE}', $email_data->phone, $message);
+			$message = str_replace('{COMPANY}', $email_data->company, $message);
 		}
 
-		$text_msg = $this->userdata->name . ' has requested a meeting for ' . date('M d', strtotime($this->input->post('booking_date'))) . ', ' . date('H:i', strtotime($this->input->post('booking_time')));
-
 		$Subject = str_replace('{EVENT_NAME}', $title, $Subject);
-		$Subject = str_replace('{NAME}', $email_data->contact_person, $Subject);
-		$Subject = str_replace('{EMAIL}', $email_data->officer_email, $Subject);
-		$Subject = str_replace('{PHONE}', $email_data->officer_phone, $Subject);
-		$Subject = str_replace('{COMPANY}', $email_data->officer_company, $Subject);
 		$Subject = str_replace('{SENDER_NAME}', $this->userdata->name, $Subject);
 		$Subject = str_replace('{SENDER_EMAIL}', $this->userdata->email, $Subject);
 		$Subject = str_replace('{SENDER_PHONE}', $this->userdata->phone, $Subject);
@@ -203,10 +222,6 @@ class Meeting extends MY_Controller
 		$Subject = str_replace('{APPOINTMENT_AGENDA}', $this->input->post('agenda_of_meeting'), $Subject);
 
 		$message = str_replace('{EVENT_NAME}', $title, $message);
-		$message = str_replace('{NAME}', $email_data->contact_person, $message);
-		$message = str_replace('{EMAIL}', $email_data->officer_email, $message);
-		$message = str_replace('{PHONE}', $email_data->officer_phone, $message);
-		$message = str_replace('{COMPANY}', $email_data->officer_company, $message);
 		$message = str_replace('{SENDER_NAME}', $this->userdata->name, $message);
 		$message = str_replace('{SENDER_EMAIL}', $this->userdata->email, $message);
 		$message = str_replace('{SENDER_PHONE}', $this->userdata->phone, $message);
