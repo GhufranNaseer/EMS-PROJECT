@@ -10,10 +10,6 @@ class Welcome extends Initialize {
 				'rule' => '-',
 				'header' => 'loadHeader'
 			),
-			'test_email' => array (
-				'rule' => '*',
-				'header' => 'loadHeader'
-			),
 
 			'login_validate,
 			forget_password_validate,
@@ -54,21 +50,6 @@ class Welcome extends Initialize {
 		return array_merge($login_fp,$common,$password);
 	}
 
-
-	function test_email() {
-		$ReceiverName = 'dronzer92@gmail.com';
-		$ReceiverEmail = 'dronzer92@gmail.com';
-		$SenderName = 'SOLUIT';
-		$SenderEmail = 'donotreply@exhibit.com.pk';
-		$Subject = 'Test Email';
-		$Message = ' TEst email from welcome';
-		$CcEmail = '';
-
-		$this->load->helper('phpmailer');
-		if($ReceiverEmail !=""){
-			echo $mail = sendMail($ReceiverName,$ReceiverEmail,$Subject,$Message,$SenderName,$SenderEmail,$CcEmail);
-		}
-	}
 
 	function login() {
 		$this->load->view ('login');

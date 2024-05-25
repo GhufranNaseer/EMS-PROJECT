@@ -26,7 +26,6 @@ function sendMail($ReceiverName, $ReceiverEmail,$Subject,$Message, $SenderName, 
 	$mail->Password = "safxnfjzlefzwkxm";
 	//If SMTP requires TLS encryption then set it
 	$mail->SMTPSecure = "ssl";
-	$mail->Host = 'ssl://smtp.gmail.com';
 
 //Set TCP port to connect to
 	$mail->Port = 465;

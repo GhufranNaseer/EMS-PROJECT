@@ -180,15 +180,16 @@ class Meeting_report extends MY_Controller
 			$msg .= '<br><br>Regards,<br><br>Team IDEAS';
 		}
 
-		$Message = $this->load->view('email', array(
-			'event_name' => $title,
-			'message' => $msg
-		), true);
-
-
 		if($ReceiverEmail !=""){
-			$this->load->helper('phpmailer');
-			$mail = sendMail($ReceiverName,$ReceiverEmail,$Subject,$Message,$SenderName,$SenderEmail,$CcEmail);
+			$this->db->insert('es_emails_cron', array(
+				'type' => 'APPOINTMENT_CANCELED',
+				'data' => null,
+				'from_name' => $title,
+				'email' => $ReceiverEmail,
+				'subject' => $Subject,
+				'message' => $msg,
+				'created_on' => date('Y-m-d H:i:s'),
+			));
 		}
 		if ($phone_number != '') {
 			$this->funcs->send_sms($phone_number, $text_msg);
@@ -274,15 +275,16 @@ class Meeting_report extends MY_Controller
 			$msg .= '<br><br>Regards,<br><br>Team IDEAS';
 		}
 
-		$Message = $this->load->view('email', array(
-			'event_name' => $title,
-			'message' => $msg
-		), true);
-
-
 		if($ReceiverEmail !=""){
-			$this->load->helper('phpmailer');
-			$mail = sendMail($ReceiverName,$ReceiverEmail,$Subject,$Message,$SenderName,$SenderEmail,$CcEmail);
+			$this->db->insert('es_emails_cron', array(
+				'type' => 'APPOINTMENT_ACCEPTED',
+				'data' => null,
+				'from_name' => $title,
+				'email' => $ReceiverEmail,
+				'subject' => $Subject,
+				'message' => $msg,
+				'created_on' => date('Y-m-d H:i:s'),
+			));
 		}
 		if ($phone_number != '') {
 			$this->funcs->send_sms($phone_number, $text_msg);
@@ -400,15 +402,17 @@ class Meeting_report extends MY_Controller
 			$msg .= $this->userdata->email;
 		}
 
-		$Message = $this->load->view('email', array(
-			'event_name' => $title,
-			'message' => $msg
-		), true);
-
 
 		if($ReceiverEmail !=""){
-			$this->load->helper('phpmailer');
-			$mail = sendMail($ReceiverName,$ReceiverEmail,$Subject,$Message,$SenderName,$SenderEmail,$CcEmail);
+			$this->db->insert('es_emails_cron', array(
+				'type' => 'APPOINTMENT_RE_SCHEDULE',
+				'data' => null,
+				'from_name' => $title,
+				'email' => $ReceiverEmail,
+				'subject' => $Subject,
+				'message' => $msg,
+				'created_on' => date('Y-m-d H:i:s'),
+			));
 		}
 		
 		if ($phone_number != '') {
