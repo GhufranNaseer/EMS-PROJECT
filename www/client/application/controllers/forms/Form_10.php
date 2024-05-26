@@ -43,12 +43,14 @@ class Form_10 extends MY_Controller {
 			return $this->common->doError(func_num_args(), 'Form submission date is already expired!');
 		}
 
-		$visitor_badges = $this->db
+		// check badge allow limit
+		$booking_badges = $this->db
 			->where('exhibition_id', $this->event->id)
 			->where('booking_id', $this->booking->id)
-			->get('es_exhibition_booking')
-			->row();
-		if ($visitor_badges->visitor_badges_limit < 1) {
+			->where('badge_type', 'visitor')
+			->where('is_active', 1)
+			->count_all_results('es_exhibition_badges');
+		if ($booking_badges >= $this->booking->visitor_badges_limit) {
 			return $this->common->doError(func_num_args(), 'You do not have enough limit to add more badge!');
 		}
 
