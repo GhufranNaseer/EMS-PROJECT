@@ -232,7 +232,7 @@ class Meeting extends MY_Controller
 				'from_name' => $title,
 				'email' => $ReceiverEmail,
 				'subject' => $Subject,
-				'message' => $msg,
+				'message' => $message,
 				'created_on' => date('Y-m-d H:i:s'),
 			));
 		}
