@@ -129,49 +129,82 @@
                     <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
                 </a>
                 <ul class="treeview-menu">
+				<?php
+					// all forms are not completed thats why we only need to show following forms
+					$allow_optional_forms = [
+						'form_21' => false,
+						'form_17' => false,
+						'form_23' => false,
+						'form_24' => false,
+						'form_10' => false,
+						'form_25' => false,
+					];
+					foreach ($forms as $form) {
+						if (array_key_exists($form->form_view, $allow_optional_forms)) {
+							$allow_optional_forms[$form->form_view] = true;
+						}
+					}
+				?>
+				<?php if ($allow_optional_forms['form_21']) { ?>
                     <li data-page="form_21">
                         <a href="<?= base_url('forms/form_21') ?>">
                             <i class="fa fa-folder"></i>
                             <span>Visa Form</span>
                         </a>
                     </li>
+				<?php 
+				}
+				if ($allow_optional_forms['form_17']) {
+				?>
                     <li data-page="form_17">
                         <a href="<?= base_url('forms/form_17') ?>">
                             <i class="fa fa-folder"></i>
                             <span>Vehicle Rental</span>
                         </a>
                     </li>
-                    <!--<li data-page="form_10">
-                        <a href="<?/*= base_url('forms/form_10') */?>">
-                            <i class="fa fa-folder"></i>
-                            <span>Trade Visitor Badge</span>
-                        </a>
-                    </li>-->
+				<?php 
+				}
+				if ($allow_optional_forms['form_23']) {
+				?>
                     <li data-page="form_23">
                         <a href="<?= base_url('forms/form_23') ?>">
                             <i class="fa fa-folder"></i>
                             <span>Display Vehicle Mobility</span>
                         </a>
                     </li>
+				<?php 
+				}
+				if ($allow_optional_forms['form_24']) {
+				?>
                     <li data-page="form_24">
                         <a href="<?= base_url('forms/form_24') ?>">
                             <i class="fa fa-folder"></i>
                             <span>Hotel Reservation</span>
                         </a>
                     </li>
+				<?php 
+				}
+				if ($allow_optional_forms['form_10']) {
+				?>
                     <li data-page="form_10">
                         <a href="<?= base_url('forms/form_10') ?>">
                             <i class="fa fa-folder"></i>
                             <span>Visitor Badge</span>
                         </a>
                     </li>
+				<?php 
+				}
+				if ($allow_optional_forms['form_25']) {
+				?>
                     <li data-page="form_25">
                         <a href="<?= base_url('forms/form_25') ?>">
                             <i class="fa fa-folder"></i>
                             <span>Branding Orders</span>
                         </a>
                     </li>
-
+				<?php 
+				}
+				?>
                 </ul>
             </li>
             <?php if (false) { ?>
