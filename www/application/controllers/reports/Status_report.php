@@ -114,7 +114,7 @@ class Status_report extends MY_Controller
 					->get('es_exhibition_booking_forms_data')
 					->row();
 
-				if ($check_data && array_key_exists('shell_stall_data', json_decode($check_data->form_data))) {
+				if ($check_data && array_key_exists('shell_stall_data', json_decode($check_data->form_data, true))) {
 					$has_data = '<a class="text-center view_details" data-bookingid="'.$row['id'].'" data-exhibitionid="'.$row['exhibition_id'].'" data-formid="1&shell">Completed</a>';
 				}
 
@@ -132,7 +132,7 @@ class Status_report extends MY_Controller
 					->get('es_exhibition_booking_forms_data')
 					->row();
 
-				if ($check_data && array_key_exists('bare_stall_data', json_decode($check_data->form_data))) {
+				if ($check_data && array_key_exists('bare_stall_data', json_decode($check_data->form_data, true))) {
 					$has_data = '<a class="text-center view_details" data-bookingid="'.$row['id'].'" data-exhibitionid="'.$row['exhibition_id'].'" data-formid="1&bare">Completed</a>';
 				}
 
