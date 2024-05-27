@@ -200,7 +200,7 @@
                                 <td colspan="2">Pending Additional Purchase</td>
                                 <td colspan="2">'. $pending_order_item->item_title .'</td>
                                 <td colspan="2">'. $pending_order_item->item_quantity .'</td>
-                                <td colspan="2" class="text-right">'. $this->booking->booking_price_type .' '. number_format($pending_order_item->item_price) .'</td>
+                                <td colspan="2" class="text-right"><a href="'. base_url('print/order/invoice?id=' . $pending_order_item->order_id) .'" target="_blank">(view invoice)</a> '. $this->booking->booking_price_type .' '. number_format($pending_order_item->item_price) .'</td>
                                 </tr>';
                         }
 
