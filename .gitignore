@@ -8,3 +8,6 @@
 
 /www/uploads/*
 !/www/uploads/.gitignore
+
+.DS_Store
+*/.DS_Store

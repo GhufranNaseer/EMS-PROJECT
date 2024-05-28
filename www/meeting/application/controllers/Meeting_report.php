@@ -65,8 +65,8 @@ class Meeting_report extends MY_Controller
                     exhibition_day,
                     appointment_date,
                     appointment_time,
-                    IF(is_canceled = 1, "<span class=\'label label-danger\'>Canceled</span>",
-                    	IF(is_approved = 1, "<span class=\'label label-success\'>Approved</span>", "<span class=\'label label-warning\'>Pending</span>")) as status,
+                    IF(is_canceled = 1, "<span class=\'label label-danger\'>Regretted</span>",
+                    	IF(is_approved = 1, "<span class=\'label label-success\'>Accepted</span>", "<span class=\'label label-warning\'>Pending</span>")) as status,
 					is_canceled,
                     is_approved,
                     user_type_to,
@@ -85,12 +85,12 @@ class Meeting_report extends MY_Controller
                 if ($row['is_canceled'] == 0) {
 					if ($row['user_type_to'] == 'officer' && $row['appointment_to'] == $this->userdata->id) {
 						if ($row['is_approved'] == 0) {
-							$html .= '<a href="' . base_url() . 'meeting-approved.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-success" onclick="return confirm(\'Are you sure you want to approve this schedule?\')">Approve</a> ';
+							$html .= '<a href="' . base_url() . 'meeting-approved.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-success" onclick="return confirm(\'Are you sure you would like to accept the meeting request?\')">Accept</a> ';
 						}
-						$html .= '<a href="' . base_url() . 'meeting-cancel.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you want to cancel this schedule?\')">Cancel</a> ';
+						$html .= '<a href="' . base_url() . 'meeting-cancel.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you would like to deny the meeting request?\')">Regret/Deny</a> ';
 						$html .= '<a href="' . base_url() . 'meeting_re_schedule.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-info">Re-Schedule</a> ';
 					} else {
-						$html = '<a href="' . base_url() . 'meeting-delete.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you want to delete this schedule?\')">Delete</a> ';
+						$html = '<a href="' . base_url() . 'meeting-delete.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you would like to delete the meeting request?\')">Delete</a> ';
 					}
 				}
 

@@ -242,7 +242,7 @@ class Meeting extends MY_Controller
 		}
 
 
-		$this->session->set_flashdata('message', 'Meeting schedule submitted successfully');
+		$this->session->set_flashdata('message', 'Meeting request forwarded successfully');
 		redirect(base_url('dashboard'));
 	}
 

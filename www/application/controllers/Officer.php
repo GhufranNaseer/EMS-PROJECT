@@ -344,6 +344,7 @@ class Officer extends MY_Controller {
     function crd_print() {
 		$html = $this->load->view('officer/officer_print', array(), true);
 
+		// echo $html; die;
 		set_time_limit(0);
 		$this->load->helper ("pdf-loader");
 		try {
