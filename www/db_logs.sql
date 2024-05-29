@@ -30,40 +30,42 @@ CREATE VIEW invitation_list_datatable AS
 
 
 CREATE VIEW `my_appointments_datatable` AS
-        SELECT
-          `a`.`id`               AS `id`,
-          `a`.`exhibition_id`    AS `exhibition_id`,
-          `a`.`appointment_from` AS `appointment_from`,
-          `a`.`user_type_from`   AS `user_type_from`,
-          `a`.`appointment_to`   AS `appointment_to`,
-          `a`.`user_type_to`     AS `user_type_to`,
-          `a`.`exhibition_day`   AS `exhibition_day`,
-          `a`.`appointment_date` AS `appointment_date`,
-          `a`.`appointment_time` AS `appointment_time`,
-          `a`.`is_approved`      AS `is_approved`,
-          `a`.`approved_on`      AS `approved_on`,
-          `a`.`is_canceled`      AS `is_canceled`,
-          `a`.`canceled_on`      AS `canceled_on`,
-          `a`.`created_on`       AS `created_on`,
-          `a`.`is_deleted`       AS `is_deleted`,
-          `a`.`deleted_on`       AS `deleted_on`,
-          IF((`a`.`user_type_from` = 'exhibitor'),
-            (SELECT `es_customers`.`company` FROM `es_customers` WHERE (`es_customers`.`id` = `a`.`appointment_from`)),
-            (SELECT CONCAT(`es_officer`.`officer_designation`,' (',
-                IF(es_officer.officer_type="foreign_delegates", 'Foreign Delegate',
-                IF(es_officer.officer_type="local_delegates", 'Local Delegate',
-                IF(es_officer.officer_type="chief_of_servicing", 'Gov. Services Chief', "-"))),
-                ')')
-            FROM `es_officer` WHERE (`es_officer`.`id` = `a`.`appointment_from`))) AS `appointment_from_company_name`,
-          IF((`a`.`user_type_to` = 'exhibitor'),
-            (SELECT `es_customers`.`company` FROM `es_customers` WHERE (`es_customers`.`id` = `a`.`appointment_to`)),
-            (SELECT CONCAT(`es_officer`.`officer_designation`,' (',
-                IF(es_officer.officer_type="foreign_delegates", 'Foreign Delegate',
-                IF(es_officer.officer_type="local_delegates", 'Local Delegate',
-                IF(es_officer.officer_type="chief_of_servicing", 'Gov. Services Chief', "-"))),
-                ')')
-            FROM `es_officer` WHERE (`es_officer`.`id` = `a`.`appointment_to`))) AS `appointment_to_company_name`
-        FROM `es_exhibition_appointments` `a`
+		SELECT
+		  `a`.`id`               AS `id`,
+		  `a`.`exhibition_id`    AS `exhibition_id`,
+		  `a`.`appointment_from` AS `appointment_from`,
+		  `a`.`user_type_from`   AS `user_type_from`,
+		  `a`.`appointment_to`   AS `appointment_to`,
+		  `a`.`user_type_to`     AS `user_type_to`,
+		  `a`.`exhibition_day`   AS `exhibition_day`,
+		  `a`.`appointment_date` AS `appointment_date`,
+		  `a`.`appointment_time` AS `appointment_time`,
+		  `a`.`is_approved`      AS `is_approved`,
+		  `a`.`approved_on`      AS `approved_on`,
+		  `a`.`is_conducted`      AS `is_conducted`,
+		  `a`.`appointment_feedback`      AS `appointment_feedback`,
+		  `a`.`is_canceled`      AS `is_canceled`,
+		  `a`.`canceled_on`      AS `canceled_on`,
+		  `a`.`created_on`       AS `created_on`,
+		  `a`.`is_deleted`       AS `is_deleted`,
+		  `a`.`deleted_on`       AS `deleted_on`,
+		  IF((`a`.`user_type_from` = 'exhibitor'),
+			(SELECT `es_customers`.`company` FROM `es_customers` WHERE (`es_customers`.`id` = `a`.`appointment_from`)),
+			(SELECT CONCAT(`es_officer`.`officer_designation`,' (',
+				IF(es_officer.officer_type="foreign_delegates", 'Foreign Delegate',
+				IF(es_officer.officer_type="local_delegates", 'Local Delegate',
+				IF(es_officer.officer_type="chief_of_servicing", 'Gov. Services Chief', "-"))),
+				')')
+			FROM `es_officer` WHERE (`es_officer`.`id` = `a`.`appointment_from`))) AS `appointment_from_company_name`,
+		  IF((`a`.`user_type_to` = 'exhibitor'),
+			(SELECT `es_customers`.`company` FROM `es_customers` WHERE (`es_customers`.`id` = `a`.`appointment_to`)),
+			(SELECT CONCAT(`es_officer`.`officer_designation`,' (',
+				IF(es_officer.officer_type="foreign_delegates", 'Foreign Delegate',
+				IF(es_officer.officer_type="local_delegates", 'Local Delegate',
+				IF(es_officer.officer_type="chief_of_servicing", 'Gov. Services Chief', "-"))),
+				')')
+			FROM `es_officer` WHERE (`es_officer`.`id` = `a`.`appointment_to`))) AS `appointment_to_company_name`
+		FROM `es_exhibition_appointments` `a`
 
 
 
@@ -143,3 +145,9 @@ CREATE TABLE `es_exhibition_mou_sign` (
   KEY `exhibition_id` (`exhibition_id`),
   CONSTRAINT `es_exhibition_mou_sign_ibfk_1` FOREIGN KEY (`exhibition_id`) REFERENCES `es_exhibitions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=latin1;
+
+
+-- 30 May 2024
+ALTER TABLE `database`.`es_exhibition_appointments` 
+ADD COLUMN `is_conducted` TINYINT(1) NULL DEFAULT 0 AFTER `approved_on`,
+ADD COLUMN `appointment_feedback` TEXT NULL AFTER `is_conducted`;

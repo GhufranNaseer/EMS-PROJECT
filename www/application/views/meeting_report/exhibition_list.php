@@ -60,6 +60,7 @@
                                 <th>Meeting Date</th>
                                 <th>Meeting Time</th>
                                 <th>Status</th>
+                                <th>Feedback</th>
                             </tr>
                             </thead>
 

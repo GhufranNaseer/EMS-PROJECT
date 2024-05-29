@@ -110,11 +110,15 @@ class Meeting_report extends MY_Controller
                      appointment_from,
                      IF(is_canceled = 1, "<span class=\'label label-danger\'>Canceled</span>",
                     	IF(is_approved = 1, "<span class=\'label label-success\'>Approved</span>", "<span class=\'label label-warning\'>Pending</span>")) as status,
+					is_conducted,
+					appointment_feedback,
 					is_canceled,
                     is_approved,
    				  ', false)
 
 
+			->unset_column('is_conducted')
+			->unset_column('appointment_feedback')
 			->unset_column('is_canceled')
 			->unset_column('is_approved')
             ->unset_column('exhibition_id')
@@ -122,6 +126,22 @@ class Meeting_report extends MY_Controller
             ->unset_column('user_type_from')
             ->unset_column('appointment_to')
             ->unset_column('appointment_from')
+
+			->add_column('col_conducted', function ($row) {
+				$id = $row['id'];
+				$is_conducted = $row['is_conducted'];
+				
+				if ($row['is_approved'] == 1) {
+					if ($row['is_conducted'] == 1) {
+						return '<div class="text-left small">'.$row['appointment_feedback'].'</div>';
+					} else {
+						return '<div class="text-center small">N/A</div>';
+					}
+				} else {
+					return '<div class="text-center">-</div>';
+				}
+			}, NULL)
+
             //->where('is_approved', 1)
 			->where('is_deleted', 0)
 			->where('is_canceled', 0)

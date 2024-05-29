@@ -76,6 +76,7 @@
                                 <th>Appointment Date</th>
                                 <th>Appointment Time</th>
                                 <th>Status</th>
+                                <th>Conducted</th>
                                 <th class="text-center">Action</th>
                             </tr>
                             </thead>
@@ -105,6 +106,46 @@
 		})
 	});
 
+	function confirm_conducted(id) {
+		swal({
+			title: "Please add feedback about meeting:",
+			text: "",
+			type: "input",
+			showCancelButton: true,
+			closeOnConfirm: true,
+			inputPlaceholder: "Write something"
+		}, function (inputValue) {
+			if (inputValue === false) return false;
+			if (inputValue === "") {
+				swal.showInputError("You need to write something!");
+				return false
+			}
+
+			$.ajax({
+				type:    'post',
+				url:     '<?= base_url('meeting_report/meeting_conducted_ajax') ?>',
+				data:    {
+					id: id,
+					feedback: inputValue,
+				},
+				success: function (data) {
+					console.log(data)
+					data = JSON.parse(data)
+
+					if (data.error == 0) {
+						oTable._fnAjaxUpdate()
+					} else {
+						swal.showInputError(data.message);
+					}
+				},
+				error:   function () {
+					alert('Something went wrong!')
+					oTable._fnAjaxUpdate()
+				}
+			});
+			
+		});
+	}
 
 </script>
 
