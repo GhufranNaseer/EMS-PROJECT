@@ -413,6 +413,8 @@ class Meeting_report extends MY_Controller
             'meeting_location' => $this->input->post('meeting_location'),
 			'appointment_to' => $meeting->appointment_from,
 			'agenda_of_meeting' => $meeting->agenda_of_meeting,
+			'discussion_points' => $meeting->discussion_points,
+			'meeting_notes' => $meeting->meeting_notes,
 			'exhibition_day' => $this->input->post('booking_day'),
 			'appointment_date' => $this->input->post('booking_date'),
 			'appointment_time' => $this->input->post('booking_time') . ':00',

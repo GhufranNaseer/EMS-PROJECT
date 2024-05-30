@@ -151,3 +151,7 @@ CREATE TABLE `es_exhibition_mou_sign` (
 ALTER TABLE `database`.`es_exhibition_appointments` 
 ADD COLUMN `is_conducted` TINYINT(1) NULL DEFAULT 0 AFTER `approved_on`,
 ADD COLUMN `appointment_feedback` TEXT NULL AFTER `is_conducted`;
+
+ALTER TABLE `database`.`es_exhibition_appointments` 
+ADD COLUMN `discussion_points` TEXT NULL AFTER `agenda_of_meeting`,
+ADD COLUMN `meeting_notes` TEXT NULL AFTER `discussion_points`;

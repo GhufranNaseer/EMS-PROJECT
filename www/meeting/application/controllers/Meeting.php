@@ -101,6 +101,7 @@ class Meeting extends MY_Controller
         $this->form_validation->set_rules('meeting_location', 'meeting_location*Meeting location', 'trim|required');
 		$this->form_validation->set_rules('booking_day', 'booking_day*Day', 'trim|required');
 		$this->form_validation->set_rules('agenda_of_meeting', 'agenda_of_meeting*Booking Agenda', 'trim|required');
+		$this->form_validation->set_rules('discussion_points', 'discussion_points*Discussion Points', 'trim|required');
 		$this->form_validation->set_rules('booking_date', 'booking_date*Date', 'trim|required');
 		$this->form_validation->set_rules('booking_time', 'booking_time*Time', 'trim|required');
 
@@ -136,6 +137,8 @@ class Meeting extends MY_Controller
     		'appointment_from' => $this->userdata->id,
             'meeting_location' => $this->input->post('meeting_location'),
             'agenda_of_meeting' => $this->input->post('agenda_of_meeting'),
+			'discussion_points' => $this->input->post('discussion_points'),
+    		'meeting_notes' => ($this->input->post('meeting_notes') && $this->input->post('meeting_notes') != '') ? $this->input->post('meeting_notes') : null,
     		'appointment_to' => $this->input->post('booking_to'),
     		'exhibition_day' => $this->input->post('booking_day'),
     		'appointment_date' => $this->input->post('booking_date'),
