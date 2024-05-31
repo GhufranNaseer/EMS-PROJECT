@@ -131,6 +131,8 @@ if ($this->input->get('type') == 'officer') {
                                         <input type="hidden" name="booking_date" class="booking_date">
                                         <input type="hidden" name="booking_time" class="booking_time">
                                         <input type="hidden" name="agenda_of_meeting" class="booking_agenda">
+										<input type="hidden" name="discussion_points" class="booking_discussion_points">
+                                        <input type="hidden" name="meeting_notes" class="booking_meeting_notes">
                                         <input type="hidden" name="booking_to" value="<?= $book_to_data->id ?>">
                                         <input type="hidden" name="user_type" value="<?= $this->input->get('type') ?>">
                                         <button type="button" class="btn btn-primary btn-lg add-agenda-btn">Proceed</button>
@@ -149,6 +151,35 @@ if ($this->input->get('type') == 'officer') {
 </div>
 
 
+<!-- Modal -->
+<div class="modal fade" id="agenda_modal" tabindex="-1" role="dialog" aria-labelledby="agenda_modal">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Meeting Agenda</h4>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<label>Agenda of meeting: <span class="text-danger">*</span></label>
+					<input type="text" class="form-control" id="agenda_modal_agenda" >
+				</div>
+				<div class="form-group">
+					<label>Discussion Points: <span class="text-danger">*</span></label>
+					<textarea class="form-control" id="agenda_modal_discussion_points" rows="6"></textarea>
+				</div>
+				<div class="form-group">
+					<label>Notes: <span class="text-muted small">(optional)</span></label>
+					<textarea class="form-control" id="agenda_modal_notes" rows="4"></textarea>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" id="agenda_modal_submit">Proceed</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 <?php $this->load->view('includes/after_login/footer'); ?>
 
@@ -211,26 +242,54 @@ if ($this->input->get('type') == 'officer') {
     $(document).on('click', '.add-agenda-btn', function (e) {
         e.stopImmediatePropagation();
 
-        swal({
-            title: "Insert agenda of meeting:",
-            text: "",
-            type: "input",
-            showCancelButton: true,
-            closeOnConfirm: false,
-            inputPlaceholder: "Write something"
-        }, function (inputValue) {
-            if (inputValue === false) return false;
-            if (inputValue === "") {
-                swal.showInputError("You need to write something!");
-                return false
-            }
+		$('#agenda_modal').modal({backdrop: 'static', keyboard: false, show: true}); // open lightbox
+        
+		// swal({
+        //     title: "Insert agenda of meeting:",
+        //     text: "",
+        //     type: "input",
+        //     showCancelButton: true,
+        //     closeOnConfirm: false,
+        //     inputPlaceholder: "Write something"
+        // }, function (inputValue) {
+        //     if (inputValue === false) return false;
+        //     if (inputValue === "") {
+        //         swal.showInputError("You need to write something!");
+        //         return false
+        //     }
 
-            $('.booking_agenda').val(inputValue);
-            $('.add-agenda-btn').hide();
-            $('.js-form_btn').show().click();
-        });
+        //     $('.booking_agenda').val(inputValue);
+        //     $('.add-agenda-btn').hide();
+        //     $('.js-form_btn').show().click();
+        // });
     });
 
+	$(document).on('click', '#agenda_modal_submit', function (e) {
+		e.stopImmediatePropagation();
+
+		$('#agenda_modal').modal('hide');
+
+		let agenda = $('#agenda_modal_agenda').val();
+		let discussion_points = $('#agenda_modal_discussion_points').val();
+		let notes = $('#agenda_modal_notes').val();
+
+		if (agenda == '') {
+			swal('Agenda of meeting is required');
+			return;
+		}
+		if (discussion_points == '') {
+			swal('Discussion points is required');
+			return;
+		}
+
+		$('.booking_agenda').val(agenda);
+		$('.booking_discussion_points').val(discussion_points);
+		$('.booking_meeting_notes').val(notes);
+
+		$('#agenda_modal').modal('hide');
+		$('.add-agenda-btn').hide();
+		$('.js-form_btn').show().click();
+	});
 
     $(document).on('ready', function () {
 		$('.day-select li:first-child').click();

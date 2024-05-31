@@ -48,8 +48,10 @@ class Event_inventory extends MY_Controller {
 		$this->datatables
 			->select('E.id,
 				  E.exhibition_title,
+				  E.booking_expire_date as booking_expire_date,
 				  L.location_title				  
 				  ', false)
+			->unset_column('booking_expire_date')
 			->add_column('total_items', function ($row) {
 				return $this->db
 					->where('exhibition_id', $row['id'])
@@ -59,6 +61,9 @@ class Event_inventory extends MY_Controller {
 			}, NULL)
 			->add_column('col_action', function ($row) {
 				$id = $row['id'];
+				// if (strtotime($row['booking_expire_date'] . ' 23:59:59') < strtotime(date('Y-m-d H:i:s'))) {
+				// 	return "<div class='text-center'><span class='label label-danger'>Expired</span></div>";
+				// }
 				$total_items = $this->db
 					->where('exhibition_id', $row['id'])
 					->where('is_active', 1)
@@ -103,6 +108,16 @@ class Event_inventory extends MY_Controller {
 
 		$this->form_validation->set_rules('items[]', 'items[]*inventory items', 'trim|required');
 
+		$expired_event_ids = array();
+		$expired_events = $this->db
+			->select('id')
+			->where('is_deleted' , 0)
+			->where('booking_expire_date <', date('Y-m-d'))
+			->get('es_exhibitions')
+			->result();
+		foreach ($expired_events as $key => $value) {
+			$expired_event_ids[] = $value->id;
+		}
 
 		if ($this->input->post('items')) {
 			$exhibition_id = $this->formdata->id;
@@ -119,6 +134,7 @@ class Event_inventory extends MY_Controller {
 					$used_stock = $this->db
 						->select('SUM(item_stock) as used_stock')
 						->where('global_item_id', $item['global_item_id'])
+						->where_not_in('exhibition_id', $expired_event_ids)
 						->where('exhibition_id !=', $exhibition_id)
 						->where('is_active', 1)
 						->where('is_deleted', 0)

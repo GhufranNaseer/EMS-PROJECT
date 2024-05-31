@@ -26,6 +26,8 @@ class Meeting_report extends MY_Controller
 		  `a`.`appointment_time` AS `appointment_time`,
 		  `a`.`is_approved`      AS `is_approved`,
 		  `a`.`approved_on`      AS `approved_on`,
+		  `a`.`is_conducted`      AS `is_conducted`,
+		  `a`.`appointment_feedback`      AS `appointment_feedback`,
 		  `a`.`is_canceled`      AS `is_canceled`,
 		  `a`.`canceled_on`      AS `canceled_on`,
 		  `a`.`created_on`       AS `created_on`,
@@ -67,6 +69,7 @@ class Meeting_report extends MY_Controller
                     appointment_time,
                     IF(is_canceled = 1, "<span class=\'label label-danger\'>Regretted</span>",
                     	IF(is_approved = 1, "<span class=\'label label-success\'>Accepted</span>", "<span class=\'label label-warning\'>Pending</span>")) as status,
+					is_conducted,
 					is_canceled,
                     is_approved,
                     user_type_to,
@@ -74,10 +77,26 @@ class Meeting_report extends MY_Controller
    				  ', false)
 
 			->unset_column('exhibition_id')
+			->unset_column('is_conducted')
 			->unset_column('is_canceled')
 			->unset_column('is_approved')
 			->unset_column('user_type_to')
 			->unset_column('appointment_to')
+
+			->add_column('col_conducted', function ($row) {
+				$id = $row['id'];
+				$is_conducted = $row['is_conducted'];
+				
+				if ($row['is_approved'] == 1) {
+					if ($row['is_conducted'] == 1) {
+						return '<div class="text-center"><input type="checkbox" checked disabled/></div>';
+					} else {
+						return '<div class="text-center"><input type="checkbox" onchange="confirm_conducted(\''.myid($id).'\')" /></div>';
+					}
+				} else {
+					return '<div class="text-center">-</div>';
+				}
+			}, NULL)
 
             ->add_column('col_action', function ($row) {
                 $id = $row['id'];
@@ -130,6 +149,8 @@ class Meeting_report extends MY_Controller
             ->update('es_exhibition_appointments', array(
                 'is_approved' => 0,
                 'approved_on' => null,
+				'is_conducted' => 0,
+				'appointment_feedback' => null,
                 'is_canceled' => 1,
                 'canceled_on' => date('Y-m-d H:i:s')
             ));
@@ -257,6 +278,8 @@ class Meeting_report extends MY_Controller
 			->update('es_exhibition_appointments', array(
 				'is_approved' => 1,
 				'approved_on' => date('Y-m-d H:i:s'),
+				'is_conducted' => 0,
+				'appointment_feedback' => null,
 				'is_canceled' => 0,
 				'canceled_on' => null
 			));
@@ -390,6 +413,8 @@ class Meeting_report extends MY_Controller
             'meeting_location' => $this->input->post('meeting_location'),
 			'appointment_to' => $meeting->appointment_from,
 			'agenda_of_meeting' => $meeting->agenda_of_meeting,
+			'discussion_points' => $meeting->discussion_points,
+			'meeting_notes' => $meeting->meeting_notes,
 			'exhibition_day' => $this->input->post('booking_day'),
 			'appointment_date' => $this->input->post('booking_date'),
 			'appointment_time' => $this->input->post('booking_time') . ':00',
@@ -404,6 +429,8 @@ class Meeting_report extends MY_Controller
 		$this->db
 			->where('id', $meeting->id)
 			->update('es_exhibition_appointments', array(
+				'is_conducted' => 0,
+				'appointment_feedback' => null,
 				'is_deleted' => 1,
 				'deleted_on' => date('Y-m-d H:i:s'),
 			));
@@ -514,6 +541,8 @@ class Meeting_report extends MY_Controller
 			->update('es_exhibition_appointments', array(
 				'is_approved' => 0,
 				'approved_on' => null,
+				'is_conducted' => 0,
+				'appointment_feedback' => null,
 				'is_canceled' => 0,
 				'canceled_on' => null,
 				'is_deleted' => 1,
@@ -522,5 +551,24 @@ class Meeting_report extends MY_Controller
 
 		$this->session->set_flashdata('message', 'Meeting has been deleted successfully');
 		redirect(base_url('my_meeting.html'));
+	}
+
+	function meeting_conducted_ajax() {
+
+		$id = $this->input->post('id');
+		$feedback = $this->input->post('feedback');
+
+		$this->db
+			->where(mycolumn(), $id)
+			->update('es_exhibition_appointments', array(
+				'is_conducted' => 1,
+				'appointment_feedback' => $feedback,
+			));
+
+		echo json_encode(array(
+			'error' => 0,
+			'message' => 'Meeting conducted successfully!'
+		));
+		die;
 	}
 }
