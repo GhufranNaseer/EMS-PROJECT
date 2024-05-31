@@ -563,6 +563,23 @@
                 </ul>
             </li>
 			<?php } ?>
+
+            <li class="treeview">
+                <a href="javascript:void(0)">
+                    <i class="fa fa-hand-paper-o"></i>
+                    <span>Networking</span>
+                    <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                </a>
+                <ul class="treeview-menu">
+                    <li data-page="mou_signing_request">
+                        <a href="<?= base_url('mou_sign.html'); ?>">
+                            <i class="fa fa-file-text-o"></i>
+                            <span>MoU's Signing Request</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </li>
         </ul>
     </section>
     <!-- /.sidebar -->

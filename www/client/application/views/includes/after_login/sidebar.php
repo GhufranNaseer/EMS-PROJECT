@@ -313,6 +313,28 @@
                     </li>
                 </ul>
             </li>
+            <li class="treeview">
+                <a href="javascript:void(0)">
+                    <i class="fa fa-folder"></i>
+                    <span>Networking</span>
+                    <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                </a>
+                <ul class="treeview-menu">
+                    <li data-page="mou-exhibitors">
+                        <a href="<?= base_url('exhibitors-list-mou.html') ?>">
+                            <i class="fa fa-clock-o"></i>
+                            <span>Exhibitors to Exhibitors</span>
+                        </a>
+                    </li>
+
+                    <li data-page="my_mou_sign">
+                        <a href="<?= base_url('mou_sign.html') ?>">
+                            <i class="fa fa-clock-o"></i>
+                            <span>My MoU's signing</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
         </ul>
     </section>
     <!-- /.sidebar -->

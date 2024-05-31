@@ -108,6 +108,19 @@ $route['print/order/invoice']['get'] = "ecommerce/ecommerce/order_invoice";
 
 # E ecommerce
 
+# S mou
+$route['exhibitors-list-mou.html']['get'] = "networking/crd_exhibitors_list";
+$route['exhibitors-datatable-mou.html'] = "networking/crd_exhibitors_list_datatable";
+
+$route['mou_schedule.html']['get'] = "networking/mou_form";
+$route['mou_schedule_validate.html']['post'] = "networking/mou_form_validate/doError";
+$route['mou_schedule_submit.html']['post'] = "networking/mou_form_submit";
+
+$route['mou_sign.html']['get'] = "mou_report/crd_list";
+$route['mou_sign-datatable.html'] = "mou_report/crd_list_datatable";
+
+$route['mou-delete.html']['get'] = "mou_report/delete_meeting";
+
 
 # S meeting
 $route['exhibitors-list.html']['get'] = "meeting/crd_exhibitors_list";

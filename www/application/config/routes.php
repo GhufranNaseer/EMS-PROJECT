@@ -674,3 +674,10 @@ $route['trade-visitor-edit-submit.html']['post'] = "trade_visitor/crd_edit_submi
 
 $route['trade-visitor-delete.html']['get'] = "trade_visitor/crd_delete";
 #E Trade Visitor Badges
+
+#Mou area
+
+$route['mou_sign.html']['get'] = "mou_report/crd_list";
+$route['mou_sign-datatable.html'] = "mou_report/crd_list_datatable";
+$route['mou_sign-cancel.html']['get'] = "mou_report/cancel";
+$route['mou_sign-approved.html']['get'] = "mou_report/approved";
