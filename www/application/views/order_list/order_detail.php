@@ -317,12 +317,17 @@
 												echo '<button type="button" class="btn btn-success btn-lg btn_mark_confirm">Mark Confirmed</button> ';
 											}
 
-											if ($this->orderdata->booking_type == 'confirmed' && $this->orderdata->is_approved == 0) {
-												echo '<button type="button" class="btn btn-success btn-lg btn_mark_approved">Approve Order</button> ';
-											}
+											// show approve and cancel option to super admin only
+											if ($this->userdata->user_group_id == SUPER_ADMIN) {
 
-											if ($this->orderdata->is_approved == 0 || $this->userdata->user_group_id != SALES_PERSON) {
-												echo '<button type="button" class="btn btn-danger btn-lg btn_cancel_order">Cancel Order</button>';
+												if ($this->orderdata->booking_type == 'confirmed' && $this->orderdata->is_approved == 0) {
+													echo '<button type="button" class="btn btn-success btn-lg btn_mark_approved">Approve Order</button> ';
+												}
+	
+												if ($this->orderdata->is_approved == 0 || $this->userdata->user_group_id != SALES_PERSON) {
+													echo '<button type="button" class="btn btn-danger btn-lg btn_cancel_order">Cancel Order</button>';
+												}
+												
 											}
 										}
 										?>

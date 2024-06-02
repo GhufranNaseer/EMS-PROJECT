@@ -355,12 +355,14 @@
             </li>
         <?php } ?>
 
+		<?php if (get_instance()->hasRight('Emailtemplate')) { ?>
             <li data-page="email_template">
                 <a href="<?= base_url('email_template.html'); ?>">
                     <i class="fa fa-print"></i>
                     <span>Email Template</span>
                 </a>
             </li>
+		<?php } ?>
 
             <?php if (get_instance()->hasRight('smsnotification')) { ?>
                 <li class="treeview">
@@ -564,6 +566,7 @@
             </li>
 			<?php } ?>
 
+			<?php if (get_instance()->hasRight('Moureport')) { ?>
             <li class="treeview">
                 <a href="javascript:void(0)">
                     <i class="fa fa-hand-paper-o"></i>
@@ -580,6 +583,7 @@
 
                 </ul>
             </li>
+			<?php } ?>
         </ul>
     </section>
     <!-- /.sidebar -->
