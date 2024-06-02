@@ -75,6 +75,13 @@ class Mou_report extends MY_Controller {
 			->get('es_exhibition_mou_sign')
 			->row();
 
+		$exhibition_data = $this->db
+			->where('id', $data->exhibition_id)
+			->get('es_exhibitions')
+			->row();
+		
+		
+
         $this->db
             ->where(mycolumn(), $this->input->get('id'))
             ->update('es_exhibition_mou_sign', array(
@@ -84,18 +91,15 @@ class Mou_report extends MY_Controller {
                 'canceled_on' => date('Y-m-d H:i:s')
             ));
 
-		$this->session->set_flashdata('message', 'MoU has been cancel successfully');
-		redirect(base_url('mou_sign.html'));
-		die;
 		// send email
 		$email_data = null;
-		$title = $this->event->exhibition_title;
+		$title = $exhibition_data->exhibition_title;
 		$ReceiverEmail = '';
 		$phone_number = '';
 		$text_msg = '';
 
 		$get_email_template = $this->db
-			->where("title" , "APPOINTMENT_CANCELED")
+			->where("title" , "MOU_SIGNING_CANCELED")
 			->get('email_template')
 			->row();
 
@@ -105,14 +109,20 @@ class Mou_report extends MY_Controller {
 
 		if ($data->user_type_from == 'officer') {
 			$email_data = $this->db
-				->where('id', $data->appointment_from)
+				->where('id', $data->request_from_id)
 				->get('es_officer')
 				->row();
 
 			$ReceiverEmail = $email_data->officer_email;
 
 			$phone_number = $email_data->officer_phone;
-			$text_msg = 'Your meeting with ' . $this->userdata->name . ' of '.$this->userdata->company.' for ' . date('M d', strtotime($data->appointment_date)) . ' at ' . date('H:i', strtotime($data->appointment_time)) . ' has been declined.';
+
+			$email_customer_data = $this->db
+				->where('id', $data->request_from_id)
+				->get('es_customers')
+				->row();
+
+			$text_msg = 'Your MoU siging with ' . $email_customer_data->name . ' of '.$email_customer_data->company.' for ' . date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)) . ' has been declined.';
 
 
 			$Subject = str_replace('{NAME}', $email_data->contact_person, $Subject);
@@ -127,14 +137,14 @@ class Mou_report extends MY_Controller {
 
 		} else {
 			$email_data = $this->db
-				->where('id', $data->appointment_from)
+				->where('id', $data->request_from_id)
 				->get('es_customers')
 				->row();
 
 			$ReceiverEmail = $email_data->email;
 
 			$phone_number = $email_data->phone;
-			$text_msg = 'Your meeting with ' . $this->userdata->name . ' of '.$this->userdata->company.' for ' . date('M d', strtotime($data->appointment_date)) . ' at ' . date('H:i', strtotime($data->appointment_time)) . ' has been declined.';
+			$text_msg = 'Your MoU singing with ' . $email_data->name . ' of '.$email_data->company.' for ' . date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)) . ' has been declined.';
 
 
 			$Subject = str_replace('{NAME}', $email_data->name, $Subject);
@@ -147,29 +157,34 @@ class Mou_report extends MY_Controller {
 			$message = str_replace('{PHONE}', $email_data->phone, $message);
 			$message = str_replace('{COMPANY}', $email_data->company, $message);
 		}
-
+		$customer_data = $this->db
+		->where('id', $data->request_from_id)
+		->get('es_customers')
+		->row();
 
 		$Subject = str_replace('{EVENT_NAME}', $title, $Subject);
-		$Subject = str_replace('{SENDER_NAME}', $this->userdata->name, $Subject);
-		$Subject = str_replace('{SENDER_EMAIL}', $this->userdata->email, $Subject);
-		$Subject = str_replace('{SENDER_PHONE}', $this->userdata->phone, $Subject);
-		$Subject = str_replace('{SENDER_COMPANY}', $this->userdata->company, $Subject);
-		$Subject = str_replace('{SENDER_WEBSITE}', $this->userdata->url, $Subject);
-		$Subject = str_replace('{APPOINTMENT_TIME}', date('M d', strtotime($data->appointment_date)) . ' at ' . date('H:i', strtotime($data->appointment_time)), $Subject);
-		$Subject = str_replace('{APPOINTMENT_AGENDA}', $meeting->agenda_of_meeting, $Subject);
+		$Subject = str_replace('{SENDER_NAME}', $customer_data->name, $Subject);
+		$Subject = str_replace('{SENDER_EMAIL}', $customer_data->email, $Subject);
+		$Subject = str_replace('{SENDER_PHONE}', $customer_data->phone, $Subject);
+		$Subject = str_replace('{SENDER_COMPANY}', $customer_data->company, $Subject);
+		$Subject = str_replace('{SENDER_WEBSITE}', $customer_data->url, $Subject);
+		$Subject = str_replace('{APPOINTMENT_TIME}', date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)), $Subject);
+		$Subject = str_replace('{DESCRIPTION}', $data->description, $Subject);
+		$Subject = str_replace('{COMMERCIAL_VALUE}', $data->commercial_value, $Subject);
 
 		$message = str_replace('{EVENT_NAME}', $title, $message);
-		$message = str_replace('{SENDER_NAME}', $this->userdata->name, $message);
-		$message = str_replace('{SENDER_EMAIL}', $this->userdata->email, $message);
-		$message = str_replace('{SENDER_PHONE}', $this->userdata->phone, $message);
-		$message = str_replace('{SENDER_COMPANY}', $this->userdata->company, $message);
-		$message = str_replace('{SENDER_WEBSITE}', $this->userdata->url, $message);
-		$message = str_replace('{APPOINTMENT_TIME}', date('M d', strtotime($data->appointment_date)) . ' at ' . date('H:i', strtotime($data->appointment_time)), $message);
-		$message = str_replace('{APPOINTMENT_AGENDA}', $data->agenda_of_meeting, $message);
+		$message = str_replace('{SENDER_NAME}', $customer_data->name, $message);
+		$message = str_replace('{SENDER_EMAIL}', $customer_data->email, $message);
+		$message = str_replace('{SENDER_PHONE}', $customer_data->phone, $message);
+		$message = str_replace('{SENDER_COMPANY}', $customer_data->company, $message);
+		$message = str_replace('{SENDER_WEBSITE}', $customer_data->url, $message);
+		$message = str_replace('{APPOINTMENT_TIME}', date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)), $message);
+		$message = str_replace('{DESCRIPTION}', $data->description, $message);
+		$Subject = str_replace('{COMMERCIAL_VALUE}', $data->commercial_value, $Subject);
 
 		if($ReceiverEmail !=""){
 			$this->db->insert('es_emails_cron', array(
-				'type' => 'APPOINTMENT_CANCELED',
+				'type' => 'MOU_SIGNING_CANCELED',
 				'data' => null,
 				'from_name' => $title,
 				'email' => $ReceiverEmail,
@@ -182,8 +197,8 @@ class Mou_report extends MY_Controller {
 			$this->funcs->send_sms($phone_number, $text_msg);
 		}
 
-        $this->session->set_flashdata('message', 'Meeting has been cancel successfully');
-		redirect(base_url('my_meeting.html'));
+        $this->session->set_flashdata('message', 'MoU has been cancel successfully');
+		redirect(base_url('mou_sign.html'));
     }
 
     function approved() {
@@ -192,6 +207,11 @@ class Mou_report extends MY_Controller {
 			->get('es_exhibition_mou_sign')
 			->row();
 
+		$exhibition_data = $this->db
+			->where('id', $data->exhibition_id)
+			->get('es_exhibitions')
+			->row();
+		
 		$this->db
 			->where(mycolumn(), $this->input->get('id'))
 			->update('es_exhibition_mou_sign', array(
@@ -202,18 +222,16 @@ class Mou_report extends MY_Controller {
 				'canceled_on' => null
 			));
 
-		$this->session->set_flashdata('message', 'Mou has been approved successfully');
-		redirect(base_url('mou_sign.html'));
-		die;
+		
 		// send email
 		$email_data = null;
-		$title = $this->event->exhibition_title;
+		$title = $exhibition_data->exhibition_title;
 		$ReceiverEmail = '';
 		$phone_number = '';
 		$text_msg = '';
 
 		$get_email_template = $this->db
-		->where("title" , "APPOINTMENT_ACCEPTED")
+		->where("title" , "MOU_SIGNING_ACCEPTED")
 		->get('email_template')
 		->row();
 
@@ -223,14 +241,19 @@ class Mou_report extends MY_Controller {
 
 		if ($data->user_type_from == 'officer') {
 			$email_data = $this->db
-				->where('id', $data->appointment_from)
+				->where('id', $data->request_from_id)
 				->get('es_officer')
+				->row();
+
+			$email_customer_data = $this->db
+				->where('id', $data->request_from_id)
+				->get('es_customers')
 				->row();
 
 			$ReceiverEmail = $email_data->officer_email;
 
 			$phone_number = $email_data->officer_phone;
-			$text_msg = 'Your request for ' . $this->userdata->name . ' of '.$this->userdata->company.' for ' . date('M d', strtotime($data->appointment_date)) . ' at ' . date('H:i', strtotime($data->appointment_time)) . ' has been accepted. Please login for further details.';
+			$text_msg = 'Your request for MOU Signing' . $email_customer_data->name . ' of '.$email_customer_data->company.' for ' . date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)) . ' has been accepted. Please login for further details.';
 
 			$Subject = str_replace('{NAME}', $email_data->contact_person, $Subject);
 			$Subject = str_replace('{EMAIL}', $email_data->officer_email, $Subject);
@@ -243,14 +266,14 @@ class Mou_report extends MY_Controller {
 			$message = str_replace('{COMPANY}', $email_data->officer_company, $message);
 		} else {
 			$email_data = $this->db
-				->where('id', $data->appointment_from)
+				->where('id', $data->request_from_id)
 				->get('es_customers')
 				->row();
 
 			$ReceiverEmail = $email_data->email;
 
 			$phone_number = $email_data->phone;
-			$text_msg = 'Your request for ' . $this->userdata->name . ' of '.$this->userdata->company.' for ' . date('M d', strtotime($data->appointment_date)) . ' at ' . date('H:i', strtotime($data->appointment_time)) . ' has been accepted. Please login for further details.';
+			$text_msg = 'Your request for MOU Signing ' . $email_data->name . ' of '.$email_data->company.' for ' . date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)) . ' has been accepted. Please login for further details.';
 
 			$Subject = str_replace('{NAME}', $email_data->name, $Subject);
 			$Subject = str_replace('{EMAIL}', $email_data->email, $Subject);
@@ -263,27 +286,34 @@ class Mou_report extends MY_Controller {
 			$message = str_replace('{COMPANY}', $email_data->company, $message);
 		}
 
+		$customer_data = $this->db
+		->where('id', $data->request_from_id)
+		->get('es_customers')
+		->row();
+		
 		$Subject = str_replace('{EVENT_NAME}', $title, $Subject);
-		$Subject = str_replace('{SENDER_NAME}', $this->userdata->name, $Subject);
-		$Subject = str_replace('{SENDER_EMAIL}', $this->userdata->email, $Subject);
-		$Subject = str_replace('{SENDER_PHONE}', $this->userdata->phone, $Subject);
-		$Subject = str_replace('{SENDER_COMPANY}', $this->userdata->company, $Subject);
-		$Subject = str_replace('{SENDER_WEBSITE}', $this->userdata->url, $Subject);
-		$Subject = str_replace('{APPOINTMENT_TIME}', date('M d', strtotime($data->appointment_date)) . ' at ' . date('H:i', strtotime($data->appointment_time)), $Subject);
-		$Subject = str_replace('{APPOINTMENT_AGENDA}', $data->agenda_of_meeting, $Subject);
+		$Subject = str_replace('{SENDER_NAME}', $customer_data->name, $Subject);
+		$Subject = str_replace('{SENDER_EMAIL}', $customer_data->email, $Subject);
+		$Subject = str_replace('{SENDER_PHONE}', $customer_data->phone, $Subject);
+		$Subject = str_replace('{SENDER_COMPANY}', $customer_data->company, $Subject);
+		$Subject = str_replace('{SENDER_WEBSITE}', $customer_data->url, $Subject);
+		$Subject = str_replace('{APPOINTMENT_TIME}', date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)), $Subject);
+		$Subject = str_replace('{DESCRIPTION}', $data->description, $Subject);
+		$Subject = str_replace('{COMMERCIAL_VALUE}', $data->commercial_value, $Subject);
 
 		$message = str_replace('{EVENT_NAME}', $title, $message);
-		$message = str_replace('{SENDER_NAME}', $this->userdata->name, $message);
-		$message = str_replace('{SENDER_EMAIL}', $this->userdata->email, $message);
-		$message = str_replace('{SENDER_PHONE}', $this->userdata->phone, $message);
-		$message = str_replace('{SENDER_COMPANY}', $this->userdata->company, $message);
-		$message = str_replace('{SENDER_WEBSITE}', $this->userdata->url, $message);
-		$message = str_replace('{APPOINTMENT_TIME}', date('M d', strtotime($data->appointment_date)) . ' at ' . date('H:i', strtotime($data->appointment_time)), $message);
-		$message = str_replace('{APPOINTMENT_AGENDA}', $data->agenda_of_meeting, $message);
+		$message = str_replace('{SENDER_NAME}', $customer_data->name, $message);
+		$message = str_replace('{SENDER_EMAIL}', $customer_data->email, $message);
+		$message = str_replace('{SENDER_PHONE}', $customer_data->phone, $message);
+		$message = str_replace('{SENDER_COMPANY}', $customer_data->company, $message);
+		$message = str_replace('{SENDER_WEBSITE}', $customer_data->url, $message);
+		$message = str_replace('{APPOINTMENT_TIME}', date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)), $message);
+		$message = str_replace('{DESCRIPTION}', $data->description, $message);
+		$Subject = str_replace('{COMMERCIAL_VALUE}', $data->commercial_value, $Subject);
 
 		if($ReceiverEmail !=""){
 			$this->db->insert('es_emails_cron', array(
-				'type' => 'APPOINTMENT_ACCEPTED',
+				'type' => 'MOU_SIGNING_ACCEPTED',
 				'data' => null,
 				'from_name' => $title,
 				'email' => $ReceiverEmail,
@@ -296,8 +326,8 @@ class Mou_report extends MY_Controller {
 			$this->funcs->send_sms($phone_number, $text_msg);
 		}
 
-		$this->session->set_flashdata('message', 'Meeting has been approved successfully');
-		redirect(base_url('my_meeting.html'));
+		$this->session->set_flashdata('message', 'Mou has been approved successfully');
+		redirect(base_url('mou_sign.html'));
     }
 
 }
