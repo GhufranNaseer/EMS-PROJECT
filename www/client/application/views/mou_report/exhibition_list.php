@@ -70,11 +70,11 @@
                             <thead>
                             <tr class="">
                                 <th class="text-center col-srialno" >#</th>
-                                <th>Appointment From</th>
-                                <th>Appointment To</th>
+                                <th>Schedule From</th>
+                                <th>Schedule To</th>
                                 <th>Event Day</th>
-                                <th>Appointment Date</th>
-                                <th>Appointment Time</th>
+                                <th>Mou Signing Date</th>
+                                <th>Mou Signing Time</th>
                                 <th>Status</th>
                                 <th class="text-center">Action</th>
                             </tr>

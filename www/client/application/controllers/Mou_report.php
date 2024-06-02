@@ -86,7 +86,7 @@ class Mou_report extends MY_Controller
 				'deleted_on' => date('Y-m-d H:i:s'),
 			));
 
-		$this->session->set_flashdata('message', 'Mou has been deleted successfully');
+		$this->session->set_flashdata('message', 'MoU request has been deleted successfully');
 		redirect(base_url('mou_sign.html'));
 	}
 }

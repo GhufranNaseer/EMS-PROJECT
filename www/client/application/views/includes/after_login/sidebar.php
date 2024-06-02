@@ -330,7 +330,7 @@
                     <li data-page="my_mou_sign">
                         <a href="<?= base_url('mou_sign.html') ?>">
                             <i class="fa fa-clock-o"></i>
-                            <span>My MoU's signing</span>
+                            <span>My MoU's Schedules</span>
                         </a>
                     </li>
                 </ul>

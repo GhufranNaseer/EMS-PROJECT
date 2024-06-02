@@ -2,7 +2,24 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Mou_report extends MY_Controller {
-	
+	protected function rule() {
+        $this->activateRightsSystem();
+        $crd = array(
+            'crd_list,
+			cancel,
+			approved' => array(
+                'rule' => '@'
+            ),
+            'crd_list_datatable' => array(
+                'rule' => '@',
+                'ajaxOnly' => true
+            )
+        );
+        $this->load->model('usermdl');
+        $this->myparent = base_url('mou_sign.html');
+        return array_merge($crd);
+    }
+
 	function crd_list() {
 		$this->load->view('includes/after_login/head');
 		$this->load->view('mou_report/exhibition_list');
@@ -38,6 +55,9 @@ class Mou_report extends MY_Controller {
             ->add_column('col_action', function ($row) {
                 $id = $row['id'];
                 $html = '';
+				if ($row['is_approved'] == 1 || $row['is_canceled'] == 1) {
+					return $html;
+				}
                 $html .= '<a href="' . base_url() . 'mou_sign-cancel.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you would like to cancel the MoU request?\')">Cancel</a> ';
 				$html .= '<a href="' . base_url() . 'mou_sign-approved.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-success" onclick="return confirm(\'Are you sure you would like to accept the MoU request\')">Accept</a> ';
 				
@@ -87,7 +107,9 @@ class Mou_report extends MY_Controller {
             ->update('es_exhibition_mou_sign', array(
                 'is_approved' => 0,
                 'approved_on' => null,
+                'approved_by' => null,
                 'is_canceled' => 1,
+                'canceled_by' => $this->userdata->id,
                 'canceled_on' => date('Y-m-d H:i:s')
             ));
 
@@ -122,7 +144,7 @@ class Mou_report extends MY_Controller {
 				->get('es_customers')
 				->row();
 
-			$text_msg = 'Your MoU siging with ' . $email_customer_data->name . ' of '.$email_customer_data->company.' for ' . date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)) . ' has been declined.';
+			$text_msg = 'Your MoU signing with ' . $email_customer_data->name . ' of '.$email_customer_data->company.' for ' . date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)) . ' has been declined.';
 
 
 			$Subject = str_replace('{NAME}', $email_data->contact_person, $Subject);
@@ -168,7 +190,7 @@ class Mou_report extends MY_Controller {
 		$Subject = str_replace('{SENDER_PHONE}', $customer_data->phone, $Subject);
 		$Subject = str_replace('{SENDER_COMPANY}', $customer_data->company, $Subject);
 		$Subject = str_replace('{SENDER_WEBSITE}', $customer_data->url, $Subject);
-		$Subject = str_replace('{APPOINTMENT_TIME}', date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)), $Subject);
+		$Subject = str_replace('{SCHEDULE_TIME}', date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)), $Subject);
 		$Subject = str_replace('{DESCRIPTION}', $data->description, $Subject);
 		$Subject = str_replace('{COMMERCIAL_VALUE}', $data->commercial_value, $Subject);
 
@@ -178,7 +200,7 @@ class Mou_report extends MY_Controller {
 		$message = str_replace('{SENDER_PHONE}', $customer_data->phone, $message);
 		$message = str_replace('{SENDER_COMPANY}', $customer_data->company, $message);
 		$message = str_replace('{SENDER_WEBSITE}', $customer_data->url, $message);
-		$message = str_replace('{APPOINTMENT_TIME}', date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)), $message);
+		$message = str_replace('{SCHEDULE_TIME}', date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)), $message);
 		$message = str_replace('{DESCRIPTION}', $data->description, $message);
 		$Subject = str_replace('{COMMERCIAL_VALUE}', $data->commercial_value, $Subject);
 
@@ -219,6 +241,7 @@ class Mou_report extends MY_Controller {
 				'approved_on' => date('Y-m-d H:i:s'),
 				'approved_by' => $this->userdata->id,
 				'is_canceled' => 0,
+				'canceled_by' => null,
 				'canceled_on' => null
 			));
 
@@ -235,7 +258,7 @@ class Mou_report extends MY_Controller {
 		->get('email_template')
 		->row();
 
-		// {NAME},{EMAIL},{PHONE},{COMPANY},{SENDER_NAME},{SENDER_EMAIL},{SENDER_PHONE},{SENDER_COMPANY},{SENDER_WEBSITE},{APPOINTMENT_TIME},{APPOINTMENT_AGENDA}
+		// {NAME},{EMAIL},{PHONE},{COMPANY},{SENDER_NAME},{SENDER_EMAIL},{SENDER_PHONE},{SENDER_COMPANY},{SENDER_WEBSITE},{SCHEDULE_TIME},{DESCRIPTION},{COMMERCIAL_VALUE}
 		$Subject = $get_email_template->subject;
 		$message = $get_email_template->message;
 
@@ -297,7 +320,7 @@ class Mou_report extends MY_Controller {
 		$Subject = str_replace('{SENDER_PHONE}', $customer_data->phone, $Subject);
 		$Subject = str_replace('{SENDER_COMPANY}', $customer_data->company, $Subject);
 		$Subject = str_replace('{SENDER_WEBSITE}', $customer_data->url, $Subject);
-		$Subject = str_replace('{APPOINTMENT_TIME}', date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)), $Subject);
+		$Subject = str_replace('{SCHEDULE_TIME}', date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)), $Subject);
 		$Subject = str_replace('{DESCRIPTION}', $data->description, $Subject);
 		$Subject = str_replace('{COMMERCIAL_VALUE}', $data->commercial_value, $Subject);
 
@@ -307,7 +330,7 @@ class Mou_report extends MY_Controller {
 		$message = str_replace('{SENDER_PHONE}', $customer_data->phone, $message);
 		$message = str_replace('{SENDER_COMPANY}', $customer_data->company, $message);
 		$message = str_replace('{SENDER_WEBSITE}', $customer_data->url, $message);
-		$message = str_replace('{APPOINTMENT_TIME}', date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)), $message);
+		$message = str_replace('{SCHEDULE_TIME}', date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)), $message);
 		$message = str_replace('{DESCRIPTION}', $data->description, $message);
 		$Subject = str_replace('{COMMERCIAL_VALUE}', $data->commercial_value, $Subject);
 

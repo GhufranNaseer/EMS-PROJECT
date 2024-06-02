@@ -74,7 +74,7 @@ if ($this->input->get('type') == 'officer') {
 <div class="content-wrapper" data-page="<?= (($this->input->get('type') == 'officer') ? ('meeting-officer-' . $book_to_data->officer_type) : 'mou-exhibitors') ?>">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-        <h1>Mou Appointment Schedule</h1>
+        <h1>MoU Schedule</h1>
         <ol class="breadcrumb">
             <li class="active"><i class="fa fa-dashboard"></i> Dashboard</li>
         </ol>
@@ -86,7 +86,7 @@ if ($this->input->get('type') == 'officer') {
             <div class="col-sm-12">
                 <div class="box">
                     <div class="box-header ">
-                        <h3 class="text-center">Mou Appointment Schedule With <?= $book_to_name ?></h3>
+                        <h3 class="text-center">MoU Schedule With <?= $book_to_name ?></h3>
                     </div>
                 </div>
             </div>
@@ -100,7 +100,7 @@ if ($this->input->get('type') == 'officer') {
                         </div>
                         <div class="row">
                             <div class="col-md-3">
-                                <h4>Location for Meeting</h4>
+                                <h4>Location</h4>
                                 <select name="meeting_location" form="crd_form" class="form-control">
                                     <option value="">- None -</option>
 									<?php if ($this->input->get('type') != 'officer') { ?>
