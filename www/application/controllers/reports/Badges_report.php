@@ -408,7 +408,7 @@ END:VCARD';
 
 		$qr = new QRGenerator($qr_data);
 		$qr = $qr->generate();
-		$output = uniqid(time()) . '.png';
+		$output = uniqid(time()) . '.svg';
 		if (!$this->download_qr($qr, $output)) {
 			echo 'ERROR: Unable to generate QR Code.'; die;
 		}
@@ -466,6 +466,14 @@ END:VCARD';
 			$html2pdf = new HTML2PDF('L', array($card_size_w, $card_size_h), 'en', true, 'UTF-8', array(0, 0, 0, 0));
 			$html2pdf->pdf->SetDisplayMode('fullpage');
 			$html2pdf->writeHTML($html);
+			$html2pdf->pdf->ImageSVG(
+				$file=base_url('uploads/qr-codes/' . $output), 
+				$x=($card_size_w - 22), 
+				$y=($card_size_h - 24), 
+				$w=18, 
+				$h=18, 
+				$link='', 
+				$align='', $palign='', $border=0, $fitonpage=false);
 			$html2pdf->Output('print-badge-'.$badge_id.'.pdf');
 		}
 		catch(HTML2PDF_exception $e) {

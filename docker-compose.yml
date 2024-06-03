@@ -39,6 +39,18 @@ services:
     networks:
       - ems_network
 
+  ems_qr_service:
+    container_name: ems_qr_service
+    build:
+      context: .
+      dockerfile: qr_service/Dockerfile
+    ports:
+      - "8001:8000"
+    depends_on:
+      - webserver
+    networks:
+      - ems_network
+
 networks:
   ems_network:
     driver: bridge

@@ -20,6 +20,8 @@ class QRGenerator {
 
 	public function generate() {
 
+		$link = 'http://ems_qr_service:8000/api?data=' . ($this->data);
+		return $link;
 		
 		// $QRLink = "https://chart.googleapis.com/chart?cht=qr&chs=" . $this->size . "x" . $this->size . "&chl=" . $this->data .
 		// 	"&choe=" . $this->encoding .

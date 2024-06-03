@@ -100,14 +100,7 @@
 				?>
             </td>
             <td rowspan="2" style="width: 25%;" class="text-right">
-				<?php
-				if (!is_null($this->badge->user_image) && 1==0) {
-					echo '<img src="'.base_url('client/' . $this->badge->user_image).'" alt="" style="width: 70px; height: 70px">';
-				} else {
 
-					echo '<br>'.'<img src="'.base_url($qr_link).'" alt="" style="margin-top: 1mm;width: 80px; height: 80px">';
-				}
-				?>
             </td>
         </tr>
     </table>
