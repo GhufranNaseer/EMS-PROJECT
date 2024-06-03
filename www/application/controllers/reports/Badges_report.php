@@ -372,6 +372,19 @@ class Badges_report extends MY_Controller {
 		}
 	}
 
+	private function save_barcode_image($data, $filename){
+		if (!file_exists('uploads/qr-codes')) {
+			mkdir('uploads/qr-codes');
+		}
+		$size = file_put_contents('uploads/qr-codes/' . $filename, $data);
+		if ($size > 0) {
+			return true;
+		} else {
+			return false;
+			// $this->download_qr($qr, $filename);
+		}
+	}
+
 	function print_badge() {
 		$badge_id = $this->input->get('id');
 
@@ -441,10 +454,14 @@ END:VCARD';
 		$this->load->helper ("barcode");
 		$generator = new \Picqer\Barcode\BarcodeGeneratorPNG();
 		$barcode = $generator->getBarcode($barcode_data, $generator::TYPE_CODE_128_B);
-
+		$barcode_img = uniqid(time()) . '.png';
+		if (!$this->save_barcode_image($barcode, $barcode_img)) {
+			echo 'ERROR: Unable to generate barcode.'; die;
+		}
 		$html = $this->load->view('badges_report/print_badge', array(
 			'qr_link' => 'uploads/qr-codes/' . $output,
-			'barcode_data' => $barcode,
+			'barcode_link' => 'uploads/qr-codes/' . $barcode_img,
+			// 'barcode_data' => $barcode,
 			'company' => $company,
 		), true);
 

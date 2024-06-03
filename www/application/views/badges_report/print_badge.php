@@ -88,7 +88,8 @@
                 <strong style="margin-bottom: 3px; font-size: 13px;"><?=substr($this->badge->full_name,0,24) ?></strong><br>
 				<?= substr($company,0,28) ?><br>
 				<?php
-				echo '<img src="data:image/png;base64,' . base64_encode($barcode_data) . '" style="width: 180px; height: 25px; margin: 3px 0 0;">';
+				// echo '<img src="data:image/png;base64,' . base64_encode($barcode_data) . '" style="width: 180px; height: 25px; margin: 3px 0 0;">';
+				echo '<img src="' . base_url($barcode_link) . '" style="width: 180px; height: 25px; margin: 3px 0 0;">';
 				?>
                 <br>
 				<?php
