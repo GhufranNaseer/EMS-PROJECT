@@ -195,7 +195,21 @@ class Print_job extends MY_Controller {
 		if ($size > 0) {
 			return true;
 		} else {
-			$this->download_qr($qr, $filename);
+			return false;
+			// $this->download_qr($qr, $filename);
+		}
+	}
+
+	private function save_barcode_image($data, $filename){
+		if (!file_exists('uploads/qr-codes')) {
+			mkdir('uploads/qr-codes');
+		}
+		$size = file_put_contents('uploads/qr-codes/' . $filename, $data);
+		if ($size > 0) {
+			return true;
+		} else {
+			return false;
+			// $this->download_qr($qr, $filename);
 		}
 	}
 
@@ -205,6 +219,15 @@ class Print_job extends MY_Controller {
 		$badges = explode(',', $badges);
 
 		$html = '';
+
+		$card_size_w = 82.74;
+		$card_size_h = 48.26;
+
+		set_time_limit(0);
+		$this->load->helper ("pdf-loader");
+		try {
+			$html2pdf = new HTML2PDF('L', array($card_size_w, $card_size_h), 'en', true, 'UTF-8', array(0, 0, 0, 0));
+			$html2pdf->pdf->SetDisplayMode('fullpage');
 
 		foreach ($badges as $badge_id) {
 			$badge = $this->db
@@ -245,8 +268,10 @@ EMAIL;TYPE=WORK:'.strtolower($badge->email).'
 END:VCARD';
 			$qr = new QRGenerator($qr_data);
 			$qr = $qr->generate();
-			$output = uniqid(time()) . '.png';
-			$this->download_qr($qr, $output);
+			$output = uniqid(time()) . '.svg';
+			if (!$this->download_qr($qr, $output)) {
+				echo 'ERROR: Unable to generate QR Code.'; die;
+			}
 
 			if (!is_null($badge->barcode_data) && $badge->barcode_data != '') {
 				$barcode_data = $badge->barcode_data;
@@ -271,42 +296,39 @@ END:VCARD';
 			$this->load->helper ("barcode");
 			$generator = new \Picqer\Barcode\BarcodeGeneratorPNG();
 			$barcode = $generator->getBarcode($barcode_data  , $generator::TYPE_CODE_128_B);
+			$barcode_img = uniqid(time()) . '.png';
+			if (!$this->save_barcode_image($barcode, $barcode_img)) {
+				echo 'ERROR: Unable to generate barcode.'; die;
+			}
 
-
-			$html .= $this->load->view('print_job/print_multiple_badge', array(
+			$html = $this->load->view('print_job/print_multiple_badge', array(
 				'qr_link' => 'uploads/qr-codes/' . $output,
-				'barcode_data' => $barcode,
+				'barcode_link' => 'uploads/qr-codes/' . $barcode_img,
+				// 'barcode_data' => $barcode,
 				'company' => $company,
 				'badge' => $badge,
 			), true);
 
-		} // end foreach
+			$html2pdf->writeHTML($html);
+			$html2pdf->pdf->ImageSVG(
+				$file=base_url('uploads/qr-codes/' . $output), 
+				$x=($card_size_w - 22), 
+				$y=($card_size_h - 24), 
+				$w=18, 
+				$h=18, 
+				$link='', 
+				$align='', $palign='', $border=0, $fitonpage=false);
 
 
-		foreach ($badges as $badge_id) {
 			$this->db
 				->where('id', $badge_id)
 				->update('es_exhibition_badges', array(
 					'is_printed' => 1,
 					'print_on' => date('Y-m-d H:i:s')
 				));
-		}
+		} // end foreach
 
-		//$card_size_w = 78.74;
-		$card_size_w = 82.74;
-		$card_size_h = 48.26;
 
-		//echo $html; die();
-		set_time_limit(0);
-		$this->load->helper ("pdf-loader");
-		try {
-			$html2pdf = new HTML2PDF('L', array($card_size_w, $card_size_h), 'en', true, 'UTF-8', array(0, 0, 0, 0));
-			$html2pdf->pdf->SetDisplayMode('fullpage');
-			//$html2pdf->addFont('impact', '', ('assets/fonts/impact.php'));
-			//$html2pdf->setDefaultFont('impact');
-			//$html2pdf->pdf->AddFont('Impact', '', 'assets/fonts/impact.php');
-			//$html2pdf->pdf->SetFont('Impact', '', 8, 'assets/fonts/impact.php');
-			$html2pdf->writeHTML($html);
 			$html2pdf->Output('print-badge-'.time().'.pdf');
 		}
 		catch(HTML2PDF_exception $e) {

@@ -89,7 +89,8 @@
                 <strong style="margin-bottom: 3px; font-size: 13px;"><?=substr($badge->full_name,0,24) ?></strong><br>
 				<?= substr($company,0,30) ?><br>
 				<?php
-				echo '<img src="data:image/png;base64,' . base64_encode($barcode_data) . '" style="width: 180px; height: 25px; margin: 3px 0 0;">';
+				// echo '<img src="data:image/png;base64,' . base64_encode($barcode_data) . '" style="width: 180px; height: 25px; margin: 3px 0 0;">';
+				echo '<img src="' . base_url($barcode_link) . '" style="width: 180px; height: 25px; margin: 3px 0 0;">';
 				?>
                 <br>
 				<?php
@@ -101,13 +102,7 @@
 				?>
             </td>
             <td rowspan="2" style="width: 25%;" class="text-right">
-				<?php
-				if (!is_null($badge->user_image) && 1 == 0) {
-					echo '<img src="'.base_url('client/' . $badge->user_image).'" alt="" style="width: 50px; height: 50px">';
-				} else {
-					echo '<br>'.'<img src="'.base_url($qr_link).'" alt="" style="margin-top: 1mm;width: 80px; height: 80px;">';
-				}
-				?>
+				
             </td>
         </tr>
     </table>
