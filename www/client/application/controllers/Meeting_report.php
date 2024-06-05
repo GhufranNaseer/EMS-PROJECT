@@ -101,7 +101,7 @@ class Meeting_report extends MY_Controller
             ->add_column('col_action', function ($row) {
                 $id = $row['id'];
                 $html = '';
-                if ($row['is_canceled'] == 0) {
+                if ($row['is_canceled'] == 0 && $row['is_conducted'] == 0) {
 					if ($row['user_type_to'] == 'exhibitor' && $row['appointment_to'] == $this->userdata->id) {
 						if ($row['is_approved'] == 0) {
 							$html .= '<a href="' . base_url() . 'meeting-approved.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-success" onclick="return confirm(\'Are you sure you would like to accept the meeting request\')">Accept</a> ';

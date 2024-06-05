@@ -157,6 +157,10 @@ $organizer = $this->db
                         <td><b>Password:</b></td>
                         <td><?= $data->login_password ?></td>
                     </tr>
+                    <tr>
+                        <td><b>URL:</b></td>
+                        <td><a href="<?= base_url('meeting/login/' . $event->id . '-' . str_replace(' ', '-', $event->exhibition_title)) ?>" target="_blank"><?= $event->exhibition_title ?></a></td>
+                    </tr>
                 </table>
             </td>
         </tr>

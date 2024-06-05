@@ -108,16 +108,16 @@ class Event_inventory extends MY_Controller {
 
 		$this->form_validation->set_rules('items[]', 'items[]*inventory items', 'trim|required');
 
-		$expired_event_ids = array();
-		$expired_events = $this->db
-			->select('id')
-			->where('is_deleted' , 0)
-			->where('booking_expire_date <', date('Y-m-d'))
-			->get('es_exhibitions')
-			->result();
-		foreach ($expired_events as $key => $value) {
-			$expired_event_ids[] = $value->id;
-		}
+		// $expired_event_ids = array();
+		// $expired_events = $this->db
+		// 	->select('id')
+		// 	->where('is_deleted' , 0)
+		// 	->where('booking_expire_date <', date('Y-m-d'))
+		// 	->get('es_exhibitions')
+		// 	->result();
+		// foreach ($expired_events as $key => $value) {
+		// 	$expired_event_ids[] = $value->id;
+		// }
 
 		if ($this->input->post('items')) {
 			$exhibition_id = $this->formdata->id;
@@ -131,16 +131,17 @@ class Event_inventory extends MY_Controller {
 						->row();
 
 					// Test 1: check stock amount is available in global stock
-					$used_stock = $this->db
-						->select('SUM(item_stock) as used_stock')
-						->where('global_item_id', $item['global_item_id'])
-						->where_not_in('exhibition_id', $expired_event_ids)
-						->where('exhibition_id !=', $exhibition_id)
-						->where('is_active', 1)
-						->where('is_deleted', 0)
-						->get('es_inventory_item')
-						->row();
-					$remaining = $global_item->item_stock - $used_stock->used_stock;
+					// $used_stock = $this->db
+					// 	->select('SUM(item_stock) as used_stock')
+					// 	->where('global_item_id', $item['global_item_id'])
+					// 	->where_not_in('exhibition_id', $expired_event_ids)
+					// 	->where('exhibition_id !=', $exhibition_id)
+					// 	->where('is_active', 1)
+					// 	->where('is_deleted', 0)
+					// 	->get('es_inventory_item')
+					// 	->row();
+					// $remaining = $global_item->item_stock - $used_stock->used_stock;
+					$remaining = $global_item->item_stock;
 
 					if ($stock > $remaining) {
 						return $this->common->doError(func_num_args(), 'items['.$key.'][stock]*Stock not available for ' . $global_item->item_title. ', Minimum '.$remaining.' stock available!');

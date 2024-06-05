@@ -268,7 +268,7 @@
             <li class="treeview">
                 <a href="javascript:void(0)">
                     <i class="fa fa-folder"></i>
-                    <span>Meetings</span>
+                    <span>Networking</span>
                     <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
                 </a>
                 <ul class="treeview-menu">
@@ -316,14 +316,14 @@
             <li class="treeview">
                 <a href="javascript:void(0)">
                     <i class="fa fa-folder"></i>
-                    <span>Networking</span>
+                    <span>MOU/contract signing</span>
                     <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
                 </a>
                 <ul class="treeview-menu">
                     <li data-page="mou-exhibitors">
                         <a href="<?= base_url('exhibitors-list-mou.html') ?>">
                             <i class="fa fa-clock-o"></i>
-                            <span>Exhibitors to Exhibitors</span>
+                            <span>To Exhibitors</span>
                         </a>
                     </li>
 

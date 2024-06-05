@@ -75,29 +75,30 @@
                                 </thead>
                                 <tbody id="iventory_items">
                                 <?php
-								$expired_event_ids = array();
-								$expired_events = $this->db
-									->select('id')
-									->where('is_deleted' , 0)
-									->where('booking_expire_date <', date('Y-m-d'))
-									->get('es_exhibitions')
-									->result();
-								foreach ($expired_events as $key => $value) {
-									$expired_event_ids[] = $value->id;
-								}
+								// $expired_event_ids = array();
+								// $expired_events = $this->db
+								// 	->select('id')
+								// 	->where('is_deleted' , 0)
+								// 	->where('booking_expire_date <', date('Y-m-d'))
+								// 	->get('es_exhibitions')
+								// 	->result();
+								// foreach ($expired_events as $key => $value) {
+								// 	$expired_event_ids[] = $value->id;
+								// }
 								
                                 $count = 0;
                                 foreach ($items as $key => $item) {
-                                    $used_stock = $this->db
-                                        ->select('SUM(item_stock) as used_stock')
-                                        ->where('global_item_id', $item->id)
-                                        ->where_not_in('exhibition_id', $expired_event_ids)
-                                        ->where('is_active', 1)
-                                        ->where('is_deleted', 0)
-                                        ->get('es_inventory_item')
-                                        ->row();
+                                    // $used_stock = $this->db
+                                    //     ->select('SUM(item_stock) as used_stock')
+                                    //     ->where('global_item_id', $item->id)
+                                    //     ->where_not_in('exhibition_id', $expired_event_ids)
+                                    //     ->where('is_active', 1)
+                                    //     ->where('is_deleted', 0)
+                                    //     ->get('es_inventory_item')
+                                    //     ->row();
 
-                                    $remaining = $item->item_stock - $used_stock->used_stock;
+                                    // $remaining = $item->item_stock - $used_stock->used_stock;
+                                    $remaining = $item->item_stock;
 
                                     $stock = $remaining;
                                     $item_price_usd = $item->item_price_usd;
