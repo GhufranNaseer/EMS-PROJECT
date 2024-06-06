@@ -9,6 +9,16 @@ $exhibitors_badges = $this->db
 	->where('is_active', 1)
 	->get('es_exhibition_badges')
 	->result();
+
+
+$active_invitation_types = $this->db
+	->where('exhibition_id', $this->event->id)
+	->where('booking_id', $this->booking->id)
+	->where('is_active', 1)
+	->where('badge_type', 'exhibitor')
+	->get('es_exhibition_badges_limit')
+	->result();
+
 ?>
 
 <style>
@@ -318,21 +328,31 @@ $exhibitors_badges = $this->db
                             <table class="table table-bordered invitation_select_table">
                                 <tr>
                                     <th width="20%" rowspan="2" style="vertical-align: bottom">Person Name</th>
-                                    <th width="12%">Inauguration</th>
+									<?php
+									foreach ($active_invitation_types as $invitation_type) {
+										echo '<th width="12%">'. ucwords(str_replace('_', ' ', $invitation_type->invitation_type)) .'</th>';
+									}
+									?>
+                                    <!-- <th width="12%">Inauguration</th>
                                     <th width="12%">Seminar</th>
                                     <th width="12%">Governor Reception</th>
                                     <th width="12%">Gala Dinner</th>
                                     <th width="12%">Karachi Air Show</th>
-                                    <th width="12%">CM Reception</th>
+                                    <th width="12%">CM Reception</th> -->
                                     <th width="8%" rowspan="2"></th>
                                 </tr>
                                 <tr class="invitation_limit_row">
-                                    <td data-type="inauguration">[0/1]</td>
+									<?php
+									foreach ($active_invitation_types as $invitation_type) {
+										echo '<td data-type="'.$invitation_type->invitation_type.'">[0/1]</td>';
+									}
+									?>
+                                    <!-- <td data-type="inauguration">[0/1]</td>
                                     <td data-type="seminar">[0/1]</td>
                                     <td data-type="governor_reception">[0/1]</td>
                                     <td data-type="gala_dinner">[0/1]</td>
                                     <td data-type="karachi_air_show">[0/1]</td>
-                                    <td data-type="cm_reception">[0/1]</td>
+                                    <td data-type="cm_reception">[0/1]</td> -->
                                 </tr>
                                 <tr class="bg-warning inv_update_row">
                                     <td>
@@ -345,12 +365,17 @@ $exhibitors_badges = $this->db
                                             ?>
                                         </select>
                                     </td>
-                                    <td><input type="checkbox" class="icheck invitations" value="inauguration"></td>
+									<?php
+									foreach ($active_invitation_types as $invitation_type) {
+										echo '<td><input type="checkbox" class="icheck invitations" value="'.$invitation_type->invitation_type.'"></td>';
+									}
+									?>
+                                    <!-- <td><input type="checkbox" class="icheck invitations" value="inauguration"></td>
                                     <td><input type="checkbox" class="icheck invitations" value="seminar"></td>
                                     <td><input type="checkbox" class="icheck invitations" value="governor_reception"></td>
                                     <td><input type="checkbox" class="icheck invitations" value="gala_dinner"></td>
                                     <td><input type="checkbox" class="icheck invitations" value="karachi_air_show"></td>
-                                    <td><input type="checkbox" class="icheck invitations" value="cm_reception"></td>
+                                    <td><input type="checkbox" class="icheck invitations" value="cm_reception"></td> -->
                                     <td>
                                         <button type="button" class="btn btn-success btn-block add_invitations_btn">SAVE</button>
                                     </td>
@@ -363,12 +388,17 @@ $exhibitors_badges = $this->db
                                 <thead>
                                 <tr>
                                     <th width="20%">Exhibitor Name</th>
-                                    <th width="12%">Inauguration</th>
+									<?php
+									foreach ($active_invitation_types as $invitation_type) {
+										echo '<th width="12%">'.$invitation_type->invitation_type.'</th>';
+									}
+									?>
+                                    <!-- <th width="12%">Inauguration</th>
                                     <th width="12%">Seminar</th>
                                     <th width="12%">Governor Reception</th>
                                     <th width="12%">Gala Dinner</th>
                                     <th width="12%">Karachi Air Show</th>
-                                    <th width="12%">CM Reception</th>
+                                    <th width="12%">CM Reception</th> -->
                                     <th width="8%"></th>
                                 </tr>
                                 </thead>
@@ -918,12 +948,15 @@ $exhibitors_badges = $this->db
 
 					html = '<tr class="text-center">';
                     html += '<td class="text-left">'+data.data[i].full_name+'</td>';
-                    html += ((data.data[i].invitations.indexOf('inauguration') >= 0) ? '<td class="bg-success"><i class="fa fa-check text-success"></i></td>' : '<td class="bg-danger"><i class="fa fa-times text-danger"></i></td>');
-                    html += ((data.data[i].invitations.indexOf('seminar') >= 0) ? '<td class="bg-success"><i class="fa fa-check text-success"></i></td>' : '<td class="bg-danger"><i class="fa fa-times text-danger"></i></td>');
-                    html += ((data.data[i].invitations.indexOf('governor_reception') >= 0) ? '<td class="bg-success"><i class="fa fa-check text-success"></i></td>' : '<td class="bg-danger"><i class="fa fa-times text-danger"></i></td>');
-                    html += ((data.data[i].invitations.indexOf('gala_dinner') >= 0) ? '<td class="bg-success"><i class="fa fa-check text-success"></i></td>' : '<td class="bg-danger"><i class="fa fa-times text-danger"></i></td>');
-                    html += ((data.data[i].invitations.indexOf('karachi_air_show') >= 0) ? '<td class="bg-success"><i class="fa fa-check text-success"></i></td>' : '<td class="bg-danger"><i class="fa fa-times text-danger"></i></td>');
-                    html += ((data.data[i].invitations.indexOf('cm_reception') >= 0) ? '<td class="bg-success"><i class="fa fa-check text-success"></i></td>' : '<td class="bg-danger"><i class="fa fa-times text-danger"></i></td>');
+					<?php foreach ($active_invitation_types as $invitation_type) { ?>
+					html += ((data.data[i].invitations.indexOf('<?= $invitation_type->invitation_type ?>') >= 0) ? '<td class="bg-success"><i class="fa fa-check text-success"></i></td>' : '<td class="bg-danger"><i class="fa fa-times text-danger"></i></td>');	
+					<?php } ?>
+                    // html += ((data.data[i].invitations.indexOf('inauguration') >= 0) ? '<td class="bg-success"><i class="fa fa-check text-success"></i></td>' : '<td class="bg-danger"><i class="fa fa-times text-danger"></i></td>');
+                    // html += ((data.data[i].invitations.indexOf('seminar') >= 0) ? '<td class="bg-success"><i class="fa fa-check text-success"></i></td>' : '<td class="bg-danger"><i class="fa fa-times text-danger"></i></td>');
+                    // html += ((data.data[i].invitations.indexOf('governor_reception') >= 0) ? '<td class="bg-success"><i class="fa fa-check text-success"></i></td>' : '<td class="bg-danger"><i class="fa fa-times text-danger"></i></td>');
+                    // html += ((data.data[i].invitations.indexOf('gala_dinner') >= 0) ? '<td class="bg-success"><i class="fa fa-check text-success"></i></td>' : '<td class="bg-danger"><i class="fa fa-times text-danger"></i></td>');
+                    // html += ((data.data[i].invitations.indexOf('karachi_air_show') >= 0) ? '<td class="bg-success"><i class="fa fa-check text-success"></i></td>' : '<td class="bg-danger"><i class="fa fa-times text-danger"></i></td>');
+                    // html += ((data.data[i].invitations.indexOf('cm_reception') >= 0) ? '<td class="bg-success"><i class="fa fa-check text-success"></i></td>' : '<td class="bg-danger"><i class="fa fa-times text-danger"></i></td>');
                     html += '<td><a href="javascript:void(0)" class="edit_invitation_btn" data-id="'+data.data[i].id+'">Edit</a></td>';
 					html += '</tr>';
 					$('#exhibitor_invited_list').append(html);

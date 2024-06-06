@@ -311,6 +311,7 @@ class Form_19 extends MY_Controller {
 		$limit_badges = $this->db
 			->where('exhibition_id', $this->event->id)
 			->where('booking_id', $this->booking->id)
+			->where('is_active', 1)
 			->where('badge_type', 'exhibitor')
 			->get('es_exhibition_badges_limit')
 			->result();
