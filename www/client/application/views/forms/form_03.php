@@ -349,15 +349,15 @@ $hall_data = $this->db
                                 <!-- main sectors -->
                                 <div class="row">
                                     <div class="col-sm-3">
-                                        <label>Select Main Business sector <span class="text-red">*</span></label>
+                                        <label>Select Main Business sector</label>
                                         <ul class="select_list" id="main_business_sector"></ul>
                                     </div>
                                     <div class="col-sm-3">
-                                        <label>Select Your Business Type <span class="text-red">*</span></label>
+                                        <label>Select Your Business Type</label>
                                         <ul class="select_list" id="main_business_type"></ul>
                                     </div>
                                     <div class="col-sm-3">
-                                        <label>Select Your Business Area <span class="text-red">*</span></label>
+                                        <label>Select Your Business Area</label>
                                         <ul class="select_list" id="main_business_area"></ul>
                                     </div>
                                     <div class="col-sm-1">
@@ -368,7 +368,7 @@ $hall_data = $this->db
                                         <div class="business_selected_area">
                                             <table class="table table-bordered" id="selected_business_area">
                                                 <?php
-                                               if ((!is_null($this->formdata)) && count((array)$this->formdata->products->main) > 0) {
+                                               if ((!is_null($this->formdata)) && isset($this->formdata->products) && count((array)$this->formdata->products->main) > 0) {
                                                     foreach ($this->formdata->products->main as $key => $main_business) {
 														echo '<tr>
                                                         <td>'. $main_business->area .'</td>
@@ -412,7 +412,7 @@ $hall_data = $this->db
                                             <div class="other_business_selected_area">
                                                 <table class="table table-bordered" id="other_business_selected_area">
 													<?php
-													if ((!is_null($this->formdata)) && property_exists($this->formdata->products, 'other') && count((array)$this->formdata->products->other) > 0) {
+													if ((!is_null($this->formdata)) && isset($this->formdata->products) && property_exists($this->formdata->products, 'other') && count((array)$this->formdata->products->other) > 0) {
 														foreach ($this->formdata->products->other as $key => $other_business) {
 															echo '<tr>
                                                             <td>'.$other_business->area.'</td>
@@ -437,15 +437,15 @@ $hall_data = $this->db
 
                                     <div class="row">
                                         <div class="col-sm-3">
-                                            <label>Product Category <span class="text-red">*</span></label>
+                                            <label>Product Category</label>
                                             <input type="text" class="form-control" id="product_category">
                                         </div>
                                         <div class="col-sm-3">
-                                            <label>Product Type <span class="text-red">*</span></label>
+                                            <label>Product Type</label>
                                             <input type="text" class="form-control" id="product_type">
                                         </div>
                                         <div class="col-sm-3">
-                                            <label>Product Name <span class="text-red">*</span></label>
+                                            <label>Product Name</label>
                                             <input type="text" class="form-control" id="product_name">
                                         </div>
                                         <div class="col-sm-1">
@@ -457,7 +457,7 @@ $hall_data = $this->db
                                             <div class="product_selected_area">
                                                 <table class="table table-bordered" id="product_selected_area">
 													<?php
-													if ((!is_null($this->formdata)) && count((array)$this->formdata->products->product) > 0) {
+													if ((!is_null($this->formdata)) && isset($this->formdata->products) && count((array)$this->formdata->products->product) > 0) {
 														foreach ($this->formdata->products->product as $key => $product) {
 															echo '<tr>
                                                             <td>'. $product->name .'</td>

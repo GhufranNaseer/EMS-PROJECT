@@ -86,6 +86,8 @@ class Form_03 extends MY_Controller {
 	}
 
 	function form_03_products_validate() {
+		// make product and category optional
+		return $this->common->doError(func_num_args(), "done", true);
 		//print_r($this->input->post()); die();
 		$this->form_validation->set_rules('products[main][]', 'products[main][]*your business', 'trim|required');
 		$this->form_validation->set_rules('products[other][]', 'products[other][]*your other business', 'trim');
