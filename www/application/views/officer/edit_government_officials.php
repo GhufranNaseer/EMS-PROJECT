@@ -42,34 +42,25 @@
                                     <input type="text" class="form-control" name="officer_country" id="officer_country" readonly value="<?= ($this->formdata->officer_country) ?>">
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <div class="col-sm-6">
-                                    <label>Officer Rank</label>
-                                    <select class="form-control" name="officer_rank" id="officer_rank">
-                                        <option value="">- select -</option>
-                                        <option value="Lieutenant Colonel" <?= (($this->formdata->officer_rank == 'Lieutenant Colonel') ? 'selected' : '') ?>>Lieutenant Colonel</option>
-                                        <option value="Colonel" <?= (($this->formdata->officer_rank == 'Colonel') ? 'selected' : '') ?>>Colonel</option>
-                                        <option value="Brigadier" <?= (($this->formdata->officer_rank == 'Brigadier') ? 'selected' : '') ?>>Brigadier</option>
-                                        <option value="Major General" <?= (($this->formdata->officer_rank == 'Major General') ? 'selected' : '') ?>>Major General</option>
-                                        <option value="Lieutenant General" <?= (($this->formdata->officer_rank == 'Lieutenant General') ? 'selected' : '') ?>>Lieutenant General</option>
-                                    </select>
+							<div class="form-group row">
+                                <div class="col-sm-12">
+                                    <label>
+                                        <input type="checkbox" name="representative" id="representative" value=""
+                                        <?= ($this->formdata->is_representative == 1) ? 'checked' : '' ?> > Representative
+                                    </label>
                                 </div>
+                            </div>
+                            <div class="form-group row">
                                 <div class="col-sm-6">
                                     <label>Contact Person Name <span class="text-red">*</span></label>
                                     <input type="text" class="form-control" name="contact_person_name" value="<?= ($this->formdata->contact_person)?>" id="contact_person_name">
                                 </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <div class="col-sm-6">
-                                    <label>Organization<span class="text-red">*</span></label>
-                                    <input type="text" class="form-control" value="<?= ($this->formdata->officer_company)?>" name="organization" id="organization">
-                                </div>
-                                <div class="col-sm-6">
-                                    <label>Mobile Number<span class="text-red">*</span></label>
+								<div class="col-sm-6">
+                                    <label>Mobile Number</label>
                                     <input type="number" class="form-control" name="mobile_number" value="<?= ($this->formdata->officer_phone)?>" id="mobile_number">
                                 </div>
                             </div>
+
 
                             <div class="form-group row">
                                 <div class="col-sm-6">

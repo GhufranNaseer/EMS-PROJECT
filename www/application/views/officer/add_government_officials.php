@@ -39,31 +39,20 @@
                                     <input type="text" class="form-control" name="officer_country" value="Pakistan" id="officer_country" readonly>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <div class="col-sm-6">
-                                    <label>Officer Rank</label>
-                                    <select class="form-control" name="officer_rank" id="officer_rank">
-                                        <option value="">- select -</option>
-                                        <option value="Lieutenant Colonel">Lieutenant Colonel</option>
-                                        <option value="Colonel">Colonel</option>
-                                        <option value="Brigadier">Brigadier</option>
-                                        <option value="Major General">Major General</option>
-                                        <option value="Lieutenant General">Lieutenant General</option>
-                                    </select>
+							<div class="form-group row">
+                                <div class="col-sm-12">
+                                    <label>
+                                        <input type="checkbox" name="representative" id="representative"> Representative
+                                    </label>
                                 </div>
+                            </div>
+                            <div class="form-group row">
                                 <div class="col-sm-6">
                                     <label>Contact Person Name <span class="text-red">*</span></label>
                                     <input type="text" class="form-control" name="contact_person_name" id="contact_person_name">
                                 </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <div class="col-sm-6">
-                                    <label>Organization<span class="text-red">*</span></label>
-                                    <input type="text" class="form-control" name="organization" id="organization">
-                                </div>
-                                <div class="col-sm-6">
-                                    <label>Mobile Number<span class="text-red">*</span></label>
+								<div class="col-sm-6">
+                                    <label>Mobile Number</label>
                                     <input type="number" class="form-control" name="mobile_number" id="mobile_number">
                                 </div>
                             </div>
