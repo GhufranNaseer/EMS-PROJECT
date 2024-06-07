@@ -14,6 +14,18 @@ class Officer extends MY_Controller {
 			local_delegates_add_submit,
 			chief_of_servicing,
 			chief_of_servicing_add_submit,
+			armed_force,
+			armed_force_add_submit,
+			armed_force_edit,
+			armed_force_edit_submit,
+			government_officials,
+			government_officials_add_submit,
+			government_officials_edit,
+			government_officials_edit_submit,
+			organizer,
+			organizer_add_submit,
+			organizer_edit,
+			organizer_edit_submit,
 			crd_print' => array(
 				'rule' => '@'
 			),
@@ -22,7 +34,13 @@ class Officer extends MY_Controller {
 			crd_add_validate,
 			foreign_delegations_add_validate,
 			local_delegates_add_validate,
-			chief_of_servicing_add_validate' => array(
+			chief_of_servicing_add_validate,
+			armed_force_add_validate,
+			armed_force_edit_validate,
+			government_officials_add_validate,
+			government_officials_edit_validate,
+			organizer_add_validate,
+			organizer_edit_validate' => array(
 				'rule' => '@',
 				'ajaxOnly' => true
 			)
@@ -103,7 +121,10 @@ class Officer extends MY_Controller {
 			->select('id, 
 				  IF(officer_type="foreign_delegates", \'Foreign Delegate\',
 				  	IF(officer_type="local_delegates", \'Local Delegate\',
-				  	IF(officer_type="chief_of_servicing", \'Gov. Services Chief\', "-"))) as type, 
+				  	IF(officer_type="armed_force", \'Armed Force (Pakistan)\',
+				  	IF(officer_type="government_officials", \'Government Officials\',
+				  	IF(officer_type="organizer", \'Organizer\',
+				  	IF(officer_type="chief_of_servicing", \'Gov. Services Chief\', "-")))))) as type, 
 				  officer_type,
 				  IF(officer_type="foreign_delegates",
 				  	IF(is_representative=1, CONCAT(officer_designation, " (Representative)"), CONCAT(officer_designation, " (Self)")),
@@ -125,6 +146,15 @@ class Officer extends MY_Controller {
                 }
                 if ( $row['officer_type'] == 'chief_of_servicing'){
                     $html = '<a href="' . base_url() . 'officer-edit-chief-of-servicing.html?id=' . urlencode(myid($id)) . '">Edit</a>';
+                }
+                if ( $row['officer_type'] == 'armed_force'){
+                    $html = '<a href="' . base_url() . 'officer-edit-armed-force.html?id=' . urlencode(myid($id)) . '">Edit</a>';
+                }
+                if ( $row['officer_type'] == 'government_officials'){
+                    $html = '<a href="' . base_url() . 'officer-edit-government-officials.html?id=' . urlencode(myid($id)) . '">Edit</a>';
+                }
+                if ( $row['officer_type'] == 'organizer'){
+                    $html = '<a href="' . base_url() . 'officer-edit-organizer.html?id=' . urlencode(myid($id)) . '">Edit</a>';
                 }
 
 				$html .= ' | <a href="' . base_url() . 'officer-print.html?id=' . urlencode(myid($id)) . '" target="_blank">Print</a>';
@@ -158,11 +188,13 @@ class Officer extends MY_Controller {
 		print ($this->datatables->generate());
 	}
 
+	/* NOT IN USE */
 	function crd_add() {
         $this->load->view('includes/after_login/head');
         $this->load->view('officer/add');
     }
 
+	/* NOT IN USE */
     function crd_add_submit() {
         if ($this->crd_add_validate() !== true)
             show_404();
@@ -200,6 +232,7 @@ class Officer extends MY_Controller {
 		redirect(base_url('officer_exhibitor.html'));
     }
 
+	/* NOT IN USE */
     function crd_add_validate() {
         $this->checkEditId();
 
@@ -226,6 +259,7 @@ class Officer extends MY_Controller {
             return $this->common->doError(func_num_args(), "done", true);
     }
 
+	/* NOT IN USE */
     function crd_edit() {
 		//$this->checkEditId();
         $id = $this->input->get('id');
@@ -245,6 +279,7 @@ class Officer extends MY_Controller {
 		$this->load->view('officer/edit');
 	}
 
+	/* NOT IN USE */
 	function crd_edit_submit() {
 		if ($this->crd_edit_validate() !== true)
 			show_404();
@@ -278,6 +313,7 @@ class Officer extends MY_Controller {
 		redirect(base_url('officer_exhibitor.html'));
 	}
 
+	/* NOT IN USE */
 	function crd_edit_validate() {
 		$id = $this->input->get('id');
 		if (is_null($id))
@@ -760,6 +796,425 @@ class Officer extends MY_Controller {
         else {
             return $this->common->doError(func_num_args(), "done", true);
         }
+    }
+
+	/* *************** */
+	function armed_force() {
+        $this->load->view('includes/after_login/head');
+        $this->load->view('officer/add_armed_force');
+    }
+
+	function armed_force_add_validate() {
+        $this->checkEditId();
+
+        $this->form_validation->set_rules('officer_designation', 'officer_designation*Officer designation', 'trim|required');
+        $this->form_validation->set_rules('officer_country', 'officer_country*Officer country', 'trim|required');
+        $this->form_validation->set_rules('officer_rank', 'officer_rank*officer rank', 'trim');
+        $this->form_validation->set_rules('organization', 'organization*Organization', 'trim|required');
+        $this->form_validation->set_rules('contact_person_name', 'contact_person_name*Contact person name', 'trim|required');
+        $this->form_validation->set_rules('mobile_number', 'mobile_number*Mobile number', 'trim|required');
+        $this->form_validation->set_rules('email', 'email*Email', 'trim|required');
+        $this->form_validation->set_rules('password', 'password*Password', 'trim|required');
+
+
+
+        if ($this->form_validation->run() == false)
+            return $this->common->doError(func_num_args(), $this->common->getFVError());
+        else
+            return $this->common->doError(func_num_args(), "done", true);
+    }
+
+    function armed_force_add_submit() {
+        if ($this->local_delegates_add_validate() !== true)
+            show_404();
+
+        $exhibition_id = $this->formdata->id;
+
+        $data = array(
+            'exhibition_id' => $exhibition_id,
+            'officer_type' => 'armed_force',
+            'officer_designation' => $this->input->post('officer_designation'),
+            'officer_country' => $this->input->post('officer_country'),
+            'officer_rank' => $this->input->post('officer_rank'),
+            'officer_company' => $this->input->post('organization'),
+            'contact_person' => $this->input->post('contact_person_name'),
+            'officer_phone' => $this->input->post('mobile_number'),
+            'officer_email' => $this->input->post('email'),
+            'login_password' => $this->input->post('password'),
+            'is_deleted' => 0
+        );
+
+        $this->db->trans_start();
+        $this->db
+            ->set($data)
+            ->insert('es_officer');
+        //$id = $this->db->insert_id();
+        $this->db->trans_complete();
+
+        $this->session->set_flashdata('message', 'Armed force officer has been created successfully');
+		redirect(base_url('officer.html?id=' . myid($this->formdata->id)));
+    }
+
+	function armed_force_edit() {
+        //$this->checkEditId();
+        $id = $this->input->get('id');
+        if (is_null($id))
+            show_404();
+        $id = $this->db->escape($id);
+        $key = config_item('encryption_key');
+        $key = $this->db->escape($key);
+        $r = $this->db
+            ->where("MD5(CONCAT($key,`id`)) = $id")
+            ->get('es_officer');
+        if ($r->num_rows() == 0)
+            show_404();
+        $this->formdata = $r->row();
+
+        $this->load->view('includes/after_login/head');
+        $this->load->view('officer/edit_armed_force.php');
+    }
+
+	function armed_force_edit_validate() {
+        $id = $this->input->get('id');
+        if (is_null($id))
+            show_404();
+        $id = $this->db->escape($id);
+        $key = config_item('encryption_key');
+        $key = $this->db->escape($key);
+        $r = $this->db
+            ->where("MD5(CONCAT($key,`id`)) = $id")
+            ->get('es_officer');
+        if ($r->num_rows() == 0)
+            show_404();
+        $this->formdata = $r->row();
+
+
+        $this->form_validation->set_rules('officer_designation', 'officer_designation*Officer designation', 'trim|required');
+        //$this->form_validation->set_rules('officer_country', 'officer_country*Officer country', 'trim|required');
+        $this->form_validation->set_rules('officer_rank', 'officer_rank*officer rank', 'trim');
+        $this->form_validation->set_rules('organization', 'organization*Organization', 'trim|required');
+        $this->form_validation->set_rules('contact_person_name', 'contact_person_name*Contact person name', 'trim|required');
+        $this->form_validation->set_rules('mobile_number', 'mobile_number*Mobile number', 'trim|required');
+        $this->form_validation->set_rules('email', 'email*Email', 'trim|required');
+        $this->form_validation->set_rules('password', 'password*Password', 'trim|required');
+
+        if ($this->form_validation->run() == false)
+            return $this->common->doError(func_num_args(), $this->common->getFVError());
+        else {
+            return $this->common->doError(func_num_args(), "done", true);
+        }
+    }
+
+    function armed_force_edit_submit() {
+        if ($this->local_delegates_edit_validate() !== true)
+            show_404();
+
+        $exhibition_id = $this->formdata->id;
+
+        $data = array(
+           // 'exhibition_id' => $exhibition_id,
+            //'officer_type' => 'armed_force',
+            'officer_designation' => $this->input->post('officer_designation'),
+            'officer_country' => $this->input->post('officer_country'),
+            'officer_rank' => $this->input->post('officer_rank'),
+            'officer_company' => $this->input->post('organization'),
+            'contact_person' => $this->input->post('contact_person_name'),
+            'officer_phone' => $this->input->post('mobile_number'),
+            'officer_email' => $this->input->post('email'),
+            'login_password' => $this->input->post('password'),
+            'is_deleted' => 0
+        );
+
+
+        $this->db->trans_start();
+        $this->db
+            ->set($data)
+            ->where('id', $this->formdata->id)
+            ->update('es_officer');
+
+        $this->db->trans_complete();
+        $this->session->set_flashdata('message', 'Armed force officer has been updated successfully');
+		redirect(base_url('officer.html?id=' . myid($this->formdata->exhibition_id)));
+    }
+
+
+	/* *************** */
+	function government_officials() {
+        $this->load->view('includes/after_login/head');
+        $this->load->view('officer/add_government_officials');
+    }
+
+	function government_officials_add_validate() {
+        $this->checkEditId();
+
+        $this->form_validation->set_rules('officer_designation', 'officer_designation*Officer designation', 'trim|required');
+        $this->form_validation->set_rules('officer_country', 'officer_country*Officer country', 'trim|required');
+        $this->form_validation->set_rules('officer_rank', 'officer_rank*officer rank', 'trim');
+        $this->form_validation->set_rules('organization', 'organization*Organization', 'trim|required');
+        $this->form_validation->set_rules('contact_person_name', 'contact_person_name*Contact person name', 'trim|required');
+        $this->form_validation->set_rules('mobile_number', 'mobile_number*Mobile number', 'trim|required');
+        $this->form_validation->set_rules('email', 'email*Email', 'trim|required');
+        $this->form_validation->set_rules('password', 'password*Password', 'trim|required');
+
+
+
+        if ($this->form_validation->run() == false)
+            return $this->common->doError(func_num_args(), $this->common->getFVError());
+        else
+            return $this->common->doError(func_num_args(), "done", true);
+    }
+
+    function government_officials_add_submit() {
+        if ($this->local_delegates_add_validate() !== true)
+            show_404();
+
+        $exhibition_id = $this->formdata->id;
+
+        $data = array(
+            'exhibition_id' => $exhibition_id,
+            'officer_type' => 'government_officials',
+            'officer_designation' => $this->input->post('officer_designation'),
+            'officer_country' => $this->input->post('officer_country'),
+            'officer_rank' => $this->input->post('officer_rank'),
+            'officer_company' => $this->input->post('organization'),
+            'contact_person' => $this->input->post('contact_person_name'),
+            'officer_phone' => $this->input->post('mobile_number'),
+            'officer_email' => $this->input->post('email'),
+            'login_password' => $this->input->post('password'),
+            'is_deleted' => 0
+        );
+
+        $this->db->trans_start();
+        $this->db
+            ->set($data)
+            ->insert('es_officer');
+        //$id = $this->db->insert_id();
+        $this->db->trans_complete();
+
+        $this->session->set_flashdata('message', 'Government official has been created successfully');
+		redirect(base_url('officer.html?id=' . myid($this->formdata->id)));
+    }
+
+	function government_officials_edit() {
+        //$this->checkEditId();
+        $id = $this->input->get('id');
+        if (is_null($id))
+            show_404();
+        $id = $this->db->escape($id);
+        $key = config_item('encryption_key');
+        $key = $this->db->escape($key);
+        $r = $this->db
+            ->where("MD5(CONCAT($key,`id`)) = $id")
+            ->get('es_officer');
+        if ($r->num_rows() == 0)
+            show_404();
+        $this->formdata = $r->row();
+
+        $this->load->view('includes/after_login/head');
+        $this->load->view('officer/edit_government_officials.php');
+    }
+
+	function government_officials_edit_validate() {
+        $id = $this->input->get('id');
+        if (is_null($id))
+            show_404();
+        $id = $this->db->escape($id);
+        $key = config_item('encryption_key');
+        $key = $this->db->escape($key);
+        $r = $this->db
+            ->where("MD5(CONCAT($key,`id`)) = $id")
+            ->get('es_officer');
+        if ($r->num_rows() == 0)
+            show_404();
+        $this->formdata = $r->row();
+
+
+        $this->form_validation->set_rules('officer_designation', 'officer_designation*Officer designation', 'trim|required');
+        //$this->form_validation->set_rules('officer_country', 'officer_country*Officer country', 'trim|required');
+        $this->form_validation->set_rules('officer_rank', 'officer_rank*officer rank', 'trim');
+        $this->form_validation->set_rules('organization', 'organization*Organization', 'trim|required');
+        $this->form_validation->set_rules('contact_person_name', 'contact_person_name*Contact person name', 'trim|required');
+        $this->form_validation->set_rules('mobile_number', 'mobile_number*Mobile number', 'trim|required');
+        $this->form_validation->set_rules('email', 'email*Email', 'trim|required');
+        $this->form_validation->set_rules('password', 'password*Password', 'trim|required');
+
+        if ($this->form_validation->run() == false)
+            return $this->common->doError(func_num_args(), $this->common->getFVError());
+        else {
+            return $this->common->doError(func_num_args(), "done", true);
+        }
+    }
+
+    function government_officials_edit_submit() {
+        if ($this->local_delegates_edit_validate() !== true)
+            show_404();
+
+        $exhibition_id = $this->formdata->id;
+
+        $data = array(
+           // 'exhibition_id' => $exhibition_id,
+            //'officer_type' => 'government_officials',
+            'officer_designation' => $this->input->post('officer_designation'),
+            'officer_country' => $this->input->post('officer_country'),
+            'officer_rank' => $this->input->post('officer_rank'),
+            'officer_company' => $this->input->post('organization'),
+            'contact_person' => $this->input->post('contact_person_name'),
+            'officer_phone' => $this->input->post('mobile_number'),
+            'officer_email' => $this->input->post('email'),
+            'login_password' => $this->input->post('password'),
+            'is_deleted' => 0
+        );
+
+
+        $this->db->trans_start();
+        $this->db
+            ->set($data)
+            ->where('id', $this->formdata->id)
+            ->update('es_officer');
+
+        $this->db->trans_complete();
+        $this->session->set_flashdata('message', 'Government official has been updated successfully');
+		redirect(base_url('officer.html?id=' . myid($this->formdata->exhibition_id)));
+    }
+
+	
+	/* *************** */
+	function organizer() {
+        $this->load->view('includes/after_login/head');
+        $this->load->view('officer/add_organizer');
+    }
+
+	function organizer_add_validate() {
+        $this->checkEditId();
+
+        $this->form_validation->set_rules('officer_designation', 'officer_designation*Officer designation', 'trim|required');
+        $this->form_validation->set_rules('officer_country', 'officer_country*Officer country', 'trim|required');
+        $this->form_validation->set_rules('officer_rank', 'officer_rank*officer rank', 'trim');
+        $this->form_validation->set_rules('organization', 'organization*Organization', 'trim|required');
+        $this->form_validation->set_rules('contact_person_name', 'contact_person_name*Contact person name', 'trim|required');
+        $this->form_validation->set_rules('mobile_number', 'mobile_number*Mobile number', 'trim|required');
+        $this->form_validation->set_rules('email', 'email*Email', 'trim|required');
+        $this->form_validation->set_rules('password', 'password*Password', 'trim|required');
+
+
+
+        if ($this->form_validation->run() == false)
+            return $this->common->doError(func_num_args(), $this->common->getFVError());
+        else
+            return $this->common->doError(func_num_args(), "done", true);
+    }
+
+    function organizer_add_submit() {
+        if ($this->local_delegates_add_validate() !== true)
+            show_404();
+
+        $exhibition_id = $this->formdata->id;
+
+        $data = array(
+            'exhibition_id' => $exhibition_id,
+            'officer_type' => 'organizer',
+            'officer_designation' => $this->input->post('officer_designation'),
+            'officer_country' => $this->input->post('officer_country'),
+            'officer_rank' => $this->input->post('officer_rank'),
+            'officer_company' => $this->input->post('organization'),
+            'contact_person' => $this->input->post('contact_person_name'),
+            'officer_phone' => $this->input->post('mobile_number'),
+            'officer_email' => $this->input->post('email'),
+            'login_password' => $this->input->post('password'),
+            'is_deleted' => 0
+        );
+
+        $this->db->trans_start();
+        $this->db
+            ->set($data)
+            ->insert('es_officer');
+        //$id = $this->db->insert_id();
+        $this->db->trans_complete();
+
+        $this->session->set_flashdata('message', 'Organizer has been created successfully');
+		redirect(base_url('officer.html?id=' . myid($this->formdata->id)));
+    }
+
+	function organizer_edit() {
+        //$this->checkEditId();
+        $id = $this->input->get('id');
+        if (is_null($id))
+            show_404();
+        $id = $this->db->escape($id);
+        $key = config_item('encryption_key');
+        $key = $this->db->escape($key);
+        $r = $this->db
+            ->where("MD5(CONCAT($key,`id`)) = $id")
+            ->get('es_officer');
+        if ($r->num_rows() == 0)
+            show_404();
+        $this->formdata = $r->row();
+
+        $this->load->view('includes/after_login/head');
+        $this->load->view('officer/edit_organizer.php');
+    }
+
+	function organizer_edit_validate() {
+        $id = $this->input->get('id');
+        if (is_null($id))
+            show_404();
+        $id = $this->db->escape($id);
+        $key = config_item('encryption_key');
+        $key = $this->db->escape($key);
+        $r = $this->db
+            ->where("MD5(CONCAT($key,`id`)) = $id")
+            ->get('es_officer');
+        if ($r->num_rows() == 0)
+            show_404();
+        $this->formdata = $r->row();
+
+
+        $this->form_validation->set_rules('officer_designation', 'officer_designation*Officer designation', 'trim|required');
+        //$this->form_validation->set_rules('officer_country', 'officer_country*Officer country', 'trim|required');
+        $this->form_validation->set_rules('officer_rank', 'officer_rank*officer rank', 'trim');
+        $this->form_validation->set_rules('organization', 'organization*Organization', 'trim|required');
+        $this->form_validation->set_rules('contact_person_name', 'contact_person_name*Contact person name', 'trim|required');
+        $this->form_validation->set_rules('mobile_number', 'mobile_number*Mobile number', 'trim|required');
+        $this->form_validation->set_rules('email', 'email*Email', 'trim|required');
+        $this->form_validation->set_rules('password', 'password*Password', 'trim|required');
+
+        if ($this->form_validation->run() == false)
+            return $this->common->doError(func_num_args(), $this->common->getFVError());
+        else {
+            return $this->common->doError(func_num_args(), "done", true);
+        }
+    }
+
+    function organizer_edit_submit() {
+        if ($this->local_delegates_edit_validate() !== true)
+            show_404();
+
+        $exhibition_id = $this->formdata->id;
+
+        $data = array(
+           // 'exhibition_id' => $exhibition_id,
+            //'officer_type' => 'organizer',
+            'officer_designation' => $this->input->post('officer_designation'),
+            'officer_country' => $this->input->post('officer_country'),
+            'officer_rank' => $this->input->post('officer_rank'),
+            'officer_company' => $this->input->post('organization'),
+            'contact_person' => $this->input->post('contact_person_name'),
+            'officer_phone' => $this->input->post('mobile_number'),
+            'officer_email' => $this->input->post('email'),
+            'login_password' => $this->input->post('password'),
+            'is_deleted' => 0
+        );
+
+
+        $this->db->trans_start();
+        $this->db
+            ->set($data)
+            ->where('id', $this->formdata->id)
+            ->update('es_officer');
+
+        $this->db->trans_complete();
+        $this->session->set_flashdata('message', 'Organizer has been updated successfully');
+		redirect(base_url('officer.html?id=' . myid($this->formdata->exhibition_id)));
     }
 
 }

@@ -32,15 +32,27 @@
                                 <a href="<?/*= base_url('officer-add.html') */?>?id=<?/*= $this->input->get('id') */?>"
                                                      class="btn btn-primary btn-block margin-bottom">Add New</a>
                             </div>-->
-                            <div class="col-xs-3 col-xs-offset-3">
+                            <div class="col-xs-2">
                                 <a href="<?= base_url('officer-add-foreign-delegations.html') ?>?id=<?= $this->input->get('id') ?>"
                                    class="btn btn-primary btn-block margin-bottom">Add Foreign Delegations</a>
                             </div>
-                            <div class="col-xs-3">
+                            <div class="col-xs-2">
                                 <a href="<?= base_url('officer-add-local-delegates.html') ?>?id=<?= $this->input->get('id') ?>"
                                    class="btn btn-primary btn-block margin-bottom">Add Local Delegations</a>
                             </div>
-                            <div class="col-xs-3">
+							<div class="col-xs-2">
+                                <a href="<?= base_url('officer-add-armed-force.html') ?>?id=<?= $this->input->get('id') ?>"
+                                   class="btn btn-primary btn-block margin-bottom">Armed Forces (Pakistan)</a>
+                            </div>
+                            <div class="col-xs-2">
+                                <a href="<?= base_url('officer-add-government-officials.html') ?>?id=<?= $this->input->get('id') ?>"
+                                   class="btn btn-primary btn-block margin-bottom">Government Officials</a>
+                            </div>
+                            <div class="col-xs-2">
+                                <a href="<?= base_url('officer-add-organizer.html') ?>?id=<?= $this->input->get('id') ?>"
+                                   class="btn btn-primary btn-block margin-bottom">Organizers</a>
+                            </div>
+                            <div class="col-xs-2">
                                 <a href="<?= base_url('officer-add-chief-of-servicing.html') ?>?id=<?= $this->input->get('id') ?>"
                                    class="btn btn-primary btn-block margin-bottom">Add Chief of Servicing</a>
                             </div>

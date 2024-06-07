@@ -390,6 +390,28 @@ $route['officer-local-delegates-submit.html']['post'] = "officer/local_delegates
 $route['officer-add-chief-of-servicing.html']['get'] = "officer/chief_of_servicing";
 $route['officer-chief-of-servicing-validate.html']['post'] = "officer/chief_of_servicing_add_validate/doError";
 $route['officer-chief-of-servicing-submit.html']['post'] = "officer/chief_of_servicing_add_submit";
+
+
+$route['officer-add-armed-force.html']['get'] = "officer/armed_force";
+$route['officer-armed-force-validate.html']['post'] = "officer/armed_force_add_validate/doError";
+$route['officer-armed-force-submit.html']['post'] = "officer/armed_force_add_submit";
+$route['officer-edit-armed-force.html']['get'] = "officer/armed_force_edit";
+$route['officer-edit-armed-force-validate.html']['post'] = "officer/armed_force_edit_validate/doError";
+$route['officer-edit-armed-force-submit.html']['post'] = "officer/armed_force_edit_submit";
+
+$route['officer-add-government-officials.html']['get'] = "officer/government_officials";
+$route['officer-government-officials-validate.html']['post'] = "officer/government_officials_add_validate/doError";
+$route['officer-government-officials-submit.html']['post'] = "officer/government_officials_add_submit";
+$route['officer-edit-government-officials.html']['get'] = "officer/government_officials_edit";
+$route['officer-edit-government-officials-validate.html']['post'] = "officer/government_officials_edit_validate/doError";
+$route['officer-edit-government-officials-submit.html']['post'] = "officer/government_officials_edit_submit";
+
+$route['officer-add-organizer.html']['get'] = "officer/organizer";
+$route['officer-organizer-validate.html']['post'] = "officer/organizer_add_validate/doError";
+$route['officer-organizer-submit.html']['post'] = "officer/organizer_add_submit";
+$route['officer-edit-organizer.html']['get'] = "officer/organizer_edit";
+$route['officer-edit-organizer-validate.html']['post'] = "officer/organizer_edit_validate/doError";
+$route['officer-edit-organizer-submit.html']['post'] = "officer/organizer_edit_submit";
 #E officer
 
 #S Sms Notification
