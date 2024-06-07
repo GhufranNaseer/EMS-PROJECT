@@ -292,6 +292,24 @@
                             <span>Exhibitors to Foreign Delegates</span>
                         </a>
                     </li>
+                    <li data-page="meeting-officer-armed_force">
+                        <a href="<?= base_url('officer-list.html?type=armed_force') ?>">
+                            <i class="fa fa-clock-o"></i>
+                            <span>Exhibitors to Armed Force</span>
+                        </a>
+                    </li>
+                    <li data-page="meeting-officer-government_officials">
+                        <a href="<?= base_url('officer-list.html?type=government_officials') ?>">
+                            <i class="fa fa-clock-o"></i>
+                            <span>Exhibitors to Government official</span>
+                        </a>
+                    </li>
+                    <li data-page="meeting-officer-organizer">
+                        <a href="<?= base_url('officer-list.html?type=organizer') ?>">
+                            <i class="fa fa-clock-o"></i>
+                            <span>Exhibitors to Organizer</span>
+                        </a>
+                    </li>
 
                     <li data-page="my_meeting">
                         <?php

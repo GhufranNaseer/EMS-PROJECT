@@ -54,7 +54,10 @@ CREATE VIEW `my_appointments_datatable` AS
 			(SELECT CONCAT(`es_officer`.`officer_designation`,' (',
 				IF(es_officer.officer_type="foreign_delegates", 'Foreign Delegate',
 				IF(es_officer.officer_type="local_delegates", 'Local Delegate',
-				IF(es_officer.officer_type="chief_of_servicing", 'Gov. Services Chief', "-"))),
+				IF(es_officer.officer_type="armed_force", 'Armed Force (Pakistan)',
+				IF(es_officer.officer_type="government_officials", 'Government Officials',
+				IF(es_officer.officer_type="organizer", 'Organizer',
+				IF(es_officer.officer_type="chief_of_servicing", 'Gov. Services Chief', "-")))))),
 				')')
 			FROM `es_officer` WHERE (`es_officer`.`id` = `a`.`appointment_from`))) AS `appointment_from_company_name`,
 		  IF((`a`.`user_type_to` = 'exhibitor'),
@@ -62,7 +65,10 @@ CREATE VIEW `my_appointments_datatable` AS
 			(SELECT CONCAT(`es_officer`.`officer_designation`,' (',
 				IF(es_officer.officer_type="foreign_delegates", 'Foreign Delegate',
 				IF(es_officer.officer_type="local_delegates", 'Local Delegate',
-				IF(es_officer.officer_type="chief_of_servicing", 'Gov. Services Chief', "-"))),
+				IF(es_officer.officer_type="armed_force", 'Armed Force (Pakistan)',
+				IF(es_officer.officer_type="government_officials", 'Government Officials',
+				IF(es_officer.officer_type="organizer", 'Organizer',
+				IF(es_officer.officer_type="chief_of_servicing", 'Gov. Services Chief', "-")))))),
 				')')
 			FROM `es_officer` WHERE (`es_officer`.`id` = `a`.`appointment_to`))) AS `appointment_to_company_name`
 		FROM `es_exhibition_appointments` `a`

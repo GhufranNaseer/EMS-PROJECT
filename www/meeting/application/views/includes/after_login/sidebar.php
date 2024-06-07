@@ -29,7 +29,7 @@
             <li class="treeview">
                 <a href="javascript:void(0)">
                     <i class="fa fa-folder"></i>
-                    <span>Meetings</span>
+                    <span>Networking</span>
                     <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
                 </a>
                 <ul class="treeview-menu">
@@ -56,6 +56,24 @@
                         <a href="<?= base_url('officer-list.html?type=foreign_delegates') ?>">
                             <i class="fa fa-clock-o"></i>
                             <span>Schedule with Foreign Delegates</span>
+                        </a>
+                    </li>
+                    <li data-page="meeting-officer-armed_force">
+                        <a href="<?= base_url('officer-list.html?type=armed_force') ?>">
+                            <i class="fa fa-clock-o"></i>
+                            <span>Schedule with Armed Force</span>
+                        </a>
+                    </li>
+                    <li data-page="meeting-officer-government_officials">
+                        <a href="<?= base_url('officer-list.html?type=government_officials') ?>">
+                            <i class="fa fa-clock-o"></i>
+                            <span>Schedule with Government official</span>
+                        </a>
+                    </li>
+                    <li data-page="meeting-officer-organizer">
+                        <a href="<?= base_url('officer-list.html?type=organizer') ?>">
+                            <i class="fa fa-clock-o"></i>
+                            <span>Schedule with Organizer</span>
                         </a>
                     </li>
 
