@@ -149,4 +149,6 @@ $route['meeting_re_schedule_submit.html']['post'] = "meeting_report/meeting_re_s
 
 
 
-
+# S product profile
+$route['view-product-profile.html']['get'] = "product_profile/view_profile";
+# E product profile

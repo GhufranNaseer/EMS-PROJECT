@@ -24,6 +24,23 @@
                 </a>
             </li>
 
+			<?php
+			$hasCataloguesFormData = $this->db
+				->where('exhibition_id', $this->event->id)
+				->where('booking_id', $this->booking->id)
+				->where('form_id', 3)
+				->count_all_results('es_exhibition_booking_forms_data');
+			
+			if ($hasCataloguesFormData > 0) {
+			?>
+			<li data-page="my-product-profile">
+				<a href="<?= base_url('view-product-profile.html?id=' . urlencode(myid($this->booking->id))); ?>">
+					<i class="fa fa-id-card"></i>
+					<span>My Product Profile</span>
+				</a>
+			</li>
+			<?php } ?>
+
             <?php
             $forms = $this->db
                 ->select('O.*')
