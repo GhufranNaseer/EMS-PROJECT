@@ -199,20 +199,24 @@
 			return;
 		}
 
-		if (this.config.enable_crop) {
-			let fileName = event.target.files[0].name;
-			let ext = fileName.split('.');
-			ext = ext[ext.length - 1];
-
-			if (this.allowed_extensions.indexOf(ext) == -1) {
-				this.set_is_uploading();
-				alert('File type .' + ext + ' is not allowed');
-			} else {
-				this.init_cropper(event.target.files[0]);
+		if (event.target.files.length && event.target.files[0].type.indexOf('image/') !== -1) {
+			
+			if (this.config.enable_crop) {
+				let fileName = event.target.files[0].name;
+				let ext = fileName.split('.');
+				ext = ext[ext.length - 1];
+	
+				if (this.allowed_extensions.indexOf(ext) == -1) {
+					this.set_is_uploading();
+					alert('File type .' + ext + ' is not allowed');
+				} else {
+					this.init_cropper(event.target.files[0]);
+				}
+	
+				return;
 			}
-
-			return;
 		}
+
 
 		for (var x = 0; x < event.target.files.length; x++) {
 			if (this.check_max_upload()) return;

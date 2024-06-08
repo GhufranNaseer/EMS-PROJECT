@@ -162,9 +162,17 @@ ALTER TABLE `database`.`es_exhibition_appointments`
 ADD COLUMN `discussion_points` TEXT NULL AFTER `agenda_of_meeting`,
 ADD COLUMN `meeting_notes` TEXT NULL AFTER `discussion_points`;
 
--- ^^ END Updated on live
 
 
 -- 03 June 2024
 INSERT INTO `email_template` VALUES (10,'MOU_SIGNING_CANCELED','<p>Dear&nbsp;<strong>{NAME},</strong></p>\r\n\r\n<p>Your schedule of MoU sign with&nbsp;{SENDER_NAME} of&nbsp;{SENDER_COMPANY}&nbsp;for&nbsp;{SCHEDULE_TIME}&nbsp;has been declined.</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>Regards,</p>\r\n\r\n<p>Team&nbsp;{EVENT_NAME}</p>\r\n','MoU Sign Request Canceled - {SCHEDULE_TIME}','2024-06-03 03:30:00','2024-06-03 03:42:00','{NAME},{EMAIL},{PHONE},{COMPANY},{SENDER_NAME},{SENDER_EMAIL},{SENDER_PHONE},{SENDER_COMPANY},{SENDER_WEBSITE},{SCHEDULE_TIME},{DESCRIPTION},{COMMERCIAL_VALUE}',1,'This template is use to send MoU sign cancel email notification.'),(11,'MOU_SIGNING_ACCEPTED','<p>Dear <strong>{NAME}</strong>,</p>\r\n\r\n<p>Your request of MoU sign with {SENDER_NAME} of {SENDER_COMPANY} for {SCHEDULE_TIME} has been accepted. Please login for further details.</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>Regards,</p>\r\n\r\n<p>Team {EVENT_NAME}</p>\r\n','MoU Sign Request Accepted - {SCHEDULE_TIME}','2024-06-03 03:30:00','2024-06-03 03:42:32','{NAME},{EMAIL},{PHONE},{COMPANY},{SENDER_NAME},{SENDER_EMAIL},{SENDER_PHONE},{SENDER_COMPANY},{SENDER_WEBSITE},{SCHEDULE_TIME},{DESCRIPTION},{COMMERCIAL_VALUE}',1,'This template is use to send MoU sign accepted email notification.');
 
+
+-- ^^ END Updated on live
+
+-- 08 June 2024
+ALTER TABLE `database`.`es_exhibition_badges_limit`
+CHANGE COLUMN `invitation_type` `invitation_type` VARCHAR(255) NULL DEFAULT NULL ;
+
+ALTER TABLE `database`.`es_exhibition_badges_invitation` 
+CHANGE COLUMN `invitation_type` `invitation_type` VARCHAR(255) NULL DEFAULT NULL ;
