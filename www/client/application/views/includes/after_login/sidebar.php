@@ -370,6 +370,13 @@
                     </li>
                 </ul>
             </li>
+
+			<li data-page="search-product-profile">
+				<a href="<?= base_url('product-profile-list.html'); ?>">
+					<i class="fa fa-search"></i>
+					<span>Search Exhibitors</span>
+				</a>
+			</li>
         </ul>
     </section>
     <!-- /.sidebar -->

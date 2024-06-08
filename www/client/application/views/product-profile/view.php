@@ -141,7 +141,7 @@
 				<?php if (isset($data->products)) { ?>
 					<div class="box">
 						<div class="box-header">
-							<h3 class="box-title">Products and Categories</h3>
+							<h3 class="box-title">Business Categories</h3>
 						</div>
 						<table class="table table-bordered table-striped">
 							<thead>
@@ -179,6 +179,43 @@
 										<td>'. $other_business->sector .'</td>
 										<td>'. $other_business->type .'</td>
 										<td>'. $other_business->area .'</td>
+										</tr>';
+									}
+								}
+								
+								?>
+							</tbody>
+						</table>
+					</div>
+				<?php } ?>
+				
+				
+				<?php if (isset($data->products) && isset($data->products->product) && count((array)$data->products->product) > 0) { ?>
+					<div class="box">
+						<div class="box-header">
+							<h3 class="box-title">Products</h3>
+						</div>
+						<table class="table table-bordered table-striped">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>Product Category</th>
+									<th>Product Type</th>
+									<th>Product Name</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php 
+								$count = 0;
+								
+								if (isset($data->products->product) && count((array)$data->products->product) > 0) {
+									foreach ($data->products->product as $key => $product) {
+										$count++;
+										echo '<tr>
+										<td>'. $count .'</td>
+										<td>'. $product->category .'</td>
+										<td>'. $product->type .'</td>
+										<td>'. $product->name .'</td>
 										</tr>';
 									}
 								}
