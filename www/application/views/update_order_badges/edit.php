@@ -43,6 +43,14 @@
                                                placeholder="Badges total limit">
                                     </div>
                                 </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Visitor badges limit</label>
+                                        <input type="text" class="form-control" name="visitor_badges_limit"
+                                               value="<?= $this->order_data->visitor_badges_limit ?>"
+                                               placeholder="Visitor badges limit">
+                                    </div>
+                                </div>
                             </div>
 
 

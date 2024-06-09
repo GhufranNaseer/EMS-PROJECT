@@ -89,6 +89,12 @@ class Meeting_report extends MY_Controller
 			->unset_column('user_type_to')
 			->unset_column('appointment_to')
 
+			->add_column('agenda', function ($row) {
+				$id = $row['id'];
+				
+				return '<div class="text-center"><button type="button" class="btn btn-link" onclick="show_agenda(\''.myid($id).'\')">view</button></div>';
+			}, NULL)
+
 			->add_column('col_conducted', function ($row) {
 				$id = $row['id'];
 				$is_conducted = $row['is_conducted'];
@@ -112,7 +118,7 @@ class Meeting_report extends MY_Controller
 						if ($row['is_approved'] == 0) {
 							$html .= '<a href="' . base_url() . 'meeting-approved.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-success" onclick="return confirm(\'Are you sure you would like to accept the meeting request\')">Accept</a> ';
 						}
-						$html .= '<a href="' . base_url() . 'meeting-cancel.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you would like to deny the meeting request?\')">Regret/Deny</a> ';
+						$html .= '<a href="' . base_url() . 'meeting-cancel.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you would like to deny the meeting request?\')">Regret</a> ';
 						$html .= '<a href="' . base_url() . 'meeting_re_schedule.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-info">Re-Schedule</a> ';
 					} else {
 						$html = '<a href="' . base_url() . 'meeting-delete.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you would like to delete the meeting request?\')">Delete</a> ';
@@ -578,6 +584,21 @@ class Meeting_report extends MY_Controller
 		echo json_encode(array(
 			'error' => 0,
 			'message' => 'Meeting conducted successfully!'
+		));
+		die;
+	}
+
+	function get_meeting_details_ajax() {
+
+		$id = $this->input->post('id');
+		
+		$meeting = $this->db->where(mycolumn(), $id)->get('es_exhibition_appointments')->row();
+
+
+		echo json_encode(array(
+			'error' => 0,
+			'message' => 'Meeting details!',
+			'data' => $meeting,
 		));
 		die;
 	}

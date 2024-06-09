@@ -179,7 +179,8 @@ class Update_order_badges extends MY_Controller {
         $this->db
             ->where('id', $this->order_data->id)
             ->update('es_exhibition_booking', array(
-                'badges_total_limit' => $this->input->post('badges_total_limit')
+                'badges_total_limit' => $this->input->post('badges_total_limit'),
+                'visitor_badges_limit' => $this->input->post('visitor_badges_limit'),
             ));
 
         $this->db
