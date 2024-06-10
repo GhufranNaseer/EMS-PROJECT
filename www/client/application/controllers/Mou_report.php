@@ -45,7 +45,10 @@ class Mou_report extends MY_Controller
             ->add_column('col_action', function ($row) {
                 $id = $row['id'];
                 $html = '';
-                $html .= '<a href="' . base_url() . 'mou-delete.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you would like to delete the MoU request?\')">Delete</a> ';
+				if ($row['is_approved'] == 0) {
+					$html .= '<a href="' . base_url() . 'mou-delete.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you would like to delete the MoU request?\')">Delete</a> ';
+				}
+                
 				
                 return "<div class='text-right'>{$html}</div>";
             }, NULL)
