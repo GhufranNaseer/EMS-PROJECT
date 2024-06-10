@@ -370,6 +370,39 @@
                     </li>
                 </ul>
             </li>
+            <li class="treeview">
+                <a href="javascript:void(0)">
+                    <i class="fa fa-folder"></i>
+                    <span>Exhibitor Team</span>
+                    <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                </a>
+                <ul class="treeview-menu">
+                    <li data-page="contact-person-list">
+                        <a href="<?= base_url('contact-person-list.html') ?>">
+                            <i class="fa fa-clock-o"></i>
+                            <span>Contact Person</span>
+                        </a>
+                    </li>
+                    <li data-page="agent-list">
+                        <a href="<?= base_url('agent-list.html') ?>">
+                            <i class="fa fa-clock-o"></i>
+                            <span>Agent</span>
+                        </a>
+                    </li>
+                    <li data-page="organizer-list">
+                        <a href="<?= base_url('organizer-list.html') ?>">
+                            <i class="fa fa-clock-o"></i>
+                            <span>Organizer</span>
+                        </a>
+                    </li>
+                    <li data-page="stall-builder-list">
+                        <a href="<?= base_url('stall-builder-list.html') ?>">
+                            <i class="fa fa-clock-o"></i>
+                            <span>Stall Builder Contractors</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
 
 			<li data-page="search-product-profile">
 				<a href="<?= base_url('product-profile-list.html'); ?>">
