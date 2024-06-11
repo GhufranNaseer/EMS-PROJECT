@@ -11,7 +11,7 @@ class Meeting_report extends MY_Controller
 			' => array(
                 'rule' => '@'
             ),
-            'crd_list_datatable,crd_exhibition_list_datatable,
+            'crd_list_datatable,crd_exhibition_list_datatable,get_meeting_details_ajax,
 			' => array(
                 'rule' => '@'
             )
@@ -127,20 +127,26 @@ class Meeting_report extends MY_Controller
             ->unset_column('appointment_to')
             ->unset_column('appointment_from')
 
-			->add_column('col_conducted', function ($row) {
+			->add_column('agenda', function ($row) {
 				$id = $row['id'];
-				$is_conducted = $row['is_conducted'];
 				
-				if ($row['is_approved'] == 1) {
-					if ($row['is_conducted'] == 1) {
-						return '<div class="text-left small">'.$row['appointment_feedback'].'</div>';
-					} else {
-						return '<div class="text-center small">N/A</div>';
-					}
-				} else {
-					return '<div class="text-center">-</div>';
-				}
+				return '<div class="text-center"><button type="button" class="btn btn-link" onclick="show_agenda(\''.myid($id).'\')">View Details</button></div>';
 			}, NULL)
+
+			// ->add_column('col_conducted', function ($row) {
+			// 	$id = $row['id'];
+			// 	$is_conducted = $row['is_conducted'];
+				
+			// 	if ($row['is_approved'] == 1) {
+			// 		if ($row['is_conducted'] == 1) {
+			// 			return '<div class="text-left small">'.$row['appointment_feedback'].'</div>';
+			// 		} else {
+			// 			return '<div class="text-center small">N/A</div>';
+			// 		}
+			// 	} else {
+			// 		return '<div class="text-center">-</div>';
+			// 	}
+			// }, NULL)
 
             //->where('is_approved', 1)
 			->where('is_deleted', 0)
@@ -159,4 +165,18 @@ class Meeting_report extends MY_Controller
         print ($this->datatables->generate());
     }
 
+	function get_meeting_details_ajax() {
+
+		$id = $this->input->post('id');
+		
+		$meeting = $this->db->where(mycolumn(), $id)->get('es_exhibition_appointments')->row();
+
+
+		echo json_encode(array(
+			'error' => 0,
+			'message' => 'Meeting details!',
+			'data' => $meeting,
+		));
+		die;
+	}
 }

@@ -318,7 +318,7 @@
 											}
 
 											// show approve and cancel option to super admin only
-											if ($this->userdata->user_group_id == SUPER_ADMIN) {
+											if ($this->userdata->user_group_id == SUPER_ADMIN || $this->userdata->user_group_id == USER_ACCOUNTS) {
 
 												if ($this->orderdata->booking_type == 'confirmed' && $this->orderdata->is_approved == 0) {
 													echo '<button type="button" class="btn btn-success btn-lg btn_mark_approved">Approve Order</button> ';

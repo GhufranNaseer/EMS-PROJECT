@@ -156,8 +156,7 @@ $route['product-profile-list.html']['get'] = "product_profile/profile_list";
 $route['product-profile-datatable.html'] = "product_profile/profile_list_datatable";
 # E product profile
 
-$route['contact-person-list.html']['get'] = "exhibitor_team/crd_contact_person_list";
-$route['contact-person-datatable.html'] = "exhibitor_team/crd_contact_person_list_datatable";
+
 
 $route['agent-list.html']['get'] = "exhibitor_team/crd_agent_list";
 $route['agent-datatable.html'] = "exhibitor_team/crd_agent_list_datatable";

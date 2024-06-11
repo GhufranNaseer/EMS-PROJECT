@@ -90,6 +90,7 @@ define('SUPER_ADMIN', 1);
 define('CUSTOMER', 2);
 define('SALES_PERSON', 3);
 define('MANAGER', 4);
+define('USER_ACCOUNTS', 9);
 
 define('ALLOW_DELETION', 1);
 

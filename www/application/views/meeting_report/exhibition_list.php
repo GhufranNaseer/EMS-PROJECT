@@ -60,7 +60,7 @@
                                 <th>Meeting Date</th>
                                 <th>Meeting Time</th>
                                 <th>Status</th>
-                                <th>Feedback</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
 
@@ -72,6 +72,42 @@
         </div>
     </section>
 
+</div>
+
+
+<div class="modal fade" id="agenda_modal" tabindex="-1" role="dialog" aria-labelledby="agenda_modal">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Meeting Agenda</h4>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<label>Agenda of meeting: <span class="text-danger">*</span></label>
+					<input type="text" class="form-control" id="agenda_modal_agenda" disabled>
+				</div>
+				<div class="form-group">
+					<label>Discussion Points: <span class="text-danger">*</span></label>
+					<textarea class="form-control" id="agenda_modal_discussion_points" rows="6" disabled></textarea>
+				</div>
+				<div class="form-group">
+					<label>Notes: <span class="text-muted small">(optional)</span></label>
+					<textarea class="form-control" id="agenda_modal_notes" rows="4" disabled></textarea>
+				</div>
+				<div class="form-group">
+					<label><input type="checkbox" id="agenda_modal_is_conducted" disabled /> Is Conducted</label>
+				</div>
+				<div class="form-group">
+					<label>Feedback:</label>
+					<textarea class="form-control" id="agenda_modal_feedback" rows="4" disabled></textarea>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
 </div>
 
 <?php $this->load->view('includes/after_login/footer'); ?>
@@ -90,7 +126,33 @@
         })
     });
 
+	function show_agenda(id) {
+		$.ajax({
+				type:    'post',
+				url:     '<?= base_url('meeting-report_status-details.html') ?>',
+				data:    {
+					id: id,
+				},
+				success: function (data) {
+					console.log(data)
+					data = JSON.parse(data)
 
+					if (data.error == 0) {
+						
+						$('#agenda_modal_agenda').val(data.data.agenda_of_meeting)
+						$('#agenda_modal_discussion_points').val(data.data.discussion_points)
+						$('#agenda_modal_notes').val(data.data.meeting_notes)
+						$('#agenda_modal_feedback').val(data.data.appointment_feedback)
+						$('#agenda_modal_is_conducted').prop('checked', (data.data.is_conducted == 1))
+
+						$('#agenda_modal').modal('show')
+					}
+				},
+				error:   function () {
+					alert('Something went wrong!')
+				}
+			});
+	}
 </script>
 
 

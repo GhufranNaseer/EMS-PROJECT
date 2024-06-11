@@ -56,7 +56,7 @@
                 <h4 class="modal-title">Organizer Details</h4>
             </div>
             <div class="modal-body">
-                <p id="modal-content">Loading...</p>
+                <div id="modal-content">Loading...</div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

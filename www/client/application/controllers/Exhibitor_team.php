@@ -3,55 +3,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Exhibitor_team extends MY_Controller
 {
-    function crd_contact_person_list() {
-		$this->load->view('includes/after_login/head');
-        $this->load->view('exhibitor_team/contact_person_list');
-    }
-    function crd_contact_person_list_datatable()
-    {
-
-		$this->load->library('datatables');
-		$this->datatables
-			->select('E.id, 
-				  E.person_name,
-				  C.company,
-				  E.designation, 
-				  E.primary_email, 
-				  E.primary_phone,
-				  E.is_active', false)
-			->unset_column('E.is_active')
-			->add_column('col_action', function ($row) {
-				$id = $row['id'];
-				$html = '<button type="button" class="btn btn-info btn-detail" data-id="' . $id . '">Detail</button>';
-				return "<center>{$html}</center>";
-			}, NULL)
-            ->join('es_customers as C', 'C.id = E.customer_id', 'LEFT')
-			->from('es_customer_contact_persons as E')
-			->where('E.is_deleted', 0);
-
-		print ($this->datatables->generate());
-    }
-	function get_contact_person_details (){
-		$id = $this->input->post('id');
-		$this->db->select('E.*, C.company');
-		$this->db->from('es_customer_contact_persons as E');
-		$this->db->join('es_customers as C', 'C.id = E.customer_id', 'LEFT');
-		$this->db->where('E.id', $id);
-		$query = $this->db->get();
-		$data = $query->row_array();
-
-		// Return the details as a formatted HTML
-		echo "<strong>Person Name:</strong> " . $data['person_name'] . "<br>";
-		echo "<strong>Company:</strong> " . $data['company'] . "<br>";
-		echo "<strong>Designation:</strong> " . $data['designation'] . "<br>";
-		echo "<strong>Primary Email:</strong> " . $data['primary_email'] . "<br>";
-		echo "<strong>Secondary Email:</strong> " . $data['secondary_email'] . "<br>";
-		echo "<strong>Primary Phone:</strong> " . $data['primary_phone'] . "<br>";
-		echo "<strong>Secondary Phone:</strong> " . $data['secondary_phone'] . "<br>";
-		echo "<strong>Office Phone:</strong> " . $data['office_phone'] . "<br>";
-		echo "<strong>Active:</strong> " . ($data['is_active'] ? 'Yes' : 'No') . "<br>";
-		
-	}
 
 	function crd_agent_list() {
 		$this->load->view('includes/after_login/head');
@@ -91,17 +42,20 @@ class Exhibitor_team extends MY_Controller
 		$query = $this->db->get();
 		$data = $query->row_array();
 
-		// Return the details as a formatted HTML
-		echo "<strong>Company:</strong> " . $data['agent_company'] . "<br>";
-		echo "<strong>Name:</strong> " . $data['agent_name'] . "<br>";
-		echo "<strong>Email:</strong> " . $data['agent_email'] . "<br>";
-		echo "<strong>Designation:</strong> " . $data['agent_designation'] . "<br>";
-		echo "<strong>Country:</strong> " . $data['agent_country'] . "<br>";
-		echo "<strong>City:</strong> " . $data['agent_city'] . "<br>";
-		echo "<strong>Zip Code Phone:</strong> " . $data['agent_zip_code'] . "<br>";
-		echo "<strong>Address:</strong> " . $data['agent_address'] . "<br>";
-		echo "<strong>Phone:</strong> " . $data['agent_phone'] . "<br>";
-		echo "<strong>Fax:</strong> " . $data['agent_fax'] . "<br>";
+		$html = '<table class="table table-striped">';
+		$html .= '<tr><th>Company:</th><td>'. $data['agent_company'] .'</td></tr>';
+		$html .= '<tr><th>Name:</th><td>'. $data['agent_name'] .'</td></tr>';
+		$html .= '<tr><th>Email:</th><td>'. $data['agent_email'] .'</td></tr>';
+		$html .= '<tr><th>Designation:</th><td>'. $data['agent_designation'] .'</td></tr>';
+		$html .= '<tr><th>Country:</th><td>'. $data['agent_country'] .'</td></tr>';
+		$html .= '<tr><th>City:</th><td>'. $data['agent_city'] .'</td></tr>';
+		$html .= '<tr><th>Zip Code Phone:</th><td>'. $data['agent_zip_code'] .'</td></tr>';
+		$html .= '<tr><th>Address:</th><td>'. $data['agent_address'] .'</td></tr>';
+		$html .= '<tr><th>Phone:</th><td>'. $data['agent_phone'] .'</td></tr>';
+		$html .= '<tr><th>Fax:</th><td>'. $data['agent_fax'] .'</td></tr>';
+		$html .= '</table>';
+
+		echo $html;
 		
 	}
 
@@ -145,13 +99,19 @@ class Exhibitor_team extends MY_Controller
 		$data = $query->row_array();
 
 		// Return the details as a formatted HTML
-		echo "<strong>Organizer Company:</strong> " . $data['organizer_company'] . "<br>";
-		echo "<strong>Organizer Name:</strong> " . $data['organizer_name'] . "<br>";
-		echo "<strong>Organizer Email:</strong> " . $data['organizer_email'] . "<br>";
-		echo "<strong>Organizer Country:</strong> " . $data['organizer_country'] . "<br>";
-		echo "<strong>Organizer City:</strong> " . $data['organizer_city'] . "<br>";
-		echo "<strong>Organizer Phone:</strong> " . $data['organizer_phone'] . "<br>";
-		echo "<strong>Organizer Image:</strong> <img src='../../" . $data['organizer_image'] . "'<br>";
+		$html = '<table class="table table-striped">';
+		$html .= '<tr>';
+		$html .= '<td rowspan="7" class="text-center"><img src="'.base_url('../' . $data['organizer_image']).'" class="img-responsive" style="max-width: 150px"></td>';
+		$html .= '</tr>';
+		$html .= '<tr><th>Company:</th><td>'. $data['organizer_company'] .'</td></tr>';
+		$html .= '<tr><th>Name:</th><td>'. $data['organizer_name'] .'</td></tr>';
+		$html .= '<tr><th>Email:</th><td>'. $data['organizer_email'] .'</td></tr>';
+		$html .= '<tr><th>Country:</th><td>'. $data['organizer_country'] .'</td></tr>';
+		$html .= '<tr><th>City:</th><td>'. $data['organizer_city'] .'</td></tr>';
+		$html .= '<tr><th>Phone:</th><td>'. $data['organizer_phone'] .'</td></tr>';
+		$html .= '</table>';
+
+		echo $html;
 	}
 
 	function crd_stall_builder_list() {
@@ -186,20 +146,26 @@ class Exhibitor_team extends MY_Controller
 		$this->db->select('E.*');
 		$this->db->from('es_stall_builders as E');
 		$this->db->where('E.id', $id);
+		$this->db->where('E.is_active', 1);
 		$query = $this->db->get();
 		$data = $query->row_array();
 
 		// Return the details as a formatted HTML
-		echo "<strong>Company Name:</strong> " . $data['company_name'] . "<br>";
-		echo "<strong>Company Logo:</strong> <img src='../../" . $data['company_logo'] . "'<br>";
-		echo "<strong>Name Of Person:</strong> " . $data['person_name'] . "<br>";
-		echo "<strong>Phone:</strong> " . $data['phone'] . "<br>";
-		echo "<strong>Designation:</strong> " . $data['designation'] . "<br>";
-		echo "<strong>Fax:</strong> " . $data['fax'] . "<br>";
-		echo "<strong>Mobile:</strong> " . $data['mobile'] . "<br>";
-		echo "<strong>Company Email:</strong> " . $data['company_email'] . "<br>";
-		echo "<strong>Url:</strong> " . $data['url'] . "<br>";
-		echo "<strong>Company Address:</strong> " . $data['company_address'] . "<br>";
-		echo "<strong>Active:</strong> " . ($data['is_active'] ? 'Yes' : 'No') . "<br>";
+		$html = '<table class="table table-striped">';
+		$html .= '<tr>';
+		$html .= '<td rowspan="10" class="text-center"><img src="'.base_url('../' . $data['company_logo']).'" class="img-responsive" style="max-width: 150px"></td>';
+		$html .= '</tr>';
+		$html .= '<tr><th>Stall Builder Company:</th><td>'. $data['company_name'] .'</td></tr>';
+		$html .= '<tr><th>Person Name:</th><td>'. $data['person_name'] .'</td></tr>';
+		$html .= '<tr><th>Company Phone:</th><td>'. $data['phone'] .'</td></tr>';
+		$html .= '<tr><th>Person Designations:</th><td>'. $data['designation'] .'</td></tr>';
+		$html .= '<tr><th>Company Fax:</th><td>'. $data['fax'] .'</td></tr>';
+		$html .= '<tr><th>Mobile:</th><td>'. $data['mobile'] .'</td></tr>';
+		$html .= '<tr><th>Company Email:</th><td>'. $data['company_email'] .'</td></tr>';
+		$html .= '<tr><th>Company Website:</th><td>'. $data['url'] .'</td></tr>';
+		$html .= '<tr><th>Company Address:</th><td>'. $data['company_address'] .'</td></tr>';
+		$html .= '</table>';
+
+		echo $html;
 	}
 }
