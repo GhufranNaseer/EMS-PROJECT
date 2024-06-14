@@ -76,7 +76,6 @@
                                 <th>Mou Signing Date</th>
                                 <th>Mou Signing Time</th>
                                 <th>Status</th>
-                                <th class="text-center">Action</th>
                             </tr>
                             </thead>
 

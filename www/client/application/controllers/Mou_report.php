@@ -42,17 +42,6 @@ class Mou_report extends MY_Controller
 			->unset_column('B.user_type_to')
 			->unset_column('B.request_to_id')
 
-            ->add_column('col_action', function ($row) {
-                $id = $row['id'];
-                $html = '';
-				if ($row['is_approved'] == 0) {
-					$html .= '<a href="' . base_url() . 'mou-delete.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you would like to delete the MoU request?\')">Delete</a> ';
-				}
-                
-				
-                return "<div class='text-right'>{$html}</div>";
-            }, NULL)
-
             ->where('B.exhibition_id', $this->event->id)
             ->where('B.is_deleted', 0)
             ->where($condition)
