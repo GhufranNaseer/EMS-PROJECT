@@ -134,21 +134,21 @@ $book_to_name = $book_to_data->company;
                                     <form action="<?= base_url('mou_re_schedule_submit.html') ?>?id=<?= $this->input->get('id') ?>" method="post" id="crd_form">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <label style="float:left">Commercial Value <span class="text-red">*</span></label>
-                                                <input type="number" class="form-control" name="commercial_value" value="<?= intval(preg_replace('@[^0-9]@', "", $commercial_value))  ?>">
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label>Currency <span class="text-red">*</span></label>
-                                                <select class="form-control" name="currency">
-                                                    <option value="PKR" <?= ($spilt[1] == 'PKR' ? 'selected' : '') ?>>PKR</option>
-                                                    <option value="USD" <?= ($spilt[1] == 'USD' ? 'selected' : '') ?>>USD</option>
-                                                </select>
+												<label style="float:left">Commercial Value <span class="text-red">*</span></label><br/>
+                                                <div class="form-group" style="width: 100% !important;">
+													<label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
+													<div class="input-group" style="width: 100% !important;">
+													  <input type="text" class="form-control" id="exampleInputAmount" value="<?= intval(preg_replace('@[^0-9]@', "", $commercial_value))  ?>" disabled>
+													  <div class="input-group-addon"><?= $spilt[1] ?></div>
+													</div>
+												</div>
                                             </div>
                                             <div class="col-md-6">
                                                 <label style="float:left">Description <span class="text-red">*</span></label>
-                                                <textarea name="description" class="form-control" rows="3"><?= $meeting->description ?></textarea>
+                                                <textarea name="description" class="form-control" rows="3" disabled><?= $meeting->description ?></textarea>
                                             </div>
                                         </div>
+										<br/>
                                         <p class="bg-danger js-msgbox"></p>
 
                                         <input type="hidden" name="booking_day" class="booking_day">
