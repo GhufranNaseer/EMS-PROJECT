@@ -124,12 +124,25 @@ $book_to_name = $book_to_data->company;
 
                                 </div>
 
+                                <?=
+                                    $commercial_value = $meeting->commercial_value;
+                                    $currency = $meeting->commercial_value;
+                                    $spilt = explode(' ', $currency);
+                                    
+                                ?>
                                 <div class="text-right">
                                     <form action="<?= base_url('mou_re_schedule_submit.html') ?>?id=<?= $this->input->get('id') ?>" method="post" id="crd_form">
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <label style="float:left">Commercial Value <span class="text-red">*</span></label>
-                                                <input type="text" class="form-control" name="commercial_value" value="<?= $meeting->commercial_value  ?>">
+                                                <input type="number" class="form-control" name="commercial_value" value="<?= intval(preg_replace('@[^0-9]@', "", $commercial_value))  ?>">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label>Currency <span class="text-red">*</span></label>
+                                                <select class="form-control" name="currency">
+                                                    <option value="PKR" <?= ($spilt[1] == 'PKR' ? 'selected' : '') ?>>PKR</option>
+                                                    <option value="USD" <?= ($spilt[1] == 'USD' ? 'selected' : '') ?>>USD</option>
+                                                </select>
                                             </div>
                                             <div class="col-md-6">
                                                 <label style="float:left">Description <span class="text-red">*</span></label>

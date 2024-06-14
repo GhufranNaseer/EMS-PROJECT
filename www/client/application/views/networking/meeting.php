@@ -128,11 +128,18 @@ if ($this->input->get('type') == 'officer') {
 
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <label>Commercial Value <span class="text-red">*</span></label>
-                                        <input type="text" class="form-control" name="commercial_value">
+                                        <input type="number" class="form-control" name="commercial_value">
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
+                                        <label>Currency <span class="text-red">*</span></label>
+                                        <select class="form-control" name="currency">
+                                            <option value="PKR">PKR</option>
+                                            <option value="USD">USD</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
                                         <label>Description <span class="text-red">*</span></label>
                                         <textarea name="description" class="form-control" rows="3"></textarea>
                                     </div>

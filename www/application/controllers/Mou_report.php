@@ -186,7 +186,7 @@ class Mou_report extends MY_Controller {
             'mou_sign_location' => $this->input->post('mou_sign_location'),
 			'request_to_id' => $meeting->request_to_id,
 			'description' => $this->input->post('description'),
-			'commercial_value' => $this->input->post('commercial_value'),
+			'commercial_value' => $this->input->post('commercial_value').' '.$this->input->post('currency'),
 			'exhibition_day' => $this->input->post('booking_day'),
 			'mou_sign_date' => $this->input->post('booking_date'),
 			'mou_sign_time' => $this->input->post('booking_time') . ':00',

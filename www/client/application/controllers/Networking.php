@@ -110,7 +110,7 @@ class Networking extends MY_Controller
             'user_type_from' => 'exhibitor',
             'user_type_to' => $this->input->post('user_type'),
 			'description' =>$this->input->post('description'),
-			'commercial_value' =>$this->input->post('commercial_value'),
+			'commercial_value' =>$this->input->post('commercial_value').' '.$this->input->post('currency'),
     		'created_on' => date('Y-m-d H:i:s'),
 		);
 
