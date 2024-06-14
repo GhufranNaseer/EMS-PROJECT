@@ -704,3 +704,7 @@ $route['mou_sign.html']['get'] = "mou_report/crd_list";
 $route['mou_sign-datatable.html'] = "mou_report/crd_list_datatable";
 $route['mou_sign-cancel.html']['get'] = "mou_report/cancel";
 $route['mou_sign-approved.html']['get'] = "mou_report/approved";
+$route['mou_sign_re_schedule.html']['get'] = "mou_report/schedule";
+$route['mou_re_schedule_validate.html']['post'] = "mou_report/mou_re_schedule_validate/doError";
+$route['mou_re_schedule_submit.html']['post'] = "mou_report/mou_re_schedule_submit";
+
