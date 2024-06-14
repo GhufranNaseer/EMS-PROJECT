@@ -124,7 +124,7 @@ $book_to_name = $book_to_data->company;
 
                                 </div>
 
-                                <?=
+                                <?php
                                     $commercial_value = $meeting->commercial_value;
                                     $currency = $meeting->commercial_value;
                                     $spilt = explode(' ', $currency);
