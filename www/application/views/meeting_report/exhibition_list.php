@@ -123,6 +123,20 @@
             file_name: 'Meeting Report',
             export_type: ['excel'],
             event_id: '<?= $this->input->get('id') ?>',
+			headers: [
+				'S.no',
+				'Meeting From',
+				'Meeting To',
+				'Exhibition Day',
+				'Meeting Date',
+				'Meeting Time',
+				'Status',
+				'Action',
+				'Meeting Agenda',
+				'Discussion Points',
+				'Is Conducted',
+				'Feedback',
+			]
         })
     });
 
