@@ -16,7 +16,6 @@ class Mou_report extends MY_Controller {
             ),
             'crd_list_datatable' => array(
                 'rule' => '@',
-                'ajaxOnly' => true
             )
         );
         $this->load->model('usermdl');
