@@ -24,7 +24,7 @@ class Mou_report extends MY_Controller
             ->select('B.id,
 					B.exhibition_id,
                     C.company as request_from_comapny,
-                    C.company as request_to_comapny,
+                    D.company as request_to_comapny,
                     B.exhibition_day,
                     B.mou_sign_date,
                     B.mou_sign_time,
