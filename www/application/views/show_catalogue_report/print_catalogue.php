@@ -90,7 +90,7 @@ $organizer = $this->db
                     <div style="background: <?= $event->event_color ?>; height: 50px; width: 100%">&nbsp;</div>
                 </td>
                 <td style="width: 20%;text-align: center">
-                    <img src="<?= $this->common->urlToBase64(base_url( $event->event_logo)) ?>" alt="" class="event_logo" style="height: 80px; width: 100px">
+                    <img src="<?= base_url( $event->event_logo) ?>" alt="" class="event_logo" style="height: 80px; width: 100px">
                 </td>
                 <td style="width: 40%; vertical-align: middle">
                     <div style="background: <?= $event->event_color ?>; height: 50px; width: 100%">&nbsp;</div>

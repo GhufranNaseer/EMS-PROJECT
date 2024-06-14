@@ -220,9 +220,16 @@
                                             <td class="text-center">
                                                 <input type="checkbox" class="has_badge_item" name="badges['.$badge->invitation_type.'][has_item]" '.$is_active.'>
                                             </td>
-                                            <td>'. ucfirst(str_replace('_', ' ', $badge->invitation_type)) .'</td>
                                             <td>
-                                                <input type="hidden" name="badges['.$badge->invitation_type.'][badge_type]" value="exhibitor">
+											<div class="input-group input-group-sm">
+												<input type="text" class="form-control invitation_type" value="'. ucfirst(str_replace('_', ' ', $badge->invitation_type)) .'" readonly>
+												<span class="input-group-btn">
+													<button class="btn btn-default edit_invitation_type" data-type="edit" type="button">edit</button>
+												</span>
+											</div>
+											</td>
+                                            <td>
+                                                <input type="hidden" class="badge_type" name="badges['.$badge->invitation_type.'][badge_type]" value="exhibitor">
                                                 <input type="number" class="form-control input-sm badge_qty" name="badges['.$badge->invitation_type.'][quantity]" value="'.$badge->quantity.'">
                                             </td>
                                             </tr>';
@@ -235,9 +242,16 @@
                                                 <td class="text-center">
                                                     <input type="checkbox" class="has_badge_item" name="badges['.$invitation.'][has_item]">
                                                 </td>
-                                                <td>'. ucfirst(str_replace('_', ' ', $invitation)) .'</td>
                                                 <td>
-                                                    <input type="hidden" name="badges['.$invitation.'][badge_type]" value="exhibitor">
+												<div class="input-group input-group-sm">
+													<input type="text" class="form-control invitation_type" value="'. ucfirst(str_replace('_', ' ', $invitation)) .'" readonly>
+													<span class="input-group-btn">
+														<button class="btn btn-default edit_invitation_type" data-type="edit" type="button">edit</button>
+													</span>
+												</div>
+												</td>
+                                                <td>
+                                                    <input type="hidden" class="badge_type" name="badges['.$invitation.'][badge_type]" value="exhibitor">
                                                     <input type="number" class="form-control input-sm badge_qty" name="badges['.$invitation.'][quantity]" value="0">
                                                 </td>
                                                 </tr>';
@@ -384,6 +398,34 @@
 		}
 	});
 	/* END Badges */
+
+
+	$(document).on('click', '.edit_invitation_type', function (e) {
+		e.stopImmediatePropagation();
+
+		let type = $(this).attr('data-type');
+
+		if (type == 'edit') {
+			$(this).attr('data-type', 'save');
+			$(this).text('save');
+			$(this).parents('td').find('.invitation_type').removeAttr('readonly');
+		}
+		else {
+
+			let val = $(this).parents('td').find('.invitation_type').val();
+			val = val.toLowerCase().replace(/\s/g, '_');
+			let key = `badges[${val}]`;
+
+			$(this).parents('tr').find('.has_badge_item').attr('name', `${key}[has_item]`);
+			$(this).parents('tr').find('.badge_type').attr('name', `${key}[badge_type]`);
+			$(this).parents('tr').find('.badge_qty').attr('name', `${key}[quantity]`);
+
+			$(this).attr('data-type', 'edit');
+			$(this).text('edit');
+			$(this).parents('td').find('.invitation_type').attr('readonly', true);
+		}
+		
+	});
 </script>
 </body>
 </html>
