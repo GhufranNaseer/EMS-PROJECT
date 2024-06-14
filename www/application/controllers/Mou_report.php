@@ -58,13 +58,11 @@ class Mou_report extends MY_Controller {
             ->add_column('col_action', function ($row) {
                 $id = $row['id'];
                 $html = '';
-				if($row['is_canceled'] == 1){
-					$html .= '<a href="' . base_url() . 'mou_sign_re_schedule.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-info">Re-Schedule</a> ';
-				}
+				$html .= '<a href="' . base_url() . 'mou_sign_re_schedule.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-info">Re-Schedule</a> ';
 				if ($row['is_approved'] == 1 || $row['is_canceled'] == 1) {
 					return $html;
 				}
-                $html .= '<a href="' . base_url() . 'mou_sign-cancel.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you would like to cancel the MoU request?\')">Cancel</a> ';
+                $html .= '<a href="' . base_url() . 'mou_sign-cancel.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you would like to cancel the MoU request?\')">Decline</a> ';
 				$html .= '<a href="' . base_url() . 'mou_sign-approved.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-success" onclick="return confirm(\'Are you sure you would like to accept the MoU request\')">Accept</a> ';
 				return "<div class='text-right'>{$html}</div>";
             }, NULL)
