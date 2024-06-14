@@ -154,6 +154,31 @@ class Meeting_report extends MY_Controller
             ->where(mycolumn('exhibition_id'), $this->input->get('id'))
             ->from('my_appointments_datatable');
 
+		if ($this->input->get('export_type') && $this->input->get('export_type') != '') {
+
+			$this->datatables->add_column('agenda_of_meeting', function ($row) {
+				$data = $this->db->select('agenda_of_meeting')->where('id', $row['id'])->get('es_exhibition_appointments')->row();
+				return $data->agenda_of_meeting;
+			}, NULL);
+			
+			$this->datatables->add_column('discussion_points', function ($row) {
+				$data = $this->db->select('discussion_points')->where('id', $row['id'])->get('es_exhibition_appointments')->row();
+				return $data->discussion_points;
+			}, NULL);
+
+			$this->datatables->add_column('is_conducted', function ($row) {
+				return ($row['is_conducted'] == 1) ? 'Yes' : 'No';
+			}, NULL);
+
+			$this->datatables->add_column('appointment_feedback', function ($row) {
+				return $row['appointment_feedback'];
+			}, NULL);
+
+		} else {
+			
+		}
+
+
 		if ($this->input->get('filter_status') && $this->input->get('filter_status') != '') {
 			if ($this->input->get('filter_status') == 'approved') {
 				$this->datatables->where('is_approved', 1);
