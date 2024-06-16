@@ -69,6 +69,9 @@
                                         <option value="foreign_delegates" <?= (($this->input->get('filter_type') && $this->input->get('filter_type') == 'foreign_delegates') ? 'selected' : '') ?>>Foreign Delegates</option>
                                         <option value="local_delegates" <?= (($this->input->get('filter_type') && $this->input->get('filter_type') == 'local_delegates') ? 'selected' : '') ?>>Local Delegates</option>
                                         <option value="chief_of_servicing" <?= (($this->input->get('filter_type') && $this->input->get('filter_type') == 'chief_of_servicing') ? 'selected' : '') ?>>Gov. Chief of Servicing</option>
+                                        <option value="armed_force" <?= (($this->input->get('filter_type') && $this->input->get('filter_type') == 'armed_force') ? 'selected' : '') ?>>Armed Forces (Pakistan)</option>
+                                        <option value="government_officials" <?= (($this->input->get('filter_type') && $this->input->get('filter_type') == 'government_officials') ? 'selected' : '') ?>>Government Officials</option>
+                                        <option value="organizer" <?= (($this->input->get('filter_type') && $this->input->get('filter_type') == 'organizer') ? 'selected' : '') ?>>Organizers</option>
                                     </select>
                                 </div>
                                 <div class="col-sm-3">

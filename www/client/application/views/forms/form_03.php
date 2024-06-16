@@ -123,7 +123,7 @@ $hall_data = $this->db
         <div class="pull-right">
             <h4>FORM SUBMISSION DUE DATE</h4>
 			<?php
-			$form_expire_date = $this->db->where('exhibition_id', $this->event->id)->where('form_id', $this->form_id)->get('es_exhibition_forms')->row()->expiry_date . ' 24:00:00';
+			$form_expire_date = $this->db->where('exhibition_id', $this->event->id)->where('form_id', $this->form_id)->get('es_exhibition_forms')->row()->expiry_date . ' 00:00:00';
 			$check_extend_date = $this->db
 				->where('exhibition_id', $this->event->id)
 				->where('form_id', $this->form_id)
@@ -916,6 +916,26 @@ $hall_data = $this->db
         if (s.length >= 300) {
 			e.preventDefault();
 			return false;
+		}
+	});
+	$(document).on('blur', '.complete_profile', function (e) {
+		e.stopImmediatePropagation();
+
+		//$('.complete_profile_count').html($(this).val().length);
+		var s = $(this).val();
+		s = s.replace(/(^\s*)|(\s*$)/gi,"");//exclude  start and end white-space
+		s = s.replace(/[ ]{2,}/gi," ");//2 or more space to 1
+		s = s.replace(/\n /,"\n"); // exclude newline with a start spacing
+        //v = v.split(' ');
+		s = s.split(' ').filter(function(str){return str!="";})
+
+        // alert(s.length)
+		// console.log(s)
+
+        if (s.length > 300) {
+			alert('You have added more then 300 words!');
+			$(this).val(s.slice(0, 300).join(' '))
+			$('.complete_profile').keyup();
 		}
 	});
 	$('.complete_profile').keyup();

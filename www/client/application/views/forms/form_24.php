@@ -35,7 +35,7 @@
         <div class="pull-right">
             <h4>FORM SUBMISSION DUE DATE</h4>
 			<?php
-			$form_expire_date = $this->db->where('exhibition_id', $this->event->id)->where('form_id', $this->form_id)->get('es_exhibition_forms')->row()->expiry_date . ' 24:00:00';
+			$form_expire_date = $this->db->where('exhibition_id', $this->event->id)->where('form_id', $this->form_id)->get('es_exhibition_forms')->row()->expiry_date . ' 00:00:00';
 			$check_extend_date = $this->db
 				->where('exhibition_id', $this->event->id)
 				->where('form_id', $this->form_id)
