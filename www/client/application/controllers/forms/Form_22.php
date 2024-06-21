@@ -244,12 +244,13 @@ class Form_22 extends MY_Controller {
 		$html = $this->load->view('print/end_user_certificate', array(), true);
 
 
-		//echo $html; die();
+		// echo $html; die();
 		set_time_limit(0);
 		$this->load->helper ("pdf-loader");
 		try {
-			$html2pdf = new HTML2PDF('P', 'A4', 'en');
+			$html2pdf = new HTML2PDF('P', 'A4', 'en', true, 'UTF-8');
 			$html2pdf->pdf->SetDisplayMode('fullpage');
+			$html2pdf->pdf->setFontSubsetting(false);
 			$html2pdf->writeHTML($html);
 			$html2pdf->Output('end-user-certificate-'.myid($this->userdata->id).'.pdf');
 		}

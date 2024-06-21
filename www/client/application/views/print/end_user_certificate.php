@@ -34,6 +34,7 @@ $stalls = $this->db
 			box-sizing: border-box;
 			margin: 0;
 			padding: 0;
+			font-family: Helvetica, Arial, sans-serif;
 		}
 		page {
 			font-family: Helvetica, Arial, sans-serif;
@@ -107,8 +108,8 @@ $stalls = $this->db
 				<img src="<?= base_url('../' . $this->event->event_logo) ?>" alt="" class="event_logo">
 			</td>
 			<td style="width: 85%;">
-				<h2><?= $this->event->exhibition_title ?></h2>
-				<h4><?= $location->location_title ?></h4>
+				<p style="font-size: 20px;"><?= $this->event->exhibition_title ?></p>
+				<p style="font-size: 14px;"><?= $location->location_title ?></p>
 				<p class="text-right text-muted"><?= date('d/m/Y') ?></p>
 			</td>
 		</tr>
@@ -118,25 +119,25 @@ $stalls = $this->db
 
 	<table class="table-bordered" style="width: 100%; margin-top: 20px;">
 		<tr>
-			<th style="width: 15%">Company Name:</th>
+			<td style="width: 15%">Company Name:</td>
 			<td style="width: 20%"><?= $this->userdata->company ?></td>
-			<th style="width: 15%">Company Address:</th>
+			<td style="width: 15%">Company Address:</td>
 			<td style="width: 30%"><?= $this->userdata->address ?></td>
-			<th style="width: 10%">Country:</th>
+			<td style="width: 10%">Country:</td>
 			<td style="width: 10%"><?= $this->userdata->country ?></td>
 		</tr>
 		<tr>
-			<th style="width: 15%">Email Address:</th>
+			<td style="width: 15%">Email Address:</td>
 			<td style="width: 20%"><?= $this->userdata->email ?></td>
-			<th style="width: 15%">Telephone:</th>
+			<td style="width: 15%">Telephone:</td>
 			<td style="width: 30%"><?= $this->userdata->phone ?></td>
-			<th style="width: 10%">Contact Person:</th>
+			<td style="width: 10%">Contact Person:</td>
 			<td style="width: 10%"><?= $contact_person_data->person_name ?></td>
 		</tr>
 		<tr>
-			<th style="width: 15%">Hall Number:</th>
+			<td style="width: 15%">Hall Number:</td>
 			<td style="width: 20%"><?= implode(', ', array_map(function ($h){ return $h->hall_title; }, $halls)) ?></td>
-			<th style="width: 15%">Stall Number:</th>
+			<td style="width: 15%">Stall Number:</td>
 			<td style="width: 50%" colspan="3"><?= implode(', ', array_map(function ($s){ return $s->stall_name; }, $stalls)) ?></td>
 		</tr>
 	</table>
@@ -144,16 +145,16 @@ $stalls = $this->db
 	<table class="table table-bordered table-striped" style="width: 100%; margin-top: 40px;">
 		<thead>
 		<tr class="dark-bg">
-			<th style="width: 10%">Category</th>
-			<th style="width: 18%">Description Of Exhibit</th>
-			<th style="width: 7%">Quantity</th>
-			<th style="width: 7%">Length</th>
-			<th style="width: 7%">Breth</th>
-			<th style="width: 7%">Height</th>
-			<th style="width: 10%">Package Qty</th>
-			<th style="width: 7%">Weight</th>
-			<th style="width: 12%">Freight Forwarder</th>
-			<th style="width: 15%">Remarks</th>
+			<td style="width: 10%">Category</td>
+			<td style="width: 18%">Description Of Exhibit</td>
+			<td style="width: 7%">Quantity</td>
+			<td style="width: 7%">Length</td>
+			<td style="width: 7%">Breth</td>
+			<td style="width: 7%">Height</td>
+			<td style="width: 10%">Package Qty</td>
+			<td style="width: 7%">Weight</td>
+			<td style="width: 12%">Freight Forwarder</td>
+			<td style="width: 15%">Remarks</td>
 		</tr>
 		</thead>
 		<tbody>
