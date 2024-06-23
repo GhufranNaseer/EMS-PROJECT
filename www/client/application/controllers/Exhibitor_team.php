@@ -60,10 +60,11 @@ class Exhibitor_team extends MY_Controller
 	}
 
 	function get_badges (){
+		$id = $this->input->post('id');
 
 		$exhibitors_badges = $this->db
 			->where('exhibition_id', $this->event->id)
-			->where('booking_id', $this->booking->id)
+			->where('booking_id', $id)
 			->where('badge_type', 'exhibitor')
 			->where('is_active', 1)
 			->get('es_exhibition_badges')

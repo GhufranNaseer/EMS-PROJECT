@@ -78,9 +78,9 @@
 									<th class="col-data">Business Types</th>
 									<th class="col-data">Business Areas</th>
 									<th class="col-data">Products</th>
-									<th class="text-center">Action</th>
+									<th class="text-center">Profile</th>
 									<th class="text-center">Schedule</th>
-									<th class="text-center">Badges</th>
+									<th class="text-center">Action</th>
 								</tr>
 							</thead>
 

@@ -68,7 +68,7 @@ class Product_profile extends MY_Controller {
 		$limit = $this->input->post('iDisplayLength') || 10;
 
 		$rows = $this->db
-			->select('F.*, C.company, C.city, C.country')
+			->select('F.*, C.company, C.city, C.country, B.customer_id')
 			->where('F.exhibition_id', $this->event->id)
 			->where('F.form_id', 3)
 			->where('F.booking_id !=', $this->booking->id)
@@ -96,6 +96,7 @@ class Product_profile extends MY_Controller {
 
 
 			$id = $row->booking_id;
+			$customer_id = $row->customer_id;
 			$data = (isset($row->form_data)) ? json_decode($row->form_data, false) : null;
 
 			$col_id = $id;
@@ -205,8 +206,8 @@ class Product_profile extends MY_Controller {
 			
 			// action
 			$col_action = '<a href="' . base_url() . 'view-product-profile.html?id=' . urlencode(myid($id)) . '">View Profile</a>';
-			$col_action_schedule = '<a href="' . base_url() . 'meeting_schedule.html?type=exhibitor&id=' . urlencode(myid($id)) . '">Schedule Appointment</a>';
-			$col_action_badges = '<button type="button" style="border: none; background: none; color: #337ab7;" class="btn-detail" data-id="' . $id . '">Exhibitor Badges</button>';
+			$col_action_schedule = '<a href="' . base_url() . 'meeting_schedule.html?type=exhibitor&id=' . urlencode(myid($customer_id)) . '">Schedule Appointment</a>';
+			$col_action_badges = '<button type="button" style="border: none; background: none; color: #337ab7;" class="btn-detail" data-id="' . $id . '">Details</button>';
 
 
 			if ($include_in_search) {
