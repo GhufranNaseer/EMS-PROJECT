@@ -281,12 +281,6 @@
                         ?>
                     </ul>
                 </li>
-            <li data-page="search-product-profile">
-				<a href="<?= base_url('product-profile-list.html'); ?>">
-					<i class="fa fa-search"></i>
-					<span>Exhibitors to Exhibitors</span>
-				</a>
-			</li>
             <li class="treeview">
                 <a href="javascript:void(0)">
                     <i class="fa fa-folder"></i>
@@ -300,7 +294,12 @@
                             <span>Exhibitors to Exhibitors</span>
                         </a>
                     </li> -->
-
+                    <li data-page="search-product-profile">
+                        <a href="<?= base_url('product-profile-list.html'); ?>">
+                            <i class="fa fa-clock-o"></i>
+                            <span>Exhibitors to Exhibitors</span>
+                        </a>
+                    </li>
 
                     <li data-page="meeting-officer-local_delegates">
                         <a href="<?= base_url('officer-list.html?type=local_delegates') ?>">
