@@ -45,19 +45,19 @@
 							<div class="form-group row">
 								<div class="col-sm-2">
 									<label>Sector / Industry</label>
-									<input type="text" class="form-control" name="filter_sector" value="<?= $_GET['filter_sector'] ?>">
+									<input type="text" class="form-control" name="filter_sector" value="<?= (isset($_GET['filter_sector']) ? $_GET['filter_sector'] : '') ?>">
 								</div>
 								<div class="col-sm-2">
 									<label>Business Types</label>
-									<input type="text" class="form-control" name="filter_type" value="<?= $_GET['filter_type'] ?>">
+									<input type="text" class="form-control" name="filter_type" value="<?= (isset($_GET['filter_type']) ? $_GET['filter_type'] : '') ?>">
 								</div>
 								<div class="col-sm-2">
 									<label>Business Areas</label>
-									<input type="text" class="form-control" name="filter_area" value="<?= $_GET['filter_area'] ?>">
+									<input type="text" class="form-control" name="filter_area" value="<?= (isset($_GET['filter_area']) ? $_GET['filter_area'] : '') ?>">
 								</div>
 								<div class="col-sm-2">
 									<label>Products / Product Category</label>
-									<input type="text" class="form-control" name="filter_product" value="<?= $_GET['filter_product'] ?>">
+									<input type="text" class="form-control" name="filter_product" value="<?= (isset($_GET['filter_product']) ? $_GET['filter_product'] : '') ?>">
 								</div>
 								
 								<div class="col-sm-2">
@@ -92,6 +92,45 @@
 
 </div>
 
+<!-- Modal -->
+<div id="detailModal" class="modal fade" role="dialog">
+    <div class="modal-dialog" style="width: 50%;">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Agent Details</h4>
+            </div>
+            <div class="modal-body">
+                <p id="modal-content">
+					<table class="table table-bordered table-striped">
+						<thead>
+							<tr>
+								<th>Person Full Name</th>
+								<th>Designation</th>
+								<th>Mobile #</th>
+								<th>Nationality</th>
+								<th>CNIC / Passport</th>
+								<th>Email Address</th>
+								<th>Created Date</th>
+								<th>Picture</th>
+							</tr>
+						</thead>
+						<tbody id="inner_badge_table">
+							<tr><td colspan="8">Loading ...</td></tr>
+						</tbody>
+					</table>	
+				</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 <?php $this->load->view('includes/after_login/footer'); ?>
 
 <script type="text/javascript">
@@ -112,6 +151,22 @@
 			export_type: ['excel', 'pdf'],
 			event_id: '<?= myid($this->event->id) ?>',
 		})
+
+		// Handle detail button click
+        $('#crud-table').on('click', '.btn-detail', function() {
+            var id = $(this).data('id');
+            // Make an AJAX request to fetch the details
+            $.ajax({
+                url: "<?php echo base_url('exhibitor_team/get_badges'); ?>",
+                method: 'POST',
+                data: { id: id },
+                success: function(response) {
+                    // Show the modal and display the details
+                    $('#inner_badge_table').html(response);
+                    $('#detailModal').modal('show');
+                }
+            });
+        });
 	});
 </script>
 

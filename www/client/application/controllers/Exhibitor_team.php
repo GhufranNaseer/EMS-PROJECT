@@ -59,6 +59,43 @@ class Exhibitor_team extends MY_Controller
 		
 	}
 
+	function get_badges (){
+
+		$exhibitors_badges = $this->db
+			->where('exhibition_id', $this->event->id)
+			->where('booking_id', $this->booking->id)
+			->where('badge_type', 'exhibitor')
+			->where('is_active', 1)
+			->get('es_exhibition_badges')
+			->result();
+	
+		if (count($exhibitors_badges) > 0) {
+			foreach ($exhibitors_badges as $badge) {
+				$html = '<tr>
+				<td>'. $badge->full_name .'</td>
+				<td>'. $badge->designation .'</td>
+				<td>'. $badge->mobile .'</td>
+				<td>'. $badge->nationality .'</td>
+				<td>'. (($badge->nationality == 'Pakistani') ? $badge->cnic : $badge->passport) .'</td>
+				<td>'. $badge->email .'</td>
+				<td>'. date('d/m/Y', strtotime($badge->created_on)) .'</td>
+				<td>
+				<a href="'. base_url($badge->user_image) .'" target="_blank">
+				<img src="'. base_url($badge->user_image) .'" alt="" width="50px">
+				</a>
+				</td>
+				<td>
+				</td>
+				</tr>';
+
+				echo $html;
+			}
+		} else {
+			echo '<tr><td colspan="8">No record found!</td></tr>';
+		}
+		
+	}
+
 	function crd_organizer_list() {
 		$this->load->view('includes/after_login/head');
         $this->load->view('exhibitor_team/organizer_list');

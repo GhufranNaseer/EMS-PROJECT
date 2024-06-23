@@ -203,6 +203,8 @@ class Product_profile extends MY_Controller {
 
 			// action
 			$col_action = '<a href="' . base_url() . 'view-product-profile.html?id=' . urlencode(myid($id)) . '">View Profile</a>';
+			$col_action .= ' / <a href="' . base_url() . 'meeting_schedule.html?type=exhibitor&id=' . urlencode(myid($id)) . '">Schedule Appointment</a>';
+			$col_action .= ' / <button type="button" style="border: none; background: none; color: #337ab7;" class="btn-detail" data-id="' . $id . '">Exhibitor Badges</button>';
 
 
 			if ($include_in_search) {

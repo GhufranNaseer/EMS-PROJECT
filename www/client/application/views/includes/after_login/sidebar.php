@@ -281,7 +281,12 @@
                         ?>
                     </ul>
                 </li>
-
+            <li data-page="search-product-profile">
+				<a href="<?= base_url('product-profile-list.html'); ?>">
+					<i class="fa fa-search"></i>
+					<span>Exhibitors to Exhibitors</span>
+				</a>
+			</li>
             <li class="treeview">
                 <a href="javascript:void(0)">
                     <i class="fa fa-folder"></i>
@@ -289,12 +294,12 @@
                     <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
                 </a>
                 <ul class="treeview-menu">
-                    <li data-page="meeting-exhibitors">
+                    <!-- <li data-page="meeting-exhibitors">
                         <a href="<?= base_url('exhibitors-list.html') ?>">
                             <i class="fa fa-clock-o"></i>
                             <span>Exhibitors to Exhibitors</span>
                         </a>
-                    </li>
+                    </li> -->
 
 
                     <li data-page="meeting-officer-local_delegates">
@@ -370,7 +375,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="treeview">
+            <!-- <li class="treeview">
                 <a href="javascript:void(0)">
                     <i class="fa fa-folder"></i>
                     <span>Exhibitor Team</span>
@@ -396,14 +401,7 @@
                         </a>
                     </li>
                 </ul>
-            </li>
-
-			<li data-page="search-product-profile">
-				<a href="<?= base_url('product-profile-list.html'); ?>">
-					<i class="fa fa-search"></i>
-					<span>Search Exhibitors</span>
-				</a>
-			</li>
+            </li> -->
         </ul>
     </section>
     <!-- /.sidebar -->
