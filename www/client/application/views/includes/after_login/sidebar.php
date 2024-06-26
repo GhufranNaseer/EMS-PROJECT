@@ -17,12 +17,12 @@
                     <small class="label pull-right bg-green"></small>
                 </a>
             </li>
-            <li data-page="profile">
+            <!-- <li data-page="profile">
                 <a href="<?= base_url('my-profile'); ?>">
                     <i class="fa fa-user"></i>
                     <span>Profile</span>
                 </a>
-            </li>
+            </li> -->
 
 			<?php
 			$hasCataloguesFormData = $this->db

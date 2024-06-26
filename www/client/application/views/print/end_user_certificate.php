@@ -115,7 +115,7 @@ $stalls = $this->db
 		</tr>
 	</table>
 
-	<h4 class="text-center">End User Certificate</h4>
+	<p style="font-size: 20px;" class="text-center">End User Certificate</p>
 
 	<table class="table-bordered" style="width: 100%; margin-top: 20px;">
 		<tr>

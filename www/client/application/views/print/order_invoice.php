@@ -107,36 +107,36 @@ $stalls = $this->db
 				<img src="<?= base_url('../' . $this->event->event_logo) ?>" alt="" class="event_logo">
 			</td>
 			<td style="width: 85%;">
-				<h2><?= $this->event->exhibition_title ?></h2>
-				<h4><?= $location->location_title ?></h4>
+				<p style="font-size: 20px;"><?= $this->event->exhibition_title ?></p>
+				<p style="font-size: 14px;"><?= $location->location_title ?></p>
 				<p class="text-right text-muted"><?= date('d/m/Y') ?></p>
 			</td>
 		</tr>
 	</table>
 
-	<h4 class="text-center">ORDER INVOICE</h4>
+	<p style="font-size: 20px;" class="text-center">ORDER INVOICE</p>
 
 	<table class="table-bordered" style="width: 100%; margin-top: 20px;">
 		<tr>
-			<th style="width: 15%">Company Name:</th>
+			<td style="width: 15%">Company Name:</td>
 			<td style="width: 20%"><?= $this->userdata->company ?></td>
-			<th style="width: 15%">Company Address:</th>
+			<td style="width: 15%">Company Address:</td>
 			<td style="width: 30%"><?= $this->userdata->address ?></td>
-			<th style="width: 10%">Country:</th>
+			<td style="width: 10%">Country:</td>
 			<td style="width: 10%"><?= $this->userdata->country ?></td>
 		</tr>
 		<tr>
-			<th style="width: 15%">Email Address:</th>
+			<td style="width: 15%">Email Address:</td>
 			<td style="width: 20%"><?= $this->userdata->email ?></td>
-			<th style="width: 15%">Telephone:</th>
+			<td style="width: 15%">Telephone:</td>
 			<td style="width: 30%"><?= $this->userdata->phone ?></td>
-			<th style="width: 10%">Contact Person:</th>
+			<td style="width: 10%">Contact Person:</td>
 			<td style="width: 10%"><?= $contact_person_data->person_name ?></td>
 		</tr>
 		<tr>
-			<th style="width: 15%">Hall Number:</th>
+			<td style="width: 15%">Hall Number:</td>
 			<td style="width: 20%"><?= implode(', ', array_map(function ($h){ return $h->hall_title; }, $halls)) ?></td>
-			<th style="width: 15%">Stall Number:</th>
+			<td style="width: 15%">Stall Number:</td>
 			<td style="width: 50%" colspan="3"><?= implode(', ', array_map(function ($s){ return $s->stall_name; }, $stalls)) ?></td>
 		</tr>
 	</table>
@@ -144,11 +144,11 @@ $stalls = $this->db
 	<table class="table table-bordered table-striped" style="width: 100%; margin-top: 40px;">
 		<thead>
 		<tr class="dark-bg">
-			<th style="width: 10%">#</th>
-			<th style="width: 40%">Product</th>
-			<th style="width: 20%">Quantity</th>
-			<th style="width: 15%">Price</th>
-			<th style="width: 15%">Sub Total</th>
+			<td style="width: 10%">#</td>
+			<td style="width: 40%">Product</td>
+			<td style="width: 20%">Quantity</td>
+			<td style="width: 15%">Price</td>
+			<td style="width: 15%">Sub Total</td>
 		</tr>
 		</thead>
 		<tbody>
@@ -165,8 +165,8 @@ $stalls = $this->db
         }
 
         echo '<tr>
-        <th colspan="4" class="text-right">Grand Total</th>
-        <th>'. number_format($order_data->total_amount) .' '.$this->booking->booking_price_type.'</th>
+        <td colspan="4" class="text-right">Grand Total</td>
+        <td>'. number_format($order_data->total_amount) .' '.$this->booking->booking_price_type.'</td>
         </tr>';
 
 		?>
