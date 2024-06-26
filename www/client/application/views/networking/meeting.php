@@ -130,7 +130,7 @@ if ($this->input->get('type') == 'officer') {
                                 <div class="row">
                                     <div class="col-md-4">
                                         <label>Commercial Value <span class="text-red">*</span></label>
-                                        <input type="number" class="form-control" name="commercial_value">
+                                        <input type="number" class="form-control" name="commercial_value" oninput="validateInput(this)" step="any">
                                     </div>
                                     <div class="col-md-4">
                                         <label>Currency <span class="text-red">*</span></label>
@@ -232,6 +232,20 @@ if ($this->input->get('type') == 'officer') {
     $(document).on('ready', function () {
 		$('.day-select li:first-child').click();
 	});
+
+    function validateInput(input) {
+            // Remove any non-numeric characters except the minus sign, period, and digits
+            input.value = input.value.replace(/[^\d.-]/g, '');
+            // Remove multiple periods
+            const parts = input.value.split('.');
+            if (parts.length > 2) {
+                input.value = parts[0] + '.' + parts.slice(1).join('');
+            }
+            // Remove multiple minus signs
+            if (input.value.indexOf('-') > 0) {
+                input.value = input.value.replace(/-/g, '');
+            }
+        }
 </script>
 
 </body>
