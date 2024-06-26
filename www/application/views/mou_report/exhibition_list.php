@@ -61,6 +61,8 @@
                                 <th>Event Day</th>
                                 <th>Appointment Date</th>
                                 <th>Appointment Time</th>
+                                <th>Description</th>
+                                <th>Commercial Value</th>
                                 <th>Status</th>
                                 <th class="text-center">Action</th>
                             </tr>

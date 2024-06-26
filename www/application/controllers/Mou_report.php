@@ -41,6 +41,8 @@ class Mou_report extends MY_Controller {
                     B.exhibition_day,
                     B.mou_sign_date,
                     B.mou_sign_time,
+					B.description,
+					B.commercial_value,
                     IF(B.is_canceled = 1, "<span class=\'label label-danger\'>Decline</span>",
                     	IF(B.is_approved = 1, "<span class=\'label label-success\'>Approved</span>", "<span class=\'label label-warning\'>Pending</span>")) as status,
 					B.is_canceled,

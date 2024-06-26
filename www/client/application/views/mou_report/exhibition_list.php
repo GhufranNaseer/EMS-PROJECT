@@ -76,6 +76,8 @@
                                 <th>Mou Signing Date</th>
                                 <th>Mou Signing Time</th>
                                 <th>Status</th>
+                                <th>Description</th>
+                                <th>Commercial Value</th>
                             </tr>
                             </thead>
 

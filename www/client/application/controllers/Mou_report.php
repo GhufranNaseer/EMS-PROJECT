@@ -34,6 +34,8 @@ class Mou_report extends MY_Controller
                     B.is_approved,
                     B.user_type_to,
                     B.request_to_id,
+					B.description,
+					B.commercial_value,
    				  ', false)
 
 			->unset_column('B.exhibition_id')

@@ -75,16 +75,6 @@ class Exhibitor_team extends MY_Controller
 				$html = '<tr>
 				<td>'. $badge->full_name .'</td>
 				<td>'. $badge->designation .'</td>
-				<td>'. $badge->mobile .'</td>
-				<td>'. $badge->nationality .'</td>
-				<td>'. (($badge->nationality == 'Pakistani') ? $badge->cnic : $badge->passport) .'</td>
-				<td>'. $badge->email .'</td>
-				<td>'. date('d/m/Y', strtotime($badge->created_on)) .'</td>
-				<td>
-				<a href="'. base_url($badge->user_image) .'" target="_blank">
-				<img src="'. base_url($badge->user_image) .'" alt="" width="50px">
-				</a>
-				</td>
 				<td>
 				</td>
 				</tr>';

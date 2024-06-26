@@ -107,7 +107,7 @@ class Product_profile extends MY_Controller {
 			$col_b_type = '';
 			$col_b_area = '';
 			$col_product = '';
-			$col_action = '';
+			//$col_action = '';
 			$col_action_schedule = '';
 			$col_action_badges = '';
 
@@ -205,7 +205,7 @@ class Product_profile extends MY_Controller {
 			$col_product .= '</ul>';
 			
 			// action
-			$col_action = '<a href="' . base_url() . 'view-product-profile.html?id=' . urlencode(myid($id)) . '">View Profile</a>';
+			//$col_action = '<a href="' . base_url() . 'view-product-profile.html?id=' . urlencode(myid($id)) . '">View Profile</a>';
 			$col_action_schedule = '<a href="' . base_url() . 'meeting_schedule.html?type=exhibitor&id=' . urlencode(myid($customer_id)) . '">Schedule Appointment</a>';
 			$col_action_badges = '<button type="button" style="border: none; background: none; color: #337ab7;" class="btn-detail" data-id="' . $id . '">Details</button>';
 
@@ -220,7 +220,7 @@ class Product_profile extends MY_Controller {
 					$col_b_type,
 					$col_b_area,
 					$col_product,
-					$col_action,
+					//$col_action,
 					$col_action_schedule,
 					$col_action_badges,
 				];

@@ -78,7 +78,6 @@
 									<th class="col-data">Business Types</th>
 									<th class="col-data">Business Areas</th>
 									<th class="col-data">Products</th>
-									<th class="text-center">Profile</th>
 									<th class="text-center">Schedule</th>
 									<th class="text-center">Action</th>
 								</tr>
@@ -109,14 +108,8 @@
 					<table class="table table-bordered table-striped">
 						<thead>
 							<tr>
-								<th>Person Full Name</th>
+								<th>Name</th>
 								<th>Designation</th>
-								<th>Mobile #</th>
-								<th>Nationality</th>
-								<th>CNIC / Passport</th>
-								<th>Email Address</th>
-								<th>Created Date</th>
-								<th>Picture</th>
 							</tr>
 						</thead>
 						<tbody id="inner_badge_table">
