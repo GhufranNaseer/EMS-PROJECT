@@ -121,7 +121,9 @@ class Meeting_report extends MY_Controller
 						$html .= '<a href="' . base_url() . 'meeting-cancel.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you would like to deny the meeting request?\')">Regret</a> ';
 						$html .= '<a href="' . base_url() . 'meeting_re_schedule.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-info">Re-Schedule</a> ';
 					} else {
-						$html = '<a href="' . base_url() . 'meeting-delete.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you would like to delete the meeting request?\')">Delete</a> ';
+						if ($row['is_approved'] == 0) {
+							$html = '<a href="' . base_url() . 'meeting-delete.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you would like to delete the meeting request?\')">Delete</a> ';
+						}
 					}
 				}
 
