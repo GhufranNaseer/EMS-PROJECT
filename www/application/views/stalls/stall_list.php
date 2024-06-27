@@ -70,6 +70,17 @@
 	$(document).ready(function () {
 		oTable = $('#crud-table').dataTable($.extend(datatable_settings, {
 			"sAjaxSource": '<?= base_url('stalls-list-datatable.html'); ?>?id=<?= $this->input->get('id') ?>',
+			"aoColumns": [
+				null,
+				null,
+				{ "bSearchable": false, "bSortable": false },
+				null,
+				{ "bSearchable": false, "bSortable": false },
+				null,
+				null,
+				null,
+				{ "bSearchable": false, "bSortable": false },
+			]
 		}));
 
 	});
