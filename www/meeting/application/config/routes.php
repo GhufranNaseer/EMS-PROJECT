@@ -118,3 +118,10 @@ $route['meeting_re_schedule.html']['get'] = "meeting_report/schedule";
 $route['meeting_re_schedule_validate.html']['post'] = "meeting_report/meeting_re_schedule_validate/doError";
 $route['meeting_re_schedule_submit.html']['post'] = "meeting_report/meeting_re_schedule_submit";
 
+
+# S product profile
+$route['view-product-profile.html']['get'] = "product_profile/view_profile";
+
+$route['product-profile-list.html']['get'] = "product_profile/profile_list";
+$route['product-profile-datatable.html'] = "product_profile/profile_list_datatable";
+# E product profile

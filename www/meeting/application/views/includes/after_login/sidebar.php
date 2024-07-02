@@ -33,6 +33,12 @@
                     <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
                 </a>
                 <ul class="treeview-menu">
+                    <li data-page="search-product-profile">
+                        <a href="<?= base_url('product-profile-list.html'); ?>">
+                            <i class="fa fa-clock-o"></i>
+                            <span>Exhibitors to Exhibitors</span>
+                        </a>
+                    </li>
                     <li data-page="meeting-exhibitors">
                         <a href="<?= base_url('exhibitors-list.html') ?>">
                             <i class="fa fa-clock-o"></i>

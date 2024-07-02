@@ -124,7 +124,7 @@ class Meeting extends MY_Controller
 				return $this->common->doError(func_num_args(), 'You already made appointment schedule with this person for this time.');
 			}
 
-			return $this->common->doError(func_num_args(), "done", true);
+			return $this->common->doError(func_num_args(), "Done", true);
 		}
 	}
 
@@ -245,7 +245,7 @@ class Meeting extends MY_Controller
 		}
 
 
-		$this->session->set_flashdata('message', 'Meeting request forwarded successfully');
+		$this->session->set_flashdata('message', 'Meeting Request Forwarded Successfully');
 		redirect(base_url('dashboard'));
 	}
 
