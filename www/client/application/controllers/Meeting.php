@@ -250,7 +250,7 @@ class Meeting extends MY_Controller
 			$this->funcs->send_sms($phone_number, $text_msg);
 		}
 
-		$this->session->set_flashdata('message', 'Meeting request forwarded successfully');
+		$this->session->set_flashdata('message', 'Meeting Request Forwarded Successfully');
 		redirect(base_url('dashboard'));
 	}
 

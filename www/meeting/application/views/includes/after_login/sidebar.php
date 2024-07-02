@@ -36,15 +36,15 @@
                     <li data-page="search-product-profile">
                         <a href="<?= base_url('product-profile-list.html'); ?>">
                             <i class="fa fa-clock-o"></i>
-                            <span>Exhibitors to Exhibitors</span>
+                            <span>Schedule with Exhibitors</span>
                         </a>
                     </li>
-                    <li data-page="meeting-exhibitors">
+                    <!-- <li data-page="meeting-exhibitors">
                         <a href="<?= base_url('exhibitors-list.html') ?>">
                             <i class="fa fa-clock-o"></i>
                             <span>Schedule with Exhibitors</span>
                         </a>
-                    </li>
+                    </li> -->
 
                     <li data-page="meeting-officer-chief_of_servicing">
                         <a href="<?= base_url('officer-list.html?type=chief_of_servicing') ?>">
