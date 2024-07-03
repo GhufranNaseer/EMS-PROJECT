@@ -71,8 +71,7 @@ class Meeting extends MY_Controller
 				  IF(is_representative=1, 
 				  		CONCAT(officer_designation, " (Representative)"),
 				  		officer_designation) as designation,
-				  contact_person, 
-				  officer_phone, 
+				  contact_person,
 				  ')
             ->add_column('col_action', function ($row) {
                 $id = $row['id'];
