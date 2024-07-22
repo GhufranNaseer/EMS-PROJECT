@@ -230,6 +230,7 @@ class Welcome extends Initialize {
 
 		$get_email_template = $this->db
 			->where("title" , "RESET_PASSWORD_LINK")
+			->where("exhibition_id" , $this->forget_event->id)
 			->get('email_template')
 			->row();
 
