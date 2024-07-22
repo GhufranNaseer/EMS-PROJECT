@@ -216,6 +216,7 @@ class Mou_report extends MY_Controller {
 
 		$get_email_template = $this->db
 			->where("title" , "MOU_SIGNING_APPOINTMENT_RE_SCHEDULE")
+			->where("exhibition_id" , $meeting->exhibition_id)
 			->get('email_template')
 			->row();
 
@@ -341,6 +342,7 @@ class Mou_report extends MY_Controller {
 
 		$get_email_template = $this->db
 			->where("title" , "MOU_SIGNING_CANCELED")
+			->where("exhibition_id" , $data->exhibition_id)
 			->get('email_template')
 			->row();
 
@@ -474,6 +476,7 @@ class Mou_report extends MY_Controller {
 
 		$get_email_template = $this->db
 		->where("title" , "MOU_SIGNING_ACCEPTED")
+		->where("exhibition_id" , $data->exhibition_id)
 		->get('email_template')
 		->row();
 

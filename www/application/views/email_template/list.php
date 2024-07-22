@@ -22,7 +22,17 @@
 				<div class="box">
 
 					<div class="box-body">
+						<div class="row">
+                            <div class="col-xs-10">
 
+                            </div>
+
+                            <div class="col-xs-2">
+                                <a href="<?= base_url('email_template-add.html') ?>?exhibition_id=<?= $this->input->get('exhibition_id') ?>"
+                                   class="btn btn-primary btn-block margin-bottom">Add New</a>
+                            </div>
+
+                        </div>
 						<table width="100%" class="table table-bordered table-striped" id="crud-table">
 							<thead>
 								<tr class="">
@@ -50,7 +60,7 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		oTable = $('#crud-table').dataTable($.extend(datatable_settings, {
-			"sAjaxSource": '<?php echo base_url('email_template-datatable.html'); ?>',
+			"sAjaxSource": '<?php echo base_url('email_template-datatable.html'); ?>?exhibition_id=<?= $this->input->get('exhibition_id') ?>',
 		}));
 
 	});

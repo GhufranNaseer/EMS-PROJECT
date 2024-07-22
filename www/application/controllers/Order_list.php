@@ -989,6 +989,7 @@ class Order_list extends MY_Controller
 
 			$get_email_template = $this->db
 			->where("title" , "EVENT_INVITATION")
+			->where("exhibition_id" , $order->exhibition_id)
 			->get('email_template')
 			->row();
 

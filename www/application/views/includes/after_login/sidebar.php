@@ -357,7 +357,7 @@
 
 		<?php if (get_instance()->hasRight('Emailtemplate')) { ?>
             <li data-page="email_template">
-                <a href="<?= base_url('email_template.html'); ?>">
+                <a href="<?= base_url('exhibition_email_template.html'); ?>">
                     <i class="fa fa-print"></i>
                     <span>Email Template</span>
                 </a>

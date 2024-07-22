@@ -176,6 +176,7 @@ class Meeting_report extends MY_Controller
 
 		$get_email_template = $this->db
 			->where("title" , "APPOINTMENT_CANCELED")
+			->where("exhibition_id" , $this->event->id)
 			->get('email_template')
 			->row();
 
@@ -305,6 +306,7 @@ class Meeting_report extends MY_Controller
 
 		$get_email_template = $this->db
 			->where("title" , "APPOINTMENT_ACCEPTED")
+			->where("exhibition_id" , $this->event->id)
 			->get('email_template')
 			->row();
 

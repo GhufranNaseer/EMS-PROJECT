@@ -188,6 +188,10 @@ $route['locations-delete.html']['get'] = "locations/crd_delete";
 $route['email_template.html']['get'] = "email_template/crd_list";
 $route['email_template-datatable.html']['post'] = "email_template/crd_list_datatable";
 
+#S Email template
+$route['exhibition_email_template.html']['get'] = "email_template/exhibition_crd_list";
+$route['exhibition_email_template-datatable.html']['post'] = "email_template/exhibition_crd_list_datatable";
+
 $route['email_template-add.html']['get'] = "email_template/crd_add";
 $route['email_template-validate.html']['post'] = "email_template/crd_add_validate/doError";
 $route['email_template-submit.html']['post'] = "email_template/crd_add_submit";
