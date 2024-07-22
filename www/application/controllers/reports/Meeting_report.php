@@ -186,6 +186,13 @@ class Meeting_report extends MY_Controller
 				$this->datatables->where('is_approved', 0);
 			}
 		}
+        if ($this->input->get('filter_user_type') && $this->input->get('filter_user_type') != '') {
+			if ($this->input->get('filter_user_type') == 'exhibitor_exhibitor') {
+				$this->datatables->where('user_type_from = user_type_to');
+			} else if ($this->input->get('filter_user_type') == 'exhibitor_others') {
+				$this->datatables->where('user_type_from != user_type_to');
+			}
+		}
 
         print ($this->datatables->generate());
     }

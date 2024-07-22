@@ -43,6 +43,14 @@
                                         <option value="pending" <?= (($this->input->get('filter_status') && $this->input->get('filter_status') == 'pending') ? 'selected' : '') ?>>Pending</option>
                                     </select>
                                 </div>
+                                <div class="col-sm-3">
+                                    <label>User Type</label>
+                                    <select name="filter_user_type" class="form-control">
+                                        <option value="">- select -</option>
+                                        <option value="exhibitor_exhibitor" <?= (($this->input->get('filter_user_type') && $this->input->get('filter_user_type') == 'exhibitor_exhibitor') ? 'selected' : '') ?>>Exhibitor To Exhibitor</option>
+                                        <option value="exhibitor_others" <?= (($this->input->get('filter_user_type') && $this->input->get('filter_user_type') == 'exhibitor_others') ? 'selected' : '') ?>>Exhibitor To Others</option>
+                                    </select>
+                                </div>
                                 <div class="col-sm-2">
                                     <label>&nbsp;</label>
                                     <button type="submit" class="btn btn-primary btn-block">Filter</button>
