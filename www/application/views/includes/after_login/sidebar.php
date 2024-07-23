@@ -355,6 +355,13 @@
             </li>
         <?php } ?>
 
+        <li data-page="event_for_meeting">
+            <a href="<?= base_url('Location_for_meeting.html'); ?>">
+                <i class="fa fa-print"></i>
+                <span>Location for Meeting</span>
+            </a>
+        </li>
+
 		<?php if (get_instance()->hasRight('Emailtemplate')) { ?>
             <li data-page="email_template">
                 <a href="<?= base_url('exhibition_email_template.html'); ?>">

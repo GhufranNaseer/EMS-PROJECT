@@ -2,7 +2,7 @@
 <?php $this->load->view('includes/after_login/sidebar'); ?>
 
 
-<div class="content-wrapper" data-page="email_template">
+<div class="content-wrapper" data-page="event_for_meeting">
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
@@ -32,8 +32,8 @@
                                 <th class="text-center" width="10%">#</th>
                                 <th>Event</th>
                                 <th>Venue</th>
-                                <th>Total Emails</th>
-                                <th class="text-center" width="20%">Action</th>
+                                <th>Total locations</th>
+                                <th class="text-center" width="30%">Action</th>
                             </tr>
                             </thead>
 
@@ -52,7 +52,7 @@
 <script type="text/javascript">
 	$(document).ready(function () {
 		oTable = $('#crud-table').dataTable($.extend(datatable_settings, {
-			"sAjaxSource": "<?php echo base_url('exhibition_email_template-datatable.html'); ?>",
+			"sAjaxSource": "<?php echo base_url('Location_for_meeting-datatable.html'); ?>",
 		}));
 
 	});

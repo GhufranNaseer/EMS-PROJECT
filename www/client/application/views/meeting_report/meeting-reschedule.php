@@ -108,14 +108,17 @@ if ($meeting->user_type_from == 'officer') {
                                 <h4>Location for Meeting</h4>
                                 <select name="meeting_location" form="crd_form" class="form-control">
                                     <option value="">- None -</option>
-                                    <?php if ($meeting->user_type_from != 'officer') { ?>
-                                    <option value="your_stall" <?= ($meeting->meeting_location == 'your_stall') ? 'selected' : ''; ?>> Your Stall</option>
-                                    <?php } ?>
-                                    <option value="our_stall" <?= ($meeting->meeting_location == 'our_stall') ? 'selected' : ''; ?>> Our Stall</option>
-                                    <option value="office_room" <?= ($meeting->meeting_location == 'office_room') ? 'selected' : ''; ?>>Office Room</option>
-                                    <?php if ($meeting->user_type_from == 'officer') { ?>
-                                    <option value="meeting_marquee" <?= ($meeting->meeting_location == 'meeting_marquee') ? 'selected' : ''; ?>> Meeting Marquee</option>
-                                    <?php } ?>
+                                    <?php 
+                                    $locations = $this->db
+                                        ->where('exhibition_id', $this->event->id)
+                                        ->where('type', 'meeting_location')
+                                        ->get('location_for_meeting')
+                                        ->result();
+                                    foreach($locations as $location){
+                                    ?>    
+                                    <option value="<?= $location->location ?>" <?= ($meeting->meeting_location == $location) ? 'selected' : ''; ?>><?= $location->location ?></option>
+                                    <?php }
+                                    ?>
                                 </select>
                                 <h4>Select Day</h4>
                                 <ul class="day-select">

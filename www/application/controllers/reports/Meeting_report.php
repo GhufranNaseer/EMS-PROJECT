@@ -188,7 +188,8 @@ class Meeting_report extends MY_Controller
 		}
         if ($this->input->get('filter_user_type') && $this->input->get('filter_user_type') != '') {
 			if ($this->input->get('filter_user_type') == 'exhibitor_exhibitor') {
-				$this->datatables->where('user_type_from = user_type_to');
+				$this->datatables->where('user_type_from', 'exhibitor');
+                $this->datatables->where('user_type_to' , 'exhibitor');
 			} else if ($this->input->get('filter_user_type') == 'exhibitor_others') {
 				$this->datatables->where('user_type_from != user_type_to');
 			}

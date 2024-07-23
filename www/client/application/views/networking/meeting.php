@@ -103,15 +103,18 @@ if ($this->input->get('type') == 'officer') {
                                 <h4>Location</h4>
                                 <select name="meeting_location" form="crd_form" class="form-control">
                                     <option value="">- None -</option>
-									<?php if ($this->input->get('type') != 'officer') { ?>
-                                    <option value="your_stall">Your Stall</option>
-									<?php } ?>
-                                    <option value="our_stall">Our Stall</option>
-                                    <option value="office_room">Office Room</option>
-                                    <?php if ($this->input->get('type') == 'officer') { ?>
-                                    <option value="meeting_marquee"> Meeting Marquee</option>
-                                    <?php } ?>
-                                </select>
+                                    <?php 
+                                    $locations = $this->db
+                                        ->where('exhibition_id', $this->event->id)
+                                        ->where('type', 'mou_location')
+                                        ->get('location_for_meeting')
+                                        ->result();
+                                    foreach($locations as $location){
+                                    ?>    
+                                    <option value="<?= $location->location ?>"><?= $location->location ?></option>
+                                    <?php }
+                                    ?>
+								</select>
                                 <h4>Select Day</h4>
                                 <ul class="day-select">
                                     <?php

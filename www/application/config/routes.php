@@ -203,6 +203,23 @@ $route['email_template-edit-submit.html']['post'] = "email_template/crd_edit_sub
 $route['email_template-delete.html']['get'] = "email_template/crd_delete";
 #E Email template
 
+#S Location_for_meeting
+$route['Location_for_meeting.html']['get'] = "Location_for_meeting/crd_list";
+$route['Location_for_meeting-datatable.html']['post'] = "Location_for_meeting/crd_list_datatable";
+
+$route['Location_meeting.html']['get'] = "Location_for_meeting/location_list";
+$route['Location_meeting-datatable.html']['post'] = "Location_for_meeting/location_list_datatable";
+
+$route['Location_for_meeting-add.html']['get'] = "Location_for_meeting/crd_add";
+$route['Location_for_meeting-validate.html']['post'] = "Location_for_meeting/crd_add_validate/doError";
+$route['Location_for_meeting-submit.html']['post'] = "Location_for_meeting/crd_add_submit";
+
+$route['Location_for_meeting-edit.html']['get'] = "Location_for_meeting/crd_edit";
+$route['Location_for_meeting-edit-validate.html']['post'] = "Location_for_meeting/crd_edit_validate/doError";
+$route['Location_for_meeting-edit-submit.html']['post'] = "Location_for_meeting/crd_edit_submit";
+
+$route['Location_for_meeting-delete.html']['get'] = "Location_for_meeting/crd_delete";
+#E Location_for_meeting
 
 #S packages
 $route['packages-event.html']['get'] = "inventory/packages/crd_event_list";
