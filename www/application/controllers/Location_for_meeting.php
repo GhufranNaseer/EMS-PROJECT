@@ -16,7 +16,7 @@ class Location_for_meeting extends MY_Controller
 			)
 		);
 		$crd_dit = array(
-			'crd_edit' => array(
+			'crd_edit, crd_delete' => array(
 				'rule' => '@'
 			),
 			'crd_edit_validate' => array(
@@ -101,7 +101,8 @@ class Location_for_meeting extends MY_Controller
 			->unset_column('E.type')
             ->add_column('col_action', function ($row) {
                 $id = $row['id'];
-                $html = '<a href="' . base_url() . 'Location_for_meeting-edit.html?id=' . urlencode(myid($id))  . '&type='.$row['type'].'">Edit</a>';
+                $html = '<a href="' . base_url() . 'Location_for_meeting-edit.html?id=' . urlencode(myid($id))  . '&type='.$row['type'].'" class="btn btn-link">Edit</a> ';
+                $html .= '<a href="' . base_url() . 'Location_for_meeting-delete.html?id=' . urlencode(myid($id))  . '&type='.$row['type'].'" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure want to delete\');">Delete</a>';
 				return "<div class='text-center'>{$html}</div>";
             }, NULL)
             ->where('E.exhibition_id', $exhibition_id)
@@ -188,4 +189,19 @@ class Location_for_meeting extends MY_Controller
 		redirect(base_url('Location_meeting.html?exhibition_id='.$this->formdata->exhibition_id.'&type='.$this->formdata->type));
 	}
 
+	function crd_delete() {
+		$this->checkEditId();
+
+		if (!ALLOW_DELETION) {
+			show_404();
+		}
+		
+	
+		$this->db
+			->where('id', $this->formdata->id)
+			->delete('location_for_meeting');
+
+		$this->session->set_flashdata('message', 'Location has been deleted successfully');
+		redirect(base_url('Location_meeting.html?exhibition_id='.$this->formdata->exhibition_id.'&type='.$this->formdata->type));
+	}
 }
