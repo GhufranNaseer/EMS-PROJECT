@@ -24,6 +24,8 @@ function sendMail($ReceiverName, $ReceiverEmail,$Subject,$Message, $SenderName, 
 	//Provide username and password
 	$mail->Username = "dronzer92@gmail.com";
 	$mail->Password = "safxnfjzlefzwkxm";
+	// $mail->Username = "facilitatio.exhibit@gmail.com";
+	// $mail->Password = "Badar=!786";
 	//If SMTP requires TLS encryption then set it
 	$mail->SMTPSecure = "ssl";
 
@@ -46,7 +48,7 @@ function sendMail($ReceiverName, $ReceiverEmail,$Subject,$Message, $SenderName, 
 		$mail->addCC($CcEmail);
 	}
 
-	$mail->addReplyTo('dronzer92@gmail.com','IDEAS Facilitation');
+	$mail->addReplyTo('facilitatio.exhibit@gmail.com','Exhibit Facilitation');
 	// $mail->addBCC('ieeep2018@gmail.com');
 
 
