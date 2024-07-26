@@ -181,3 +181,14 @@ CHANGE COLUMN `invitation_type` `invitation_type` VARCHAR(255) NULL DEFAULT NULL
 -- 26 July 2024
 ALTER TABLE `database`.`email_template` 
 ADD COLUMN `exhibition_id` INT NULL DEFAULT NULL AFTER `id`;
+
+CREATE TABLE `database`.`location_for_meeting` (
+  `id` INT NOT NULL,
+  `exhibition_id` INT NULL,
+  `type` VARCHAR(255) NULL,
+  `location` VARCHAR(255) NULL,
+  `created_on` DATETIME NULL,
+  PRIMARY KEY (`id`));
+
+ALTER TABLE `database`.`location_for_meeting` 
+CHANGE COLUMN `id` `id` INT NOT NULL AUTO_INCREMENT ;

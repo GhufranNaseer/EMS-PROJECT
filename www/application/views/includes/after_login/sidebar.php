@@ -257,6 +257,15 @@
                     </li>
 					<?php } ?>
 
+					<?php if (get_instance()->hasRight('exhibitions')) { ?>
+					<li data-page="event_for_meeting">
+						<a href="<?= base_url('Location_for_meeting.html'); ?>">
+							<i class="fa fa-map"></i>
+							<span>Meeting Locations</span>
+						</a>
+					</li>
+					<?php } ?>
+
                     <?php if (get_instance()->hasRight('tradevisitor')) { ?>
                     <li data-page="trade_visitor">
                         <a href="<?= base_url('trade-visitor.html'); ?>">
@@ -355,12 +364,6 @@
             </li>
         <?php } ?>
 
-        <li data-page="event_for_meeting">
-            <a href="<?= base_url('Location_for_meeting.html'); ?>">
-                <i class="fa fa-print"></i>
-                <span>Location for Meeting</span>
-            </a>
-        </li>
 
 		<?php if (get_instance()->hasRight('Emailtemplate')) { ?>
             <li data-page="email_template">

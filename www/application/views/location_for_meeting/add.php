@@ -23,7 +23,7 @@
 				<div class="box">
 
 					<div class="box-body">
-						<h3><?= ($this->input->get('type') == "mou_location" ? 'MoU Signing Location' : 'Meeting Location') ?> Add</h3>
+						<h3>Add <?= ($this->input->get('type') == "mou_location" ? 'MoU Signing Location' : 'Meeting Location') ?></h3>
 
 						<form action="<?= base_url('Location_for_meeting-submit.html') ?>" method="post" id="crd_form" enctype="multipart/form-data">
 							<input type="hidden" name="exhibition_id" value="<?= $this->input->get('exhibition_id') ?>">

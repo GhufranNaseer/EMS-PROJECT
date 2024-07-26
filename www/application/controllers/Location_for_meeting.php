@@ -72,8 +72,8 @@ class Location_for_meeting extends MY_Controller
             }, NULL)
             ->add_column('col_action', function ($row) {
                 $id = $row['id'];
-                $html = '<a href="' . base_url() . 'Location_meeting.html?exhibition_id=' . $id . '&type=mou_location">View MoU Loctions</a>';
-				$html .= '/<a href="' . base_url() . 'Location_meeting.html?exhibition_id=' . $id . '&type=meeting_location">View Meeting Loctions</a>';
+				$html = '<a href="' . base_url() . 'Location_meeting.html?exhibition_id=' . $id . '&type=meeting_location" class="btn btn-link">Meeting Locations</a>';
+                $html .= '<a href="' . base_url() . 'Location_meeting.html?exhibition_id=' . $id . '&type=mou_location" class="btn btn-link">MoU Locations</a> ';
                 return "<div class='text-center'>{$html}</div>";
             }, NULL)
             ->where('E.is_deleted', 0)
@@ -96,10 +96,12 @@ class Location_for_meeting extends MY_Controller
         $this->datatables
             ->select('E.id,
 				  E.location,
+				  E.type,
 				  ', false)
+			->unset_column('E.type')
             ->add_column('col_action', function ($row) {
                 $id = $row['id'];
-                $html = '<a href="' . base_url() . 'Location_for_meeting-edit.html?id=' . urlencode(myid($id))  . '">Edit</a>';
+                $html = '<a href="' . base_url() . 'Location_for_meeting-edit.html?id=' . urlencode(myid($id))  . '&type='.$row['type'].'">Edit</a>';
 				return "<div class='text-center'>{$html}</div>";
             }, NULL)
             ->where('E.exhibition_id', $exhibition_id)
@@ -142,7 +144,7 @@ class Location_for_meeting extends MY_Controller
         //$id = $this->db->insert_id();
         $this->db->trans_complete();
 
-        $this->session->set_flashdata('message', 'Location For Meeting has been Addedd successfully');
+        $this->session->set_flashdata('message', 'Location has been added successfully');
 		redirect(base_url('Location_meeting.html?exhibition_id='.$this->input->post('exhibition_id').'&type='.$this->input->post('type')));
 	}
 

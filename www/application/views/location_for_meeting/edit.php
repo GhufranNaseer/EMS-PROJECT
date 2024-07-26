@@ -23,7 +23,7 @@
 				<div class="box">
 
 					<div class="box-body">
-						<h3>Location For Meeting Edit</h3>
+						<h3>Edit <?= ($this->input->get('type') == "mou_location" ? 'MoU Signing Location' : 'Meeting Location') ?></h3>
 
 						<form action="<?= base_url('Location_for_meeting-edit-submit.html') ?>?id=<?= $this->input->get('id') ?>" method="post" id="crd_form" enctype="multipart/form-data">
 
