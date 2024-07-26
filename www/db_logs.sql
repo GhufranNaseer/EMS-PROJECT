@@ -176,3 +176,8 @@ ALTER TABLE `database`.`es_exhibition_badges_invitation`
 CHANGE COLUMN `invitation_type` `invitation_type` VARCHAR(255) NULL DEFAULT NULL ;
 
 -- ^^ END Updated on live
+
+
+-- 26 July 2024
+ALTER TABLE `database`.`email_template` 
+ADD COLUMN `exhibition_id` INT NULL DEFAULT NULL AFTER `id`;

@@ -62,21 +62,6 @@
 								</div>
 							</div>
 
-							<div class="row">
-								<div class="col-sm-6">
-									<div class="form-group">
-										<label>Placeholders</label>
-										<input type="text" placeholder="{EMAIL},{PASSWORD},{LOGIN_URL},{EVENT_NAME}" class="form-control" name="email_template_placeholder">
-									</div>
-								</div>
-								<div class="col-sm-6">
-									<div class="form-group">
-										<label>Discription</label>
-										<textarea class="form-control" name="email_template_discription"></textarea>
-									</div>
-								</div>
-							</div>
-
 
 							<p class="bg-danger js-msgbox"></p>
 

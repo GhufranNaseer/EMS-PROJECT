@@ -215,14 +215,17 @@ class Mou_report extends MY_Controller {
 		$text_msg = '';
 
 		$get_email_template = $this->db
-			->where("title" , "MOU_SIGNING_APPOINTMENT_RE_SCHEDULE")
+			->where("title" , "MOU_SIGNING_RE_SCHEDULE")
 			->where("exhibition_id" , $meeting->exhibition_id)
 			->get('email_template')
 			->row();
 
-		// {NAME},{EMAIL},{PHONE},{COMPANY},{SENDER_NAME},{SENDER_EMAIL},{SENDER_PHONE},{SENDER_COMPANY},{SENDER_WEBSITE},{APPOINTMENT_TIME},{APPOINTMENT_AGENDA}
-		$Subject = $get_email_template->subject;
-		$message = $get_email_template->message;
+		$Subject = 'Email not configure!';
+		$message = 'Email not configure!';
+		if (isset($get_email_template)) {
+			$Subject = $get_email_template->subject;
+			$message = $get_email_template->message;
+		}
 
 		if ($this->input->post('user_type') == 'officer') {
 			$email_data = $this->db
@@ -346,9 +349,12 @@ class Mou_report extends MY_Controller {
 			->get('email_template')
 			->row();
 
-		// {NAME},{EMAIL},{PHONE},{COMPANY},{SENDER_NAME},{SENDER_EMAIL},{SENDER_PHONE},{SENDER_COMPANY},{SENDER_WEBSITE},{APPOINTMENT_TIME},{APPOINTMENT_AGENDA}
-		$Subject = $get_email_template->subject;
-		$message = $get_email_template->message;
+		$Subject = 'Email not configure!';
+		$message = 'Email not configure!';
+		if (isset($get_email_template)) {
+			$Subject = $get_email_template->subject;
+			$message = $get_email_template->message;
+		}
 
 		if ($data->user_type_from == 'officer') {
 			$email_data = $this->db
@@ -480,9 +486,12 @@ class Mou_report extends MY_Controller {
 		->get('email_template')
 		->row();
 
-		// {NAME},{EMAIL},{PHONE},{COMPANY},{SENDER_NAME},{SENDER_EMAIL},{SENDER_PHONE},{SENDER_COMPANY},{SENDER_WEBSITE},{SCHEDULE_TIME},{DESCRIPTION},{COMMERCIAL_VALUE}
-		$Subject = $get_email_template->subject;
-		$message = $get_email_template->message;
+		$Subject = 'Email not configure!';
+		$message = 'Email not configure!';
+		if (isset($get_email_template)) {
+			$Subject = $get_email_template->subject;
+			$message = $get_email_template->message;
+		}
 
 		if ($data->user_type_from == 'officer') {
 			$email_data = $this->db

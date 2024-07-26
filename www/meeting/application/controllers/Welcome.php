@@ -234,14 +234,18 @@ class Welcome extends Initialize {
 			->get('email_template')
 			->row();
 
+		$subject = 'Email not configure!';
+		$message = 'Email not configure!';
+		if (isset($get_email_template)) {
+			$subject = $get_email_template->subject;
+			$message = $get_email_template->message;
+		}
 		// {PASSWORD_RESET_LINK},{CUSTOMER_COMPANY},{CUSTOMER_NAME},{CUSTOMER_EMAIL},{EVENT_NAME}
-		$subject = $get_email_template->subject;
 		$subject = str_replace('{CUSTOMER_COMPANY}', $this->forget_customer->company, $subject);
 		$subject = str_replace('{CUSTOMER_NAME}', $this->forget_customer->name, $subject);
 		$subject = str_replace('{CUSTOMER_EMAIL}', $this->forget_customer->email, $subject);
 		$subject = str_replace('{EVENT_NAME}', $this->forget_event->exhibition_title, $subject);
 
-		$message = $get_email_template->message;
 		$message = str_replace('{PASSWORD_RESET_LINK}', $login_link, $message);
 		$message = str_replace('{CUSTOMER_COMPANY}', $this->forget_customer->company, $message);
 		$message = str_replace('{CUSTOMER_NAME}', $this->forget_customer->name, $message);

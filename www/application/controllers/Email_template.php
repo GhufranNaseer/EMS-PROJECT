@@ -50,7 +50,7 @@ class Email_template extends MY_Controller
 		$this->formdata = $r->row();
 	}
 
-	function exhibition_crd_list() 
+	function exhibition_crd_list()
 	{
 		$this->load->view('includes/after_login/head');
 		$this->load->view('email_template/exh_list');
@@ -59,27 +59,27 @@ class Email_template extends MY_Controller
 	function exhibition_crd_list_datatable()
 	{
 		$this->load->library('datatables');
-        $this->datatables
-            ->select('E.id,
+		$this->datatables
+			->select('E.id,
 				  E.exhibition_title,
 				  L.location_title				  
 				  ', false)
-            ->add_column('total_emails', function ($row) {
-                return $this->db
-                    ->where('exhibition_id', $row['id'])
-                    ->count_all_results('email_template');
-            }, NULL)
-            ->add_column('col_action', function ($row) {
-                $id = $row['id'];
-                $html = '<a href="' . base_url() . 'email_template.html?exhibition_id=' . $id . '">View Emails</a>';
+			->add_column('total_emails', function ($row) {
+				return $this->db
+					->where('exhibition_id', $row['id'])
+					->count_all_results('email_template');
+			}, NULL)
+			->add_column('col_action', function ($row) {
+				$id = $row['id'];
+				$html = '<a href="' . base_url() . 'email_template.html?exhibition_id=' . $id . '">View Emails</a>';
 
-                return "<div class='text-center'>{$html}</div>";
-            }, NULL)
-            ->where('E.is_deleted', 0)
-            ->join('es_locations as L', 'E.location_id = L.id', 'LEFT')
-            ->from('es_exhibitions as E');
+				return "<div class='text-center'>{$html}</div>";
+			}, NULL)
+			->where('E.is_deleted', 0)
+			->join('es_locations as L', 'E.location_id = L.id', 'LEFT')
+			->from('es_exhibitions as E');
 
-        print ($this->datatables->generate());
+		print($this->datatables->generate());
 	}
 
 	function crd_list()
@@ -93,7 +93,7 @@ class Email_template extends MY_Controller
 	function crd_list_datatable()
 	{
 		$exhibition_id = $this->input->get('exhibition_id');
-		
+
 		$this->load->library('datatables');
 		$this->datatables
 			->select('
@@ -106,20 +106,21 @@ class Email_template extends MY_Controller
 
 			->add_column('col_action', function ($row) {
 				$id = $row['id'];
-				$html = '<a href="' . base_url() . 'email_template-edit.html?id=' . urlencode(myid($id)) . '">Edit '.$exhibition_id.'</a>';
+				$html = '<a href="' . base_url() . 'email_template-edit.html?id=' . urlencode(myid($id)) . '">Edit</a>';
 				return "<div class='text-center'>{$html}</div>";
 			}, NULL)
-			->where("email_template.exhibition_id" , $exhibition_id)
+			->where("email_template.exhibition_id", $exhibition_id)
 			->from('email_template')
 			->join('users', 'users.id = email_template.updated_by', 'LEFT');
 
 		print($this->datatables->generate());
 	}
 
-	function crd_add() {
-        $this->load->view('includes/after_login/head');
-        $this->load->view('email_template/add');
-    }
+	function crd_add()
+	{
+		$this->load->view('includes/after_login/head');
+		$this->load->view('email_template/add');
+	}
 
 	function crd_add_validate()
 	{
@@ -131,31 +132,57 @@ class Email_template extends MY_Controller
 			return $this->common->doError(func_num_args(), "done", true);
 	}
 
-	function crd_add_submit() {
+	function crd_add_submit()
+	{
 		if ($this->crd_add_validate() !== true)
-            show_404();
+			show_404();
 
-        $data = array(
-            'exhibition_id' => $this->input->post('exhibition_id'),
-            'title' => $this->input->post('email_template_title'),
-            'message' => $this->input->post('email_template_message'),
-            'subject' => $this->input->post('email_template_subject'),
-            'created_on' => date('Y-m-d H:i:s'),
-            'placeholders' => $this->input->post('email_template_placeholder'),
-            'updated_by' => $this->userdata->id,
-            'description' => $this->input->post('email_template_discription'),
-            'updated_on' => date('Y-m-d H:i:s'),
-        );
+
+		$DESCRIPTIONS = array(
+			'EVENT_INVITATION' => 'This template is use to send login credentials and login link to new customers.',
+			'RESET_PASSWORD_LINK' => 'This template is use to send password reset link to user.',
+			'APPOINTMENT_SCHEDULE' => 'This template is use to send appointment schedule email notification.',
+			'APPOINTMENT_ACCEPTED' => 'This template is use to send appointment accept email notification.',
+			'APPOINTMENT_CANCELED' => 'This template is use to send appointment cancel email notification.',
+			'APPOINTMENT_RE_SCHEDULE' => 'This template is use to send appointment re-schedule email notification.',
+			'MOU_SIGNING_CANCELED' => 'This template is use to send MoU sign cancel email notification.',
+			'MOU_SIGNING_ACCEPTED' => 'This template is use to send MoU sign accepted email notification.',
+			'MOU_SIGNING_RE_SCHEDULE' => 'This template is use to send MoU sign re-schedule email notification.',
+		);
+
+		$PLACEHOLDERS = array(
+			'EVENT_INVITATION' => '{EMAIL},{PASSWORD},{LOGIN_URL},{EVENT_NAME}',
+			'RESET_PASSWORD_LINK' => '{PASSWORD_RESET_LINK},{CUSTOMER_COMPANY},{CUSTOMER_NAME},{CUSTOMER_EMAIL},{EVENT_NAME}',
+			'APPOINTMENT_SCHEDULE' => '{EVENT_NAME},{NAME},{EMAIL},{PHONE},{COMPANY},{SENDER_NAME},{SENDER_EMAIL},{SENDER_PHONE},{SENDER_COMPANY},{SENDER_WEBSITE},{APPOINTMENT_TIME},{APPOINTMENT_AGENDA}',
+			'APPOINTMENT_ACCEPTED' => '{EVENT_NAME},{NAME},{EMAIL},{PHONE},{COMPANY},{SENDER_NAME},{SENDER_EMAIL},{SENDER_PHONE},{SENDER_COMPANY},{SENDER_WEBSITE},{APPOINTMENT_TIME},{APPOINTMENT_AGENDA}',
+			'APPOINTMENT_CANCELED' => '{EVENT_NAME},{NAME},{EMAIL},{PHONE},{COMPANY},{SENDER_NAME},{SENDER_EMAIL},{SENDER_PHONE},{SENDER_COMPANY},{SENDER_WEBSITE},{APPOINTMENT_TIME},{APPOINTMENT_AGENDA}',
+			'APPOINTMENT_RE_SCHEDULE' => '{EVENT_NAME},{NAME},{EMAIL},{PHONE},{COMPANY},{SENDER_NAME},{SENDER_EMAIL},{SENDER_PHONE},{SENDER_COMPANY},{SENDER_WEBSITE},{APPOINTMENT_TIME},{APPOINTMENT_AGENDA}',
+			'MOU_SIGNING_CANCELED' => '{NAME},{EMAIL},{PHONE},{COMPANY},{SENDER_NAME},{SENDER_EMAIL},{SENDER_PHONE},{SENDER_COMPANY},{SENDER_WEBSITE},{SCHEDULE_TIME},{DESCRIPTION},{COMMERCIAL_VALUE}',
+			'MOU_SIGNING_ACCEPTED' => '{NAME},{EMAIL},{PHONE},{COMPANY},{SENDER_NAME},{SENDER_EMAIL},{SENDER_PHONE},{SENDER_COMPANY},{SENDER_WEBSITE},{SCHEDULE_TIME},{DESCRIPTION},{COMMERCIAL_VALUE}',
+			'MOU_SIGNING_RE_SCHEDULE' => '{NAME},{EMAIL},{PHONE},{COMPANY},{SENDER_NAME},{SENDER_EMAIL},{SENDER_PHONE},{SENDER_COMPANY},{SENDER_WEBSITE},{SCHEDULE_TIME},{DESCRIPTION},{COMMERCIAL_VALUE}',
+		);
+
+		$data = array(
+			'exhibition_id' => $this->input->post('exhibition_id'),
+			'title' => $this->input->post('email_template_title'),
+			'message' => $this->input->post('email_template_message'),
+			'subject' => $this->input->post('email_template_subject'),
+			'created_on' => date('Y-m-d H:i:s'),
+			'placeholders' => $PLACEHOLDERS[$this->input->post('email_template_title')],
+			'updated_by' => $this->userdata->id,
+			'description' => $DESCRIPTIONS[$this->input->post('email_template_title')],
+			'updated_on' => date('Y-m-d H:i:s'),
+		);
 
 		$this->db->trans_start();
-        $this->db
-            ->set($data)
-            ->insert('email_template');
-        //$id = $this->db->insert_id();
-        $this->db->trans_complete();
+		$this->db
+			->set($data)
+			->insert('email_template');
+		//$id = $this->db->insert_id();
+		$this->db->trans_complete();
 
-        $this->session->set_flashdata('message', 'Email template has been Addedd successfully');
-		redirect(base_url('email_template.html?exhibition_id='.$this->input->post('exhibition_id')));
+		$this->session->set_flashdata('message', 'Email template has been Addedd successfully');
+		redirect(base_url('email_template.html?exhibition_id=' . $this->input->post('exhibition_id')));
 	}
 
 	function crd_edit()
@@ -199,7 +226,6 @@ class Email_template extends MY_Controller
 			->update('email_template');
 
 		$this->session->set_flashdata('message', 'Email template has been updated successfully');
-		redirect(base_url('email_template.html?exhibition_id='.$this->formdata->exhibition_id));
+		redirect(base_url('email_template.html?exhibition_id=' . $this->formdata->exhibition_id));
 	}
-
 }

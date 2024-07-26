@@ -165,9 +165,12 @@ class Meeting extends MY_Controller
 			->get('email_template')
 			->row();
 
-		// {NAME},{EMAIL},{PHONE},{COMPANY},{SENDER_NAME},{SENDER_EMAIL},{SENDER_PHONE},{SENDER_COMPANY},{SENDER_WEBSITE},{APPOINTMENT_TIME},{APPOINTMENT_AGENDA}
-		$Subject = $get_email_template->subject;
-		$message = $get_email_template->message;
+		$Subject = 'Email not configure!';
+		$message = 'Email not configure!';
+		if (isset($get_email_template)) {
+			$Subject = $get_email_template->subject;
+			$message = $get_email_template->message;
+		}
 
 		if ($this->input->post('user_type') == 'officer') {
 			$email_data = $this->db

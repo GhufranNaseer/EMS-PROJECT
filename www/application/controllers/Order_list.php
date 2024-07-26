@@ -993,13 +993,18 @@ class Order_list extends MY_Controller
 			->get('email_template')
 			->row();
 
-			$subject = $get_email_template->subject;
+			$subject = 'Email not configure!';
+			$message = 'Email not configure!';
+			if (isset($get_email_template)) {
+				$subject = $get_email_template->subject;
+				$message = $get_email_template->message;
+			}
+
 			$subject = str_replace('{EMAIL}', $login_name, $subject);
 			$subject = str_replace('{PASSWORD}', $login_pass, $subject);
 			$subject = str_replace('{LOGIN_URL}', $login_link, $subject);
 			$subject = str_replace('{EVENT_NAME}', $this->formdata->exhibition_title, $subject);
 
-			$message = $get_email_template->message;
 			$message = str_replace('{EMAIL}', $login_name, $message);
 			$message = str_replace('{PASSWORD}', $login_pass, $message);
 			$message = str_replace('{LOGIN_URL}', $login_link, $message);
