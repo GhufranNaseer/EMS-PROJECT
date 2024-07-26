@@ -88,12 +88,36 @@ class Meeting_report extends MY_Controller
 
     function crd_exhibition_list()
     {
+		$event_halls = $this->db
+			->select('EH.*, H.hall_title')
+			->where(mycolumn('EH.exhibition_id'), $this->input->get('id'))
+			->join('es_location_halls as H', 'H.id = EH.hall_id')
+			->get('es_exhibition_halls as EH')
+			->result();
+
         $this->load->view('includes/after_login/head');
-        $this->load->view('meeting_report/exhibition_list');
+        $this->load->view('meeting_report/exhibition_list', array(
+			'event_halls' => $event_halls,
+		));
     }
 
     function crd_exhibition_list_datatable()
     {
+		if ($this->input->get('filter_hall') && $this->input->get('filter_hall') != '') {
+			$hall_customers = $this->db
+				->select('customer_id')
+				->where('hall_id', $this->input->get('filter_hall'))
+				->where(mycolumn('exhibition_id'), $this->input->get('id'))
+				->group_by('customer_id')
+				->get('es_exhibition_booking_stalls')
+				->result();
+				
+			$customers_ids = [];
+			foreach ($hall_customers as $c) {
+				$customers_ids[] = $c->customer_id;
+			}
+		}
+
         $this->load->library('datatables');
         $this->datatables
             ->select('id,
@@ -192,6 +216,15 @@ class Meeting_report extends MY_Controller
                 $this->datatables->where('user_type_to' , 'exhibitor');
 			} else if ($this->input->get('filter_user_type') == 'exhibitor_others') {
 				$this->datatables->where('user_type_from != user_type_to');
+			}
+		}
+
+		if ($this->input->get('filter_hall') && $this->input->get('filter_hall') != '') {
+			if (count($customers_ids)) {
+				$this->datatables->where('user_type_from', 'exhibitor');
+				$this->datatables->where_in('appointment_from', $customers_ids);
+			} else {
+				$this->datatables->where('appointment_from', 0); // don't show result if no customer available for hall
 			}
 		}
 

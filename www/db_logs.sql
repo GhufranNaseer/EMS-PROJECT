@@ -175,7 +175,6 @@ CHANGE COLUMN `invitation_type` `invitation_type` VARCHAR(255) NULL DEFAULT NULL
 ALTER TABLE `database`.`es_exhibition_badges_invitation` 
 CHANGE COLUMN `invitation_type` `invitation_type` VARCHAR(255) NULL DEFAULT NULL ;
 
--- ^^ END Updated on live
 
 
 -- 26 July 2024
@@ -192,3 +191,5 @@ CREATE TABLE `database`.`location_for_meeting` (
 
 ALTER TABLE `database`.`location_for_meeting` 
 CHANGE COLUMN `id` `id` INT NOT NULL AUTO_INCREMENT ;
+
+-- ^^ END Updated on live

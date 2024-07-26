@@ -35,7 +35,7 @@
                         <form action="" method="get">
                             <input type="hidden" name="id" value="<?= $this->input->get('id') ?>">
                             <div class="form-group row">
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                     <label>Status</label>
                                     <select name="filter_status" class="form-control">
                                         <option value="">- select -</option>
@@ -49,6 +49,18 @@
                                         <option value="">- select -</option>
                                         <option value="exhibitor_exhibitor" <?= (($this->input->get('filter_user_type') && $this->input->get('filter_user_type') == 'exhibitor_exhibitor') ? 'selected' : '') ?>>Exhibitor To Exhibitor</option>
                                         <option value="exhibitor_others" <?= (($this->input->get('filter_user_type') && $this->input->get('filter_user_type') == 'exhibitor_others') ? 'selected' : '') ?>>Exhibitor To Others</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label>Halls</label>
+                                    <select name="filter_hall" class="form-control">
+                                        <option value="">- select -</option>
+										<?php
+											foreach ($event_halls as $event_hall) {
+												$selected = ($this->input->get('filter_hall') && $this->input->get('filter_hall') == $event_hall->hall_id) ? 'selected' : '';
+												echo '<option value="'.$event_hall->hall_id.'" '.$selected.'>'.$event_hall->hall_title.'</option>';
+											}
+										?>
                                     </select>
                                 </div>
                                 <div class="col-sm-2">
