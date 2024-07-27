@@ -22,10 +22,14 @@ function sendMail($ReceiverName, $ReceiverEmail,$Subject,$Message, $SenderName, 
 	//Set this to true if SMTP host requires authentication to send email
 	$mail->SMTPAuth = true;
 	//Provide username and password
-	$mail->Username = "dronzer92@gmail.com";
-	$mail->Password = "safxnfjzlefzwkxm";
-	// $mail->Username = "facilitatio.exhibit@gmail.com";
+	// $mail->Username = "dronzer92@gmail.com";
+	// $mail->Password = "safxnfjzlefzwkxm";
+
+	$mail->Username = "facilitatio.exhibit@gmail.com";
+	$mail->Password = "wiixhnvfijyuxddy";
 	// $mail->Password = "Badar=!786";
+	// 03212379056
+	
 	//If SMTP requires TLS encryption then set it
 	$mail->SMTPSecure = "ssl";
 
