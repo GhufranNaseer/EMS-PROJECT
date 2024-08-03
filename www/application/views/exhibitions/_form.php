@@ -191,3 +191,33 @@
 		?>
     </div>
 </fieldset>
+
+<fieldset>
+    <legend>Official Freight Forwarders</legend>
+
+    <div class="row">
+		<?php
+		$freight_forwarders = $this->db
+            ->where('is_active', 1)
+            ->where('is_deleted', 0)
+            ->get('es_freight_forwarders')
+            ->result();
+
+		foreach ($freight_forwarders as $key => $freight_forwarder) {
+			$contractor_checked = 'checked';
+
+			if (isset($edit_data)) {
+			    $old_contractors = explode(',', $edit_data->event_freight_forwarders);
+
+				$contractor_checked = (in_array(str_replace(' ', '_', $freight_forwarder->company_name), $old_contractors)) ? 'checked' : '';
+            }
+
+			echo '<div class="col-sm-2">
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="event_freight_forwarders[]" '.$contractor_checked.' value="'. str_replace(' ', '_', $freight_forwarder->company_name) .'"> '. $freight_forwarder->company_name .'</label>
+                        </div>
+                    </div>';
+		}
+		?>
+    </div>
+</fieldset>

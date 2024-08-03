@@ -193,3 +193,29 @@ ALTER TABLE `database`.`location_for_meeting`
 CHANGE COLUMN `id` `id` INT NOT NULL AUTO_INCREMENT ;
 
 -- ^^ END Updated on live
+
+
+-- 03 Aug 2024
+CREATE TABLE `es_freight_forwarders` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `company_name` varchar(255) DEFAULT NULL,
+  `company_logo` text,
+  `person_name` varchar(255) DEFAULT NULL,
+  `phone` varchar(255) DEFAULT NULL,
+  `designation` varchar(255) DEFAULT NULL,
+  `fax` varchar(255) DEFAULT NULL,
+  `mobile` varchar(255) DEFAULT NULL,
+  `company_email` varchar(255) DEFAULT NULL,
+  `person_email` varchar(255) DEFAULT NULL,
+  `url` varchar(255) DEFAULT NULL,
+  `company_address` text,
+  `is_active` tinyint(1) DEFAULT '1',
+  `created_on` datetime DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT '0',
+  `deleted_by` int DEFAULT NULL,
+  `deleted_on` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
+
+ALTER TABLE `database`.`es_exhibitions` 
+ADD COLUMN `event_freight_forwarders` TEXT NULL AFTER `stall_builder_contractors`;

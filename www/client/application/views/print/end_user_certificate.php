@@ -161,11 +161,13 @@ $stalls = $this->db
 		<?php
 		if (!is_null($this->formdata)) {
 			$even_child = 'light-bg';
-			$freight_forwarders = array(
-				'logistics' => 'Logistics Link & Supplies Pvt. Let. (LLS)',
-                'bay_west' => 'Bay West Pvt. Ltd.',
-                'both' => 'Both the Forwader\'s',
-            );
+			$freight_forwarders = array();
+			if (isset($this->event->event_freight_forwarders) && !is_null($this->event->event_freight_forwarders)) {
+				$event_freight_forwarders = explode(',', $this->event->event_freight_forwarders);
+				foreach ($event_freight_forwarders as $forwarder) {
+					$freight_forwarders[$forwarder] = str_replace('_', ' ', $forwarder);
+				}
+			}
 			foreach ($this->formdata->products as $row) {
 				$even_child = ($even_child == '') ? 'light-bg' : '';
 				echo '<tr class="'.$even_child.'">
@@ -177,7 +179,7 @@ $stalls = $this->db
 				<td style="width: 7%">'. $row->package_height .' '. $row->package_size_units .'</td>
 				<td style="width: 10%">'. $row->package_quantity .'</td>
 				<td style="width: 7%">'. $row->package_weight .' '. $row->package_weight_units .'</td>
-				<td style="width: 12%">'. $freight_forwarders[$row->official_freight_forwarder] .'</td>
+				<td style="width: 12%">'. (array_key_exists($row->official_freight_forwarder, $freight_forwarders) ? $freight_forwarders[$row->official_freight_forwarder] : '') .'</td>
 				<td style="width: 15%">'. $row->package_remarks .'</td>
 				</tr>';
 			}

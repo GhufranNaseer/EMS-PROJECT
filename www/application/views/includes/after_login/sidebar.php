@@ -112,6 +112,15 @@
                             </a>
                         </li>
                     <?php } ?>
+                    <?php if (get_instance()->hasRight('stallbuilder')) { ?>
+                        <li data-page="freight_forwarder">
+                            <a href="<?= base_url('freight-forwarder.html'); ?>">
+                                <i class="fa fa-sitemap"></i>
+                                <span>Freight Forwarder</span>
+                                <small class="label pull-right bg-green"></small>
+                            </a>
+                        </li>
+                    <?php } ?>
                 </ul>
             </li>
             <?php } ?>

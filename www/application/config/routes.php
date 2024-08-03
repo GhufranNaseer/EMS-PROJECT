@@ -477,6 +477,22 @@ $route['stall-builder-edit-submit.html']['post'] = "stall_builder/crd_edit_submi
 $route['stall-builder-delete.html']['get'] = "stall_builder/crd_delete";
 #E stall builder
 
+
+#S freight forwarder
+$route['freight-forwarder.html']['get'] = "freight_forwarder/crd_list";
+$route['freight-forwarder-datatable.html']['post'] = "freight_forwarder/crd_list_datatable";
+
+$route['freight-forwarder-add.html']['get'] = "freight_forwarder/crd_add";
+$route['freight-forwarder-validate.html']['post'] = "freight_forwarder/crd_add_validate/doError";
+$route['freight-forwarder-submit.html']['post'] = "freight_forwarder/crd_add_submit";
+
+$route['freight-forwarder-edit.html']['get'] = "freight_forwarder/crd_edit";
+$route['freight-forwarder-edit-validate.html']['post'] = "freight_forwarder/crd_edit_validate/doError";
+$route['freight-forwarder-edit-submit.html']['post'] = "freight_forwarder/crd_edit_submit";
+
+$route['freight-forwarder-delete.html']['get'] = "freight_forwarder/crd_delete";
+#E freight forwarder
+
 #S stalls
 $route['stalls.html']['get'] = "stalls/crd_list";
 $route['stalls-datatable.html']['post'] = "stalls/crd_list_datatable";

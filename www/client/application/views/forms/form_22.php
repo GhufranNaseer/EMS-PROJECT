@@ -244,10 +244,16 @@
                                         <div class="col-sm-6">
                                             <label>Select Official Freight Forwarder</label>
                                             <select name="official_freight_forwarder" class="form-control">
-                                                <option value="logistics">Logistics Link & Supplies Pvt. Let. (LLS)</option>
-                                                <option value="bay_west">Bay West Pvt. Ltd.</option>
-                                                <option value="both">Both the Forwader's</option>
+												<?php
+												if (isset($this->event->event_freight_forwarders) && !is_null($this->event->event_freight_forwarders)) {
+													$event_freight_forwarders = explode(',', $this->event->event_freight_forwarders);
 
+													foreach ($event_freight_forwarders as $forwarder) {
+														$forwarder_is_selected = (!is_null($this->editdata) && $this->editdata->official_freight_forwarder == $forwarder) ? 'selected' : '';
+														echo '<option value="'.$forwarder.'" '.$forwarder_is_selected.'>'.str_replace('_', ' ', $forwarder).'</option>';
+													}
+												}
+												?>
                                             </select>
                                         </div>
                                     </div>
