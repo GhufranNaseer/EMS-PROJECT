@@ -227,6 +227,7 @@ CREATE TABLE `bank_details` (
   `bank_name` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
   `branch_name` varchar(255) DEFAULT NULL,
+  `branch_code` varchar(255) DEFAULT NULL,
   `account_no` varchar(255) DEFAULT NULL,
   `iban_no` varchar(255) DEFAULT NULL,
   `swift_code` varchar(255) DEFAULT NULL,

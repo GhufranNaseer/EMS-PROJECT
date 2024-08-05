@@ -48,6 +48,12 @@
 								</div>
 								<div class="col-sm-6">
 									<div class="form-group">
+										<label>Branch Code</label>
+										<input type="text" class="form-control" name="branch_code" value="<?= html_escape(ucwords($bank_data->branch_code)) ?>" placeholder="Branch Name">
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
 										<label>Account No.</label>
 										<input type="text" class="form-control" name="account_no" value="<?= html_escape(ucwords($bank_data->account_no)) ?>" placeholder="Account No">
 									</div>

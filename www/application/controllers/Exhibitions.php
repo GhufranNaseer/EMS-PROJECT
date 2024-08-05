@@ -97,6 +97,9 @@ class Exhibitions extends MY_Controller {
         if ($this->bank_detail_add_validate() !== true)
             show_404();
 
+		$this->db
+            ->where('exhibition_id', $this->input->post('exhibition_id'))
+            ->delete('bank_details');	
 		
 
         $data = array(
@@ -104,6 +107,7 @@ class Exhibitions extends MY_Controller {
             'bank_name' => $this->input->post('bank_name'),
             'title' => $this->input->post('title'),
             'branch_name' => $this->input->post('branch_name'),
+			'branch_code' => $this->input->post('branch_code'),
             'account_no' => $this->input->post('account_no'),
             'iban_no' => $this->input->post('iban_no'),
             'swift_code' => $this->input->post('swift_code'),
@@ -130,6 +134,7 @@ class Exhibitions extends MY_Controller {
 		$this->form_validation->set_rules('account_no', 'account_no*account no', 'trim|required');
 		$this->form_validation->set_rules('iban_no', 'iban_no*IBAN No', 'trim|required');
 		$this->form_validation->set_rules('swift_code', 'swift_code*Swift Code', 'trim|required');
+		$this->form_validation->set_rules('branch_code', 'branch_code*Branch Code', 'trim|required');
 
         if ($this->form_validation->run() == false)
             return $this->common->doError(func_num_args(), $this->common->getFVError());

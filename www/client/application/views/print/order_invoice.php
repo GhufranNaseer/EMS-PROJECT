@@ -25,6 +25,11 @@ $stalls = $this->db
 	->get('es_exhibition_booking_stalls as BS')
 	->result();
 
+$bank_details = $this->db
+->where('exhibition_id', $this->event->id)
+->get('bank_details')
+->row(); 
+
 ?>
 <page>
 	<style>
@@ -104,7 +109,6 @@ $stalls = $this->db
 	<table style="width: 100%">
 		<tr>
 			<td style="width: 15%;">
-				<img src="<?= base_url('../' . $this->event->event_logo) ?>" alt="" class="event_logo">
 			</td>
 			<td style="width: 85%;">
 				<p style="font-size: 20px;"><?= $this->event->exhibition_title ?></p>
@@ -172,6 +176,61 @@ $stalls = $this->db
 		?>
 		</tbody>
 	</table>
+
+	<table class="table table-striped" style="width: 100%; margin-top: 40px;">
+		<tbody>
+			<tr class="dark-bg">
+				<td colspan="4"><h4>Mode of Payment:</h4></td>
+			</tr>
+			<tr>
+				<td colspan="4">All payments shall be made in favor of "BADAR EXPO SOLUTIONS" through Payorder / Demand Draft / Cross Cheque / IBFT Only.</td>
+			</tr>
+			<tr>
+				<td colspan="4"><h4>For online payment:</h4></td>
+			</tr>
+			<tr>
+				<th><h5>Bank Name:</h5></th>
+				<td><?= $bank_details->bank_name ?></td>
+				<th><h5>Branch Name:</h5></th>
+				<td><?= $bank_details->branch_name ?></td>
+			</tr>
+			<tr>
+				<th><h5>Branch Code:</h5></th>
+				<td><?= $bank_details->branch_code ?></td>
+				<th><h5>Swift Code:</h5></th>
+				<td><?= $bank_details->swift_code ?></td>
+			</tr>
+			<tr>
+				<th><h5>Title of Account:</h5></th>
+				<td><?= $bank_details->title ?></td>
+				<td><h5>Account No.:</h5></td>
+				<td><?= $bank_details->account_no ?></td>
+			</tr>
+			<tr>
+				<th colspan="2"><h5>IBAN No:</h5></th>
+				<td colspan="2"><?= $bank_details->iban_no ?></td>
+			</tr>
+			<tr>
+				<td colspan="4">Minimum 50% advance payment of booking amount is mandatory for confirmed allocation of stall.</td>
+			</tr>
+			<tr>
+				<td colspan="4">100% payment has to be cleared before 45 Days of the Event.</td>
+			</tr>
+			<tr>
+				<td colspan="4">The booking of stall without payment will be considered as "TENTATIVE" and stall can be allocated to any other Exhibitor on the basis of first come first serve.</td>
+			</tr>
+			<tr>
+				<td colspan="4">Any valid tax will be applied in addition to the net amount.</td>
+			</tr>
+			<tr>
+				<td colspan="4"><h4>Rules & Regulations / Participation & Cancellation Policy:</h4></td>
+			</tr>
+			<tr>
+				<td colspan="4">Please read all the terms and conditions and policies carefully at https://fleepfair.com/rules-regulations-of-participation/</td>
+			</tr>
+		</tbody>
+	</table>		
+			
 
 
 </page>
