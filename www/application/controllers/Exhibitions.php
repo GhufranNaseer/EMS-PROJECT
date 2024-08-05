@@ -5,10 +5,10 @@ class Exhibitions extends MY_Controller {
 	protected function rule() {
 		$this->activateRightsSystem();
 		$crd = array(
-			'crd_list,crd_add,crd_add_submit' => array(
+			'crd_list,bank_detail_add,bank_detail_add_submit,crd_add,crd_add_submit' => array(
 				'rule' => '@'
 			),
-			'crd_list_datatable,crd_add_validate' => array(
+			'crd_list_datatable,crd_add_validate,bank_detail_add_validate' => array(
 				'rule' => '@',
 				'ajaxOnly' => true
 			)
@@ -71,6 +71,8 @@ class Exhibitions extends MY_Controller {
 				if (ALLOW_DELETION)
 					$html .= ' | <a href="' . base_url() . 'exhibitions-delete.html?id=' . urlencode(myid($id)) . '" onclick="return confirm(\'Are you sure want to delete\');">Delete</a>';
 
+				$html .= '| <a href="'. base_url() .'bank-details-add.html?exhibition_id='. $id .'"> Add Bank Details';
+
 				return "<div class='text-center'>{$html}</div>";
 			}, NULL)
 			->where('E.is_deleted', 0)
@@ -79,6 +81,61 @@ class Exhibitions extends MY_Controller {
 
 		print ($this->datatables->generate());
 	}
+
+	function bank_detail_add() {
+		$bank_data = $this->db
+				->where('exhibition_id', $this->input->get('exhibition_id'))
+				->get('bank_details')
+				->row();
+		$data['bank_data'] = $bank_data;
+		$this->load->view('includes/after_login/head');
+        $this->load->view('exhibitions/bank_detail_add', $data);
+
+    }
+
+    function bank_detail_add_submit() {
+        if ($this->bank_detail_add_validate() !== true)
+            show_404();
+
+		
+
+        $data = array(
+            'exhibition_id' => $this->input->post('exhibition_id'),
+            'bank_name' => $this->input->post('bank_name'),
+            'title' => $this->input->post('title'),
+            'branch_name' => $this->input->post('branch_name'),
+            'account_no' => $this->input->post('account_no'),
+            'iban_no' => $this->input->post('iban_no'),
+            'swift_code' => $this->input->post('swift_code'),
+            'created_on' => date('Y-m-d H:i:s')
+        );
+
+        $this->db->trans_start();
+        $this->db
+            ->set($data)
+            ->insert('bank_details');
+        //$id = $this->db->insert_id();
+        $this->db->trans_complete();
+
+        $this->session->set_flashdata('message', 'Bank Details Added successfully');
+		
+		redirect(base_url('exhibitions.html'));
+    }
+
+    function bank_detail_add_validate() {
+
+        $this->form_validation->set_rules('bank_name', 'bank_name*bank name', 'trim|required');
+		$this->form_validation->set_rules('title', 'title*title', 'trim|required');
+		$this->form_validation->set_rules('branch_name', 'branch_name*branch name', 'trim|required');
+		$this->form_validation->set_rules('account_no', 'account_no*account no', 'trim|required');
+		$this->form_validation->set_rules('iban_no', 'iban_no*IBAN No', 'trim|required');
+		$this->form_validation->set_rules('swift_code', 'swift_code*Swift Code', 'trim|required');
+
+        if ($this->form_validation->run() == false)
+            return $this->common->doError(func_num_args(), $this->common->getFVError());
+        else
+            return $this->common->doError(func_num_args(), "done", true);
+    }
 
 	function crd_add_validate() {
 

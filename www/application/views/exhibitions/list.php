@@ -47,7 +47,7 @@
                                 <th>Venue</th>
                                 <th>Booking Expire Date</th>
                                 <th>Price Type</th>
-                                <th class="text-center" width="10%">Action</th>
+                                <th class="text-center" width="15%">Action</th>
                             </tr>
                             </thead>
 

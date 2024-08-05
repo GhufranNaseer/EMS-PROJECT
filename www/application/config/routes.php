@@ -716,6 +716,11 @@ $route['badge-scan.html']['get'] = "badges_scan/scan";
 $route['badge-scan_id.html']['post'] = "badges_scan/scan_id";
 #E Badge scan
 
+#S Trade Visitor Badges
+$route['bank-details-add.html']['get'] = "exhibitions/bank_detail_add";
+$route['bank-details-validate.html']['post'] = "exhibitions/bank_detail_add_validate/doError";
+$route['bank-details-submit.html']['post'] = "exhibitions/bank_detail_add_submit";
+
 
 #S Trade Visitor Badges
 $route['trade-visitor.html']['get'] = "trade_visitor/exhibitor_crd_list";

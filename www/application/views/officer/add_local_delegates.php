@@ -41,15 +41,8 @@
                             </div>
                             <div class="form-group row">
                                 <div class="col-sm-6">
-                                    <label>Officer Rank</label>
-                                    <select class="form-control" name="officer_rank" id="officer_rank">
-                                        <option value="">- select -</option>
-                                        <option value="Lieutenant Colonel">Lieutenant Colonel</option>
-                                        <option value="Colonel">Colonel</option>
-                                        <option value="Brigadier">Brigadier</option>
-                                        <option value="Major General">Major General</option>
-                                        <option value="Lieutenant General">Lieutenant General</option>
-                                    </select>
+                                    <label>Profile</label>
+                                    <input type="text" class="form-control" name="officer_rank"  id="officer_rank">
                                 </div>
                                 <div class="col-sm-6">
                                     <label>Contact Person Name <span class="text-red">*</span></label>

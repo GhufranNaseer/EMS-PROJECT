@@ -44,15 +44,8 @@
                             </div>
                             <div class="form-group row">
                                 <div class="col-sm-6">
-                                    <label>Officer Rank</label>
-                                    <select class="form-control" name="officer_rank" id="officer_rank">
-                                        <option value="">- select -</option>
-                                        <option value="Lieutenant Colonel" <?= (($this->formdata->officer_rank == 'Lieutenant Colonel') ? 'selected' : '') ?>>Lieutenant Colonel</option>
-                                        <option value="Colonel" <?= (($this->formdata->officer_rank == 'Colonel') ? 'selected' : '') ?>>Colonel</option>
-                                        <option value="Brigadier" <?= (($this->formdata->officer_rank == 'Brigadier') ? 'selected' : '') ?>>Brigadier</option>
-                                        <option value="Major General" <?= (($this->formdata->officer_rank == 'Major General') ? 'selected' : '') ?>>Major General</option>
-                                        <option value="Lieutenant General" <?= (($this->formdata->officer_rank == 'Lieutenant General') ? 'selected' : '') ?>>Lieutenant General</option>
-                                    </select>
+                                    <label>Profile</label>
+                                    <input type="text" class="form-control" value="<?= ($this->formdata->officer_rank)?>" name="officer_rank"  id="officer_rank">
                                 </div>
                                 <div class="col-sm-6">
                                     <label>Contact Person Name <span class="text-red">*</span></label>

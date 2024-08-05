@@ -219,3 +219,17 @@ CREATE TABLE `es_freight_forwarders` (
 
 ALTER TABLE `database`.`es_exhibitions` 
 ADD COLUMN `event_freight_forwarders` TEXT NULL AFTER `stall_builder_contractors`;
+
+-- 05 Aug 2024
+CREATE TABLE `bank_details` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `exhibition_id` int NULL,
+  `bank_name` varchar(255) DEFAULT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `branch_name` varchar(255) DEFAULT NULL,
+  `account_no` varchar(255) DEFAULT NULL,
+  `iban_no` varchar(255) DEFAULT NULL,
+  `swift_code` varchar(255) DEFAULT NULL,
+  `created_on` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;

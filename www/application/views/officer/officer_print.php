@@ -138,7 +138,7 @@ $organizer = $this->db
                     </tr>
 					<?php if ($data->officer_type == "local_delegates") { ?>
                         <tr>
-                            <td><b>Rank:</b></td>
+                            <td><b>Profile:</b></td>
                             <td><?= $data->officer_rank ?></td>
                         </tr>
 					<?php } ?>
