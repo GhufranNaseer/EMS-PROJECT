@@ -191,11 +191,11 @@ $stalls = $this->db
 	<table style="width: 100%; margin-top: 30px" class="text-muted text-justify">
 		<tr>
 			<td style="width: 70%">
-				<p style="margin-bottom: 14px"><strong>Exhibitors are required to complete the following declaration:</strong></p>
+				<p style="margin-bottom: 14px">Exhibitors are required to complete the following declaration:</p>
 
-				<p style="margin-bottom: 14px"><strong>DECLARATION</strong> We understand that it is a condition of the licensing authority that no weapon, ammunition, explosive or toxic material will be exhibited at our <?= $this->event->exhibition_title ?> stand other than models, dummies, inert ammunition, cutaways and weapons which have been rendered irreversibly unserviceable. We confirm that all our exhibits comply with this rule. Within the consignment of exhibits and materials shipped to Pakistan by us for display <?= $this->event->exhibition_title ?> are the following items, which under the definition stated above can be classified as 'weapons' 'ammunition' or 'projectile', including mines etc. as per category/sub-category</p>
+				<p style="margin-bottom: 14px">DECLARATION We understand that it is a condition of the licensing authority that no weapon, ammunition, explosive or toxic material will be exhibited at our <?= $this->event->exhibition_title ?> stand other than models, dummies, inert ammunition, cutaways and weapons which have been rendered irreversibly unserviceable. We confirm that all our exhibits comply with this rule. Within the consignment of exhibits and materials shipped to Pakistan by us for display <?= $this->event->exhibition_title ?> are the following items, which under the definition stated above can be classified as 'weapons' 'ammunition' or 'projectile', including mines etc. as per category/sub-category</p>
 
-				<p style="margin-bottom: 14px"><strong>Note:</strong> Dummy or and inert is defined "as any item or armament or any projectile, which contains no explosive, incendiary or toxic material and has been rendered inert to a degree from which it cannot be repaired to become a usable weapon or projectile in a weapon"</p>
+				<p style="margin-bottom: 14px">Note: Dummy or and inert is defined "as any item or armament or any projectile, which contains no explosive, incendiary or toxic material and has been rendered inert to a degree from which it cannot be repaired to become a usable weapon or projectile in a weapon"</p>
 			</td>
 			<td style="width: 30%">
 				<div class="company_stamp_area"></div>
