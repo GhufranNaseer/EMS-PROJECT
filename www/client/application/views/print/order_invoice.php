@@ -26,9 +26,9 @@ $stalls = $this->db
 	->result();
 
 $bank_details = $this->db
-->where('exhibition_id', $this->event->id)
-->get('bank_details')
-->row(); 
+	->where('exhibition_id', $this->event->id)
+	->get('bank_details')
+	->row(); 
 
 ?>
 <page>
@@ -178,60 +178,63 @@ $bank_details = $this->db
 		</tbody>
 	</table>
 
-	<table class="table table-striped" style="width: 100%; margin-top: 40px;">
+	<?php if (isset($bank_details)) { ?>
+	<table class="table" style="width: 100%; margin-top: 50px;">
 		<tbody>
-			<tr class="dark-bg">
-				<td colspan="4"><h4>Mode of Payment:</h4></td>
+			<tr>
+				<th colspan="4"><p style="font-size: 13px;text-decoration: underline;">Mode of Payment:</p></th>
 			</tr>
 			<tr>
-				<td colspan="4">All payments shall be made in favor of "BADAR EXPO SOLUTIONS" through Payorder / Demand Draft / Cross Cheque / IBFT Only.</td>
+				<td colspan="4">&#8226; All payments shall be made in favor of "<span style="font-weight: bold;">BADAR EXPO SOLUTIONS</span>" through Payorder / Demand Draft / Cross Cheque / IBFT Only.</td>
 			</tr>
 			<tr>
-				<td colspan="4"><h4>For online payment:</h4></td>
+				<th colspan="4"><p style="font-size: 13px;text-decoration: underline;">For online payment:</p></th>
 			</tr>
 			<tr>
-				<th><h5>Bank Name:</h5></th>
-				<td><?= $bank_details->bank_name ?></td>
-				<th><h5>Branch Name:</h5></th>
-				<td><?= $bank_details->branch_name ?></td>
+				<td><p style="font-size: 12px;">&#8226; Bank Name</p></td>
+				<th><p style="font-size: 12px;text-decoration: underline;"><?= $bank_details->bank_name ?></p></th>
+				<td><p style="font-size: 12px;">&#8226; Title of Account</p></td>
+				<th><p style="font-size: 12px;text-decoration: underline;"><?= $bank_details->title ?></p></th>
 			</tr>
 			<tr>
-				<th><h5>Branch Code:</h5></th>
-				<td><?= $bank_details->branch_code ?></td>
-				<th><h5>Swift Code:</h5></th>
-				<td><?= $bank_details->swift_code ?></td>
+				<td><p style="font-size: 12px;">&#8226; Branch Name</p></td>
+				<th><p style="font-size: 12px;text-decoration: underline;"><?= $bank_details->branch_name ?></p></th>
+				<td><p style="font-size: 12px;">&#8226; Account No.</p></td>
+				<th><p style="font-size: 12px;text-decoration: underline;"><?= $bank_details->account_no ?></p></th>
 			</tr>
 			<tr>
-				<th><h5>Title of Account:</h5></th>
-				<td><?= $bank_details->title ?></td>
-				<td><h5>Account No.:</h5></td>
-				<td><?= $bank_details->account_no ?></td>
+				<td><p style="font-size: 12px;">&#8226; Branch Code</p></td>
+				<th><p style="font-size: 12px;text-decoration: underline;"><?= $bank_details->branch_code ?></p></th>
+				<td><p style="font-size: 12px;">&#8226; IBAN No.</p></td>
+				<th><p style="font-size: 12px;text-decoration: underline;"><?= $bank_details->iban_no ?></p></th>
 			</tr>
 			<tr>
-				<th colspan="2"><h5>IBAN No:</h5></th>
-				<td colspan="2"><?= $bank_details->iban_no ?></td>
+				<td><p style="font-size: 12px;">&#8226; Swift Code</p></td>
+				<th><p style="font-size: 12px;text-decoration: underline;"><?= $bank_details->swift_code ?></p></th>
+				<td><p style="font-size: 12px;"></p></td>
+				<th><p style="font-size: 12px;text-decoration: underline;"></p></th>
 			</tr>
 			<tr>
-				<td colspan="4">Minimum 50% advance payment of booking amount is mandatory for confirmed allocation of stall.</td>
+				<td colspan="4">&#8226; Minimum 50% advance payment of booking amount is mandatory for confirmed allocation of stall.</td>
 			</tr>
 			<tr>
-				<td colspan="4">100% payment has to be cleared before 45 Days of the Event.</td>
+				<td colspan="4">&#8226; 100% payment has to be cleared before 45 Days of the Event.</td>
 			</tr>
 			<tr>
-				<td colspan="4">The booking of stall without payment will be considered as "TENTATIVE" and stall can be allocated to any other Exhibitor on the basis of first come first serve.</td>
+				<td colspan="4">&#8226; The booking of stall without payment will be considered as "<span style="font-weight: bold;">TENTATIVE</span>" and stall can be allocated to any other Exhibitor on the basis of first come first serve.</td>
 			</tr>
 			<tr>
-				<td colspan="4">Any valid tax will be applied in addition to the net amount.</td>
+				<td colspan="4">&#8226; Any valid tax will be applied in addition to the net amount.</td>
 			</tr>
 			<tr>
-				<td colspan="4"><h4>Rules & Regulations / Participation & Cancellation Policy:</h4></td>
+				<th colspan="4"><p style="font-size: 13px;text-decoration: underline;">Rules & Regulations / Participation & Cancellation Policy:</p></th>
 			</tr>
 			<tr>
 				<td colspan="4">Please read all the terms and conditions and policies carefully at https://fleepfair.com/rules-regulations-of-participation/</td>
 			</tr>
 		</tbody>
 	</table>		
-			
+	<?php } ?>
 
 
 </page>

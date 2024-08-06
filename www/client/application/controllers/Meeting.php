@@ -86,6 +86,12 @@ class Meeting extends MY_Controller
         if ($this->input->get('type') && $this->input->get('type') != '') {
 			$this->datatables->where('officer_type', $this->input->get('type'));
 		}
+		
+		if ($this->input->get('type') && $this->input->get('type') == 'local_delegates') {
+
+		} else {
+			$this->datatables->unset_column('officer_rank');
+		}
 
         print ($this->datatables->generate());
     }

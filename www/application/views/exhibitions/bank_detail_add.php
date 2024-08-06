@@ -6,7 +6,7 @@
 	<!-- Content Header (Page header) -->
 	<section class="content-header">
 		<h1>
-		Bank Detail Add
+			Event Bank Detail
 			<small></small>
 		</h1>
 		<ol class="breadcrumb">

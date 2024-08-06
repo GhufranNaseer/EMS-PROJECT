@@ -68,10 +68,12 @@ class Exhibitions extends MY_Controller {
 			->add_column('col_action', function ($row) {
 				$id = $row['id'];
 				$html = '<a href="' . base_url() . 'exhibitions-edit.html?id=' . urlencode(myid($id)) . '">Edit</a>';
+
+				$html .= ' | <a href="'. base_url() .'bank-details-add.html?exhibition_id='. $id .'"> Bank Details';
+
 				if (ALLOW_DELETION)
 					$html .= ' | <a href="' . base_url() . 'exhibitions-delete.html?id=' . urlencode(myid($id)) . '" onclick="return confirm(\'Are you sure want to delete\');">Delete</a>';
 
-				$html .= '| <a href="'. base_url() .'bank-details-add.html?exhibition_id='. $id .'"> Add Bank Details';
 
 				return "<div class='text-center'>{$html}</div>";
 			}, NULL)
@@ -121,17 +123,17 @@ class Exhibitions extends MY_Controller {
         //$id = $this->db->insert_id();
         $this->db->trans_complete();
 
-        $this->session->set_flashdata('message', 'Bank Details Added successfully');
+        $this->session->set_flashdata('message', 'Bank details updated successfully');
 		
 		redirect(base_url('exhibitions.html'));
     }
 
     function bank_detail_add_validate() {
 
-        $this->form_validation->set_rules('bank_name', 'bank_name*bank name', 'trim|required');
-		$this->form_validation->set_rules('title', 'title*title', 'trim|required');
-		$this->form_validation->set_rules('branch_name', 'branch_name*branch name', 'trim|required');
-		$this->form_validation->set_rules('account_no', 'account_no*account no', 'trim|required');
+        $this->form_validation->set_rules('bank_name', 'bank_name*Bank name', 'trim|required');
+		$this->form_validation->set_rules('title', 'title*Title of Account', 'trim|required');
+		$this->form_validation->set_rules('branch_name', 'branch_name*Branch name', 'trim|required');
+		$this->form_validation->set_rules('account_no', 'account_no*Account no', 'trim|required');
 		$this->form_validation->set_rules('iban_no', 'iban_no*IBAN No', 'trim|required');
 		$this->form_validation->set_rules('swift_code', 'swift_code*Swift Code', 'trim|required');
 		$this->form_validation->set_rules('branch_code', 'branch_code*Branch Code', 'trim|required');
