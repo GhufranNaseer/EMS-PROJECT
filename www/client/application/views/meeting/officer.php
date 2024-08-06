@@ -34,7 +34,11 @@
                                 <th>Country</th>
                                 <th>Designation</th>
                                 <th>Contact Person</th>
-                                <th>Profile</th>
+								<?php 
+								if ($this->input->get('type') && $this->input->get('type') == 'local_delegates') {
+									echo '<th>Profile</th>';
+								}
+								?>
                                 <th class="text-center" width="15%">Action</th>
                             </tr>
                             </thead>

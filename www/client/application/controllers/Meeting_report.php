@@ -117,9 +117,10 @@ class Meeting_report extends MY_Controller
 					if ($row['user_type_to'] == 'exhibitor' && $row['appointment_to'] == $this->userdata->id) {
 						if ($row['is_approved'] == 0) {
 							$html .= '<a href="' . base_url() . 'meeting-approved.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-success" onclick="return confirm(\'Are you sure you would like to accept the meeting request\')">Accept</a> ';
+							
+							$html .= '<a href="' . base_url() . 'meeting-cancel.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you would like to deny the meeting request?\')">Regret</a> ';
+							$html .= '<a href="' . base_url() . 'meeting_re_schedule.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-info">Re-Schedule</a> ';
 						}
-						$html .= '<a href="' . base_url() . 'meeting-cancel.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you would like to deny the meeting request?\')">Regret</a> ';
-						$html .= '<a href="' . base_url() . 'meeting_re_schedule.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-info">Re-Schedule</a> ';
 					} else {
 						if ($row['is_approved'] == 0) {
 							$html = '<a href="' . base_url() . 'meeting-delete.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you would like to delete the meeting request?\')">Delete</a> ';

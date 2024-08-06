@@ -192,7 +192,6 @@ CREATE TABLE `database`.`location_for_meeting` (
 ALTER TABLE `database`.`location_for_meeting` 
 CHANGE COLUMN `id` `id` INT NOT NULL AUTO_INCREMENT ;
 
--- ^^ END Updated on live
 
 
 -- 03 Aug 2024
@@ -220,6 +219,7 @@ CREATE TABLE `es_freight_forwarders` (
 ALTER TABLE `database`.`es_exhibitions` 
 ADD COLUMN `event_freight_forwarders` TEXT NULL AFTER `stall_builder_contractors`;
 
+
 -- 05 Aug 2024
 CREATE TABLE `bank_details` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -234,3 +234,5 @@ CREATE TABLE `bank_details` (
   `created_on` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
+
+-- ^^ END Updated on live
