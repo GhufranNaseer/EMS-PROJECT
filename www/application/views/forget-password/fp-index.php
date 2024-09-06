@@ -17,6 +17,12 @@
             </div>
             <div class="row">
                 <div class="col-sm-12 text-center" id="msg-box" style="color:#F00;">&nbsp;</div>
+				<?php
+				$error = $this->session->flashdata('error');
+				if (is_string($error)) {
+					echo '<div class="alert alert-danger text-center">'.$error.'</div>';
+				}
+				?>
             </div>
             <br>
             <div class="row">
@@ -26,7 +32,10 @@
                     </div>
                 </div><!-- /.col -->
                 <div class="col-xs-4">
-                    <button type="button" id="btn-submit" class="btn btn-primary btn-block btn-flat">Send Email</button>
+					<button class="g-recaptcha btn btn-primary btn-block btn-flat" 
+								data-sitekey="6LeCiTgqAAAAAAy_4gVIDiwaD83EYOZQEU9YqurO" 
+								data-callback='onSubmit' 
+								data-action='submit'>Send Email</button>
                 </div><!-- /.col -->
             </div>
         </form>
@@ -37,19 +46,27 @@
 <script type="text/javascript" src="<?= base_url('assets'); ?>/js/jquery-2.2.3.min.js"></script>
 
 <script src="<?= base_url ("assets/js/doFormValidation.js"); ?>"></script>
+<script src="https://www.google.com/recaptcha/api.js"></script>
 <script>
-	$(function () {
-		var obj = {
-			'form':         '#login-form',
-			'msgbox':       '#msg-box',
-			'urlValidator': "<?php echo base_url("forget-password-validate"); ?>",
-			'loadingImg':   "<?php echo base_url("assets/img/load-indicator.gif"); ?>",
-			'onFormError':  function () {
-				$('input').addClass('validation-fail');
+
+	function onSubmit(token) {
+		$.ajax({
+			url: "<?php echo base_url("forget-password-validate"); ?>",
+			type: 'POST',
+			data: $('#login-form').serialize()
+		}).done(function (data) {
+			$("#login-form .validation-failed").removeClass("validation-failed");
+			$("#login-form .do-error-msg").remove();
+
+			if (data == "done") {
+				$('#msg-box').html('');
+				$('#msg-box').html('<img src="<?php echo base_url("assets/img/load-indicator.gif"); ?>" />');
+				$('#login-form').submit();
+			} else {
+				$('#msg-box').html(data);
 			}
-		};
-		doFormValidation(obj);
-	});
+		});
+	}
 </script>
 </body>
 </html>
