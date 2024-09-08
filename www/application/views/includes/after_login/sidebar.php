@@ -403,6 +403,12 @@
                                 <span>Individual Send Sms</span>
                             </a>
                         </li>
+						<li data-page="email_send_to_companies">
+                            <a href="<?= base_url('email-send-to-companies'); ?>">
+                                <i class="fa fa-comments"></i>
+                                <span>Send Emails To companies</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
             <?php } ?>

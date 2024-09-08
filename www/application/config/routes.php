@@ -443,6 +443,10 @@ $route['sms-send-to-companies-add-submit']['post'] = "sms_notification/crd_add_s
 $route['sms-individual-send']['get'] = "sms_notification/crd_add_individual";
 $route['sms-individual-send-add-validate']['post'] = "sms_notification/crd_add_validate_individual/doError";
 $route['sms-individual-send-add-submit']['post'] = "sms_notification/crd_add_submit_individual";
+
+$route['email-send-to-companies']['get'] = "sms_notification/crd_add_email";
+$route['email-send-to-companies-add-validate']['post'] = "sms_notification/crd_add_email_validate/doError";
+$route['email-send-to-companies-add-submit']['post'] = "sms_notification/crd_add_email_submit";
 #E Sms Notification
 
 
