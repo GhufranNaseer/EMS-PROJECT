@@ -1,4 +1,6 @@
 # Send emails to customers
 * * * * * root wget -qO- http://webserver/Cron_email/send_messages &
 
+* * * * * root wget -qO- http://webserver/Cron_email/send_text_message &
+
 # last line

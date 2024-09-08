@@ -76,20 +76,21 @@ class Cron_email extends Initialize {
 	function send_text_message() {
 		$messages = $this->db
 			->where('is_send', 0)
-			->limit(10)
+			->limit(5)
 			->get('es_sms_notification')
 			->result();
 
 		foreach ($messages as $message) {
 
-			$this->funcs->send_sms($message->phone_number, $message->text_message);
+			if ($this->funcs->send_sms($message->phone_number, $message->text_message)) {
+				$this->db
+					->where('id', $message->id)
+					->update('es_sms_notification', array(
+						'is_send' => 1,
+						'send_on' => date('Y-m-d H:i:s'),
+					));
+			}
 
-			$this->db
-				->where('id', $message->id)
-				->update('es_sms_notification', array(
-					'is_send' => 1,
-					'send_on' => date('Y-m-d H:i:s'),
-				));
 		}
 
 		echo 'done';
