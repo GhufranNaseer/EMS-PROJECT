@@ -50,11 +50,19 @@ class Cron_email extends Initialize {
 				));
 
 			if ($email->type && $email->type == 'EVENT_INVITATION') {
-				$this->db
-					->where('id', $booking->id)
-					->update('es_exhibition_booking', array(
-						'invitation_sent' => 1
-					));
+				try {
+					$booking = json_decode($email->data);
+
+					if (isset($booking) && $booking->order_id) {
+						$this->db
+						->where('id', $booking->order_id)
+						->update('es_exhibition_booking', array(
+							'invitation_sent' => 1
+						));
+					}
+				} catch (Exception $e) {
+
+				}
 			}
 		}
 

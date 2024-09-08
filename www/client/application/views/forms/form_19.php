@@ -308,10 +308,9 @@ $active_invitation_types = $this->db
                                         </a>
                                         </td>
                                         <td>';
-                                        if ($badge->is_printed == 1) {
 											$html .= '<a href="javascript:void(0)" class="edit_badge_btn" data-id="' . $badge->id . '">Edit</a>';
 											$html .= '| <a href="javascript:void(0)" class="delete_badge_btn" data-id="' . $badge->id . '">Delete</a>';
-										}
+										
 										$html .= '</td>
                                         </tr>';
 
