@@ -63,11 +63,8 @@
                             </div>
                         </div>
 
-                        <div class="col-xs-4">
-							<button class="g-recaptcha btn btn-primary btn-block btn-flat" 
-								data-sitekey="6LeCiTgqAAAAAAy_4gVIDiwaD83EYOZQEU9YqurO" 
-								data-callback='onSubmit' 
-								data-action='submit'>Login</button>
+                         <div class="col-xs-4">
+							<button class="btn btn-primary btn-block btn-flat" type="submit" id="btn-submit">Login</button>
                         </div>
                     </div>
                 </form>
@@ -103,7 +100,7 @@
 <script type="text/javascript" src="<?= base_url('assets'); ?>/js/jquery-ui.js"></script>
 <script src="<?= base_url('assets') ?>/iCheck/icheck.min.js"></script>
 <script src="<?= base_url ("assets/js/doFormValidation.js"); ?>"></script>
-<script src="https://www.google.com/recaptcha/api.js"></script>
+
 
 <script>
 	$('#remember').iCheck({
@@ -112,11 +109,13 @@
 		increaseArea:  '20%' // optional
 	});
 
-	function onSubmit(token) {
+	$('#login-form').on('submit', function (e) {
+		e.preventDefault();
+		var form = this;
 		$.ajax({
 			url: "<?php echo base_url("login-validate"); ?>",
 			type: 'POST',
-			data: $('#login-form').serialize()
+			data: $(form).serialize()
 		}).done(function (data) {
 			$("#login-form .validation-failed").removeClass("validation-failed");
 			$("#login-form .do-error-msg").remove();
@@ -124,12 +123,12 @@
 			if (data == "done") {
 				$('#msg-box').html('');
 				$('#msg-box').html('<img src="<?php echo base_url("assets/img/load-indicator.gif"); ?>" />');
-				$('#login-form').submit();
+				form.submit();
 			} else {
 				$('#msg-box').html(data);
 			}
 		});
-	}
+	});
 </script>
 
 </body>

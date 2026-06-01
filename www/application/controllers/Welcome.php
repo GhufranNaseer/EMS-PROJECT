@@ -75,16 +75,6 @@ class Welcome extends Initialize {
 		if ($this->login_validate () !== true)
 			show_404 ();
 
-		$recaptcha_token = $this->input->post('g-recaptcha-response');
-		if (!is_string($recaptcha_token) || $recaptcha_token == "") {
-			$this->session->set_flashdata('error', 'reCaptcha validation failed!');
-			return redirect(base_url('login'));
-		}
-		if (!$this->common->validate_recaptcha()) {
-			$this->session->set_flashdata('error', 'reCaptcha validation failed!');
-			return redirect(base_url('login'));
-		}
-
 		$rm = $this->input->post ('rememberme');
 		$rm = (!is_null($rm))? true : false;
 
@@ -190,16 +180,6 @@ class Welcome extends Initialize {
 	function forget_password_submit () {
 		if ($this->forget_password_validate()!==true)
 			show_404();
-
-		$recaptcha_token = $this->input->post('g-recaptcha-response');
-		if (!is_string($recaptcha_token) || $recaptcha_token == "") {
-			$this->session->set_flashdata('error', 'reCaptcha validation failed!');
-			return redirect(base_url('forget-password'));
-		}
-		if (!$this->common->validate_recaptcha()) {
-			$this->session->set_flashdata('error', 'reCaptcha validation failed!');
-			return redirect(base_url('forget-password'));
-		}
 
 		$user = $this->db->get()->row();
 

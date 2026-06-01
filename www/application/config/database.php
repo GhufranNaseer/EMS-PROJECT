@@ -75,10 +75,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'mysql-db',
-	'username' => 'ubuntu',
-	'password' => 'password',
-	'database' => 'database',
+	'hostname' => '127.0.0.1',
+        'username' => 'root',
+        'password' => '',
+        'database' => 'ems_main_db',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
