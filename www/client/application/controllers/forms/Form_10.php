@@ -57,9 +57,9 @@ class Form_10 extends MY_Controller {
 
 		$this->form_validation->set_rules('is_agree', 'is_agree*is_agree', 'trim|required');
 
-		$this->form_validation->set_rules('visitor_name', 'visitor_name*visitor_name', 'trim|required|max_length[19]');
+		$this->form_validation->set_rules('visitor_name', 'visitor_name*visitor_name', 'trim|required|max_length[36]');
 		$this->form_validation->set_rules('visitor_father_name', 'visitor_father_name*visitor_father_name', 'trim');
-		$this->form_validation->set_rules('visitor_job_title', 'visitor_job_title*visitor_job_title', 'trim|required|max_length[19]');
+		$this->form_validation->set_rules('visitor_job_title', 'visitor_job_title*visitor_job_title', 'trim|required|max_length[36]');
 		$this->form_validation->set_rules('visitor_phone', 'visitor_phone*visitor_phone', 'trim|numeric');
 		$this->form_validation->set_rules('visitor_mobile', 'visitor_mobile*visitor_mobile', 'trim|required|numeric');
 		$this->form_validation->set_rules('visitor_email', 'visitor_email*visitor_email', 'trim|valid_email');

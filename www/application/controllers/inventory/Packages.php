@@ -230,7 +230,7 @@ class Packages extends MY_Controller {
 					'exhibition_id' => $this->formdata->id,
 					'package_id' => $insert_id,
 					'badge_type' => $item['badge_type'],
-					'invitation_type' => $key,
+					'invitation_type' => trim($key),
 					'quantity' => (array_key_exists('has_item', $item) ? $item['quantity'] : 0),
 					'is_active' => (array_key_exists('has_item', $item) ? 1 : 0),
 				);
@@ -379,7 +379,7 @@ class Packages extends MY_Controller {
 					'exhibition_id' => $this->formdata->id,
 					'package_id' => $this->packagedata->id,
 					'badge_type' => $item['badge_type'],
-					'invitation_type' => $key,
+					'invitation_type' => trim($key),
 					'quantity' => (array_key_exists('has_item', $item) ? $item['quantity'] : 0),
 					'is_active' => (array_key_exists('has_item', $item) ? 1 : 0),
 				);
@@ -493,7 +493,7 @@ class Packages extends MY_Controller {
 					'exhibition_id' => $this->formdata->id,
 					'package_id' => $new_package_id,
 					'badge_type' => $badge->badge_type,
-					'invitation_type' => $badge->invitation_type,
+					'invitation_type' => trim($badge->invitation_type),
 					'quantity' => $badge->quantity,
 					'is_active' => $badge->is_active,
 				);

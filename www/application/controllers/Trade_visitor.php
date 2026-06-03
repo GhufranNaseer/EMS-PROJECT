@@ -143,6 +143,9 @@ class Trade_visitor extends MY_Controller {
 			->where('badge_type', 'trade_visitor')
 			->from('es_exhibition_badges');
 
+		if ($this->userdata->user_group_id == 11) {
+			$this->datatables->where('added_by', $this->userdata->id);
+		}
 		if ($this->userdata->user_group_id == SALES_PERSON) {
 			$this->datatables->where('added_by', $this->userdata->id);
 		}

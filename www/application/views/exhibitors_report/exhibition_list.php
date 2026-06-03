@@ -61,7 +61,27 @@
 <script type="text/javascript">
 	$(document).ready(function () {
 		oTable = $('#crud-table').dataTable($.extend(datatable_settings, {
+            "bServerSide": true,
+            "bProcessing": true,
+            "fnRowCallback": null,
+            "fnInitComplete": null,
 			"sAjaxSource": '<?php echo base_url('exhibitions_form_status-datatable.html'); ?>?id=<?= $this->input->get('id') ?>',
+			"aoColumns": [
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				{ "bSearchable": false },
+				{ "bSearchable": false },
+				{ "bSearchable": false },
+				{ "bSearchable": false },
+			]
 		}));
 		my_datatable(oTable, {
 			exportable: true,

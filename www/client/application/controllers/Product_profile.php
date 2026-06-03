@@ -72,6 +72,8 @@ class Product_profile extends MY_Controller {
 			->where('F.exhibition_id', $this->event->id)
 			->where('F.form_id', 3)
 			->where('F.booking_id !=', $this->booking->id)
+			->where('B.is_approved', 1)
+			->where('B.is_canceled', 0)
 			->join('es_exhibition_booking as B', 'F.booking_id = B.id', 'LEFT')
 			->join('es_customers as C', 'B.customer_id = C.id', 'LEFT')
 			->get('es_exhibition_booking_forms_data as F')

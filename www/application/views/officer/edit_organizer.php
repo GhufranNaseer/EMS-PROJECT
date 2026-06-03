@@ -50,6 +50,10 @@
                             </div>
 
                             <div class="form-group row">
+								<div class="col-sm-6">
+                                    <label>Profile</label>
+                                    <input type="text" class="form-control" value="<?= ($this->formdata->profile)?>" name="profile"  id="profile">
+                                </div>
                                 <div class="col-sm-6">
                                     <label>Mobile Number</label>
                                     <input type="number" class="form-control" name="mobile_number" value="<?= ($this->formdata->officer_phone)?>" id="mobile_number">

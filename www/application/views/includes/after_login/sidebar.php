@@ -339,14 +339,20 @@
 
 			
             <?php if (get_instance()->hasRight('orderlist')) { ?>
+				<li data-page="active_order_list">
+                    <a href="<?= base_url('active_order_list.html'); ?>">
+                        <i class="fa fa-shopping-cart"></i>
+                        <span>Active Order List</span>
+                    </a>
+                </li>
                 <li data-page="order_list">
                     <a href="<?= base_url('order_list.html'); ?>">
                         <i class="fa fa-shopping-cart"></i>
-                        <span>Order List</span>
+                        <span>Order List(All)</span>
                     </a>
                 </li>
             <?php } ?>
-            <?php if (get_instance()->hasRight('update_order_badges')) { ?>
+            <?php if (get_instance()->hasRight('Updateorderbadges')) { ?>
                 <li data-page="update_order_badges">
                     <a href="<?= base_url('update-order-badges.html'); ?>">
                         <i class="fa fa-shopping-cart"></i>

@@ -96,6 +96,7 @@
                                 <th>Type</th>
                                 <th>Designation</th>
                                 <th>Country</th>
+                                <th>Profile</th>
                                 <th>Contact person</th>
                                 <th>Phone</th>
                                 <th>Email</th>

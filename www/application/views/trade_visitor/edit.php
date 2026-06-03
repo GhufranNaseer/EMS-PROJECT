@@ -62,7 +62,7 @@
 								</div>
 								<div class="col-sm-3">
 									<label>C.N.I.C or Passport # <span class="text-red">*</span></label>
-									<input type="text" class="form-control" name="cnin_passport" value="<?= ($data->nationality == 'Pakistani') ? $data->cnic : $data->passport ?>">
+									<input type="text" class="form-control cnic_field" name="cnin_passport" value="<?= ($data->nationality == 'Pakistani') ? $data->cnic : $data->passport ?>">
 								</div>
 								<div class="col-sm-3">
 									<label>Date of Expiry</label>
@@ -90,7 +90,7 @@
 								</div>
 								<div class="col-sm-3">
 									<label>Collection Person CNIC</label>
-									<input type="number" class="form-control" name="collection_person_cnic"
+									<input type="text" class="form-control collection_cnic_field" name="collection_person_cnic"
 										   placeholder="Collection Person CNIC" value="<?= $data->collection_person_cnic ?>">
 								</div>
 								<div class="col-sm-3">
@@ -121,7 +121,7 @@
 </div><!-- /.content-wrapper -->
 
 <?php $this->load->view('includes/after_login/footer'); ?>
-
+<script src="<?= base_url('assets') ?>/input-mask/jquery.inputmask.js"></script>
 <script>
 	$(function () {
 		doFormValidation({
@@ -152,6 +152,8 @@
 			predefined_images: <?= json_encode(explode(',', $data->user_image)) ?>
             <?php } ?>
 		});
+		$('.cnic_field').inputmask("9999999999999");
+		$('.collection_cnic_field').inputmask("9999999999999");
 	});
 </script>
 </body>

@@ -98,7 +98,7 @@ $organizer = $this->db
                 <div style="background: <?= $event->event_color ?>;  height: 50px; width: 100%">&nbsp;</div>
             </td>
             <td style="width: 20%;text-align: center">
-                <img src="<?= base_url($event->event_logo) ?>" alt="" class="event_logo">
+                <img src="<?= LOCAL_EXHIBIT_URL . ($event->event_logo) ?>" alt="" class="event_logo">
             </td>
             <td style="width: 40%; vertical-align: middle">
                 <div style="background: <?= $event->event_color ?>;  height: 50px; width: 100%">&nbsp;</div>
@@ -177,10 +177,10 @@ $organizer = $this->db
                     </div>
                 </td>
                 <td style="width: 10%;text-align: center;">
-                    <img src="<?= base_url($event->associate_logo) ?>" alt="" style="width: 60px;">
+                    <img src="<?= LOCAL_EXHIBIT_URL . ($event->associate_logo) ?>" alt="" style="width: 60px;">
                 </td>
                 <td style="width: 10%;text-align: center;">
-                    <img src="<?= base_url($organizer->organizer_image) ?>" alt="" style="width: 60px;">
+                    <img src="<?= LOCAL_EXHIBIT_URL . ($organizer->organizer_image) ?>" alt="" style="width: 60px;">
                 </td>
                 <td style="width: 40%; vertical-align: middle;">
                     <div

@@ -174,7 +174,9 @@ class Show_catalogue_report extends MY_Controller
 				if (isset($data)) {
 					$data = json_decode($data->form_data);
 					if(isset($data->exhibit) && isset($data->exhibit->company_ad)){
-						$html = '<a href="'.base_url('client/'.str_replace('uploaded:', '', $data->exhibit->company_ad[0])).'" target="_blank">Download</a>';
+						foreach ($data->exhibit->company_ad as $ad) {
+							$html = '<a href="'.base_url('client/'.str_replace('uploaded:', '', $ad)).'" target="_blank">Download</a>';
+						}
 					}
 				}
 
@@ -447,7 +449,6 @@ class Show_catalogue_report extends MY_Controller
 		$html = $this->load->view('show_catalogue_report/print_catalogue', array(
 
 		), true);
-
 
 		//echo $html; die();
 		set_time_limit(0);

@@ -49,6 +49,7 @@ class Meeting extends MY_Controller
             ->where('B.exhibition_id', $this->event->id)
             ->where('B.id !=', $this->booking->id)
             ->where('B.is_approved', 1)
+            ->where('B.is_canceled', 0)
             ->join('es_customers as C', 'B.customer_id = C.id')
             ->join('es_customer_contact_persons as A', 'B.contact_person_id = A.id')
             ->from('es_exhibition_booking as B');
@@ -87,11 +88,11 @@ class Meeting extends MY_Controller
 			$this->datatables->where('officer_type', $this->input->get('type'));
 		}
 		
-		if ($this->input->get('type') && $this->input->get('type') == 'local_delegates') {
+		//if ($this->input->get('type') && $this->input->get('type') == 'local_delegates') {
 
-		} else {
-			$this->datatables->unset_column('officer_rank');
-		}
+		//} else {
+		//	$this->datatables->unset_column('officer_rank');
+		//}
 
         print ($this->datatables->generate());
     }

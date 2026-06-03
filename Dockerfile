@@ -14,6 +14,9 @@ RUN apt-get update \
 
 RUN docker-php-ext-install mbstring
 
+# modify php ini
+ADD ./custom-php.ini /usr/local/etc/php/conf.d/custom-php.ini
+
 # Set the working directory to /var/www/html
 WORKDIR /var/www/html
 # Copy the source code in /www into the container at /var/www/html

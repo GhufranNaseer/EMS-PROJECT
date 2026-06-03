@@ -49,6 +49,7 @@ class Networking extends MY_Controller
             ->where('B.exhibition_id', $this->event->id)
             ->where('B.id !=', $this->booking->id)
             ->where('B.is_approved', 1)
+			->where('B.is_canceled', 0)
             ->join('es_customers as C', 'B.customer_id = C.id')
             ->join('es_customer_contact_persons as A', 'B.contact_person_id = A.id')
             ->from('es_exhibition_booking as B');

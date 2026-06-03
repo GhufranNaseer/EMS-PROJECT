@@ -88,9 +88,9 @@ class Form_01 extends MY_Controller {
 
 			$old_data = json_decode($old_form->form_data, true);
 			if ($this->input->post('has_bare_stall') && $this->input->post('has_bare_stall') == 1) {
-				$old_data->bare_stall_data = $this->input->post();
+				$old_data['bare_stall_data'] = $this->input->post();
 			} else {
-				$old_data->shell_stall_data = $this->input->post();
+				$old_data['shell_stall_data'] = $this->input->post();
 			}
 			$data = json_encode($old_data);
 

@@ -31,15 +31,25 @@ class Badges_scan extends MY_Controller {
 		}
 		$badge_id = trim($badge_id);*/
 
-		$badge_id = substr($badge_id, 6, strlen($badge_id));
+		//$badge_id = substr($badge_id, 6, strlen($badge_id));
 
 		$html="";
 
+		//$data = $this->db
+		//	->select('C.company, B.*')
+			//->where('B.id',$badge_id)
+		//	->where('B.barcode_data',$badge_id)
+		//	->join('es_exhibition_booking as O', 'B.booking_id = O.id')
+		//	->join('es_customers as C', 'O.customer_id = C.id')
+		//	->get('es_exhibition_badges as B')
+		//	->row();
+			
 		$data = $this->db
 			->select('C.company, B.*')
-			->where('B.id',$badge_id)
-			->join('es_exhibition_booking as O', 'B.booking_id = O.id')
-			->join('es_customers as C', 'O.customer_id = C.id')
+			//->where('B.id', $badge_id)
+			->where('B.barcode_data', $badge_id)
+			->join('es_exhibition_booking as O', 'B.booking_id = O.id', 'LEFT')
+			->join('es_customers as C', 'O.customer_id = C.id', 'LEFT')
 			->get('es_exhibition_badges as B')
 			->row();
 

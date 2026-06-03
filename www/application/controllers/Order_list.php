@@ -8,6 +8,7 @@ class Order_list extends MY_Controller
         $this->activateRightsSystem();
         $crd = array(
             'crd_list,
+			active_order_list,
 			event_order_list,
 			order_detail,
 			print_order_invoice,
@@ -22,6 +23,7 @@ class Order_list extends MY_Controller
                 'rule' => '@'
             ),
             'crd_list_datatable,
+			active_order_list_datatable,
 			order_list_datatable,
 			send_order_invitation_validate,
 			' => array(
@@ -106,6 +108,43 @@ class Order_list extends MY_Controller
     }
 
 
+	function active_order_list()
+    {
+        $this->load->view('includes/after_login/head');
+        $this->load->view('order_list/active_list');
+    }
+	
+	function active_order_list_datatable()
+    {
+        $this->load->library('datatables');
+        $this->datatables
+            ->select('E.id,
+				  E.exhibition_title,
+				  L.location_title				  
+				  ', false)
+            ->add_column('total_orders', function ($row) {
+				if ($this->userdata->user_group_id == SALES_PERSON) {
+					$this->db->where('booked_by', $this->userdata->id);
+				}
+                return $this->db
+                    ->where('exhibition_id', $row['id'])
+                    ->where('is_canceled', 0)
+                    ->count_all_results('es_exhibition_booking');
+            }, NULL)
+            ->add_column('col_action', function ($row) {
+                $id = $row['id'];
+                $html = '<a href="' . base_url() . 'event-order-list.html?id=' . urlencode(myid($id)) . '">View Orders</a>';
+
+                return "<div class='text-center'>{$html}</div>";
+            }, NULL)
+            ->where('E.is_deleted', 0)
+			->where('E.booking_expire_date >=', date('Y-m-d'))
+            ->join('es_locations as L', 'E.location_id = L.id', 'LEFT')
+            ->from('es_exhibitions as E');
+
+        print ($this->datatables->generate());
+    }
+	
     function event_order_list() {
         $this->checkEditId();
 

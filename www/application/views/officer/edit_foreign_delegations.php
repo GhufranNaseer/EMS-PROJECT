@@ -55,6 +55,10 @@
                             </div>
 
                             <div class="form-group row">
+								<div class="col-sm-6">
+                                    <label>Profile</label>
+                                    <input type="text" class="form-control" value="<?= ($this->formdata->profile)?>" name="profile"  id="profile">
+                                </div>
                                 <div class="col-sm-6">
                                     <label>Contact Person Name <span class="text-red">*</span></label>
                                     <input type="text" class="form-control" name="contact_person_name" value="<?= ($this->formdata->contact_person)?>" id="contact_person_name">

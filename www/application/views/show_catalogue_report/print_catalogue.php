@@ -90,7 +90,7 @@ $organizer = $this->db
                     <div style="background: <?= $event->event_color ?>; height: 50px; width: 100%">&nbsp;</div>
                 </td>
                 <td style="width: 20%;text-align: center">
-                    <img src="<?= base_url( $event->event_logo) ?>" alt="" class="event_logo" style="height: 80px; width: 100px">
+                    <img src="<?= LOCAL_EXHIBIT_URL . ( $event->event_logo) ?>" alt="" class="event_logo" style="height: 80px; width: 100px">
                 </td>
                 <td style="width: 40%; vertical-align: middle">
                     <div style="background: <?= $event->event_color ?>; height: 50px; width: 100%">&nbsp;</div>
@@ -125,48 +125,60 @@ $organizer = $this->db
             <td style="width:70%;padding: 0">
                 <table style="width: 70%">
                     <tr>
-                        <td colspan="2"><strong style="margin-bottom: 3px; font-size: 13pt; color: <?= $event->event_color ?>"><?= (isset($rows->company)) ? wordwrap($rows->company, 35, "<br>\n") : '' ?></strong><br></td>
+                        <td colspan="2"><p style="margin-bottom: 3px; font-size: 13pt;"><?= (isset($rows->company)) ? wordwrap($rows->company, 35, "<br>\n") : '' ?></p><br></td>
                     </tr>
                     <tr>
-                        <th>Address:</th>
+                        <td>Address:</td>
                         <td style="width: 90%"><?= (isset($data->exhibit->address)) ? ucfirst(strtolower($data->exhibit->address)) : '' ?></td>
                     </tr>
                     <tr>
-                        <th>Country:</th>
+                        <td>Country:</td>
                         <td><?= (isset($data->exhibit->country)) ? $data->exhibit->country : '' ?></td>
                     </tr>
                     <tr>
-                        <th>Telephone:</th>
+                        <td>Telephone:</td>
                         <td><?= (isset($data->exhibit->telephone)) ? $data->exhibit->telephone : '' ?></td>
                     </tr>
                     <tr>
-                        <th>Fax:</th>
+                        <td>Fax:</td>
                         <td><?= (isset($data->exhibit->fax)) ? $data->exhibit->fax : '' ?></td>
                     </tr>
                     <tr>
-                        <th>Email:</th>
+                        <td>Email:</td>
                         <td><?= (isset($data->exhibit->email)) ? $data->exhibit->email : '' ?></td>
                     </tr>
                     <tr>
-                        <th>Website:</th>
+                        <td>Website:</td>
                         <td><?= (isset($data->exhibit->website)) ? $data->exhibit->website : '' ?></td>
                     </tr>
                     <tr>
-                        <th>Contact Person:</th>
+                        <td>Contact Person:</td>
                         <td><?= (isset($data->exhibit->contact_person->name)) ? $data->exhibit->contact_person->name : '' ?></td>
                     </tr>
                     <tr>
-                        <th>Designation:</th>
+                        <td>Designation:</td>
                         <td><?= (isset($data->exhibit->contact_person->designation)) ? $data->exhibit->contact_person->designation : '' ?></td>
                     </tr>
                 </table>
             </td>
             <td style="width:30%;">
                 <?php
-                if (isset($data->exhibit->company_logo)) {
+                
+				if (!empty($data->exhibit->company_logo) && is_array($data->exhibit->company_logo)) {
+					// Assuming 'company_logo' is an array and we're fetching the first logo.
 					$logo = $data->exhibit->company_logo[0];
+				
+
+					// Remove 'uploaded:' prefix if present.
 					$logo = str_replace('uploaded:', '', $logo);
-					echo '<img src="' . base_url('client/' . $logo) . '" alt="" style="width: 200px; text-align: right; ">';
+					if($logo != '../uploads/client_form_3/17307949755956729d5df526dc.png')
+					{
+							echo '<img src="' . LOCAL_EXHIBIT_URL . 'client/' . htmlspecialchars($logo) . '" alt="Company Logo" style="width: 200px; text-align: right;">';
+					}
+
+				} else {
+					// Optionally handle case where no logo is available.
+					echo '<p>No company logo available.</p>';
 				}
                 ?>
             </td>
@@ -183,14 +195,14 @@ $organizer = $this->db
 </table>
 
     <?php if ($data->principle->is_active == 1) { ?>
-    <h4 style="margin-top: 15px">Company Principal</h4>
+    <p style="font-size: 18px; margin-top: 15px; margin-bottom: 5px">Company Principal</p>
     <table style="width: 100%;" border="1">
         <tr>
-            <th>Company</th>
-            <th>Country</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th></th>
+            <td>Company</td>
+            <td>Country</td>
+            <td>Phone</td>
+            <td>Email</td>
+            <td></td>
         </tr>
         <?php
         foreach ($data->principle->principles_list as $row) {
@@ -206,7 +218,7 @@ $organizer = $this->db
                     if (isset($row->company_logo)) {
 						$logo = $row->company_logo;
 						$logo = str_replace('uploaded:', '', $logo);
-						echo '<img src="' . base_url('client/' . $logo) . '" alt="" style="width: 60px; text-align: right; ">';
+						echo '<img src="' . LOCAL_EXHIBIT_URL . ('client/' . $logo) . '" alt="" style="width: 60px; text-align: right; ">';
 					}
                     ?>
                 </td>
@@ -222,10 +234,10 @@ $organizer = $this->db
                 <div style="background: <?= $event->event_color ?>; height: 30px; width: 100%; vertical-align: middle; text-align: center; color: #fff">&nbsp;</div>
             </td>
             <td style="width: 10%;text-align: center;">
-                <img src="<?= base_url( $event->associate_logo) ?>" alt="" style="width: 60px;">
+                <img src="<?= LOCAL_EXHIBIT_URL . ( $event->associate_logo) ?>" alt="" style="width: 60px;">
             </td>
             <td style="width: 10%;text-align: center;">
-                <img src="<?= base_url( $organizer->organizer_image) ?>" alt="" style="width: 60px;">
+                <img src="<?= LOCAL_EXHIBIT_URL . ( $organizer->organizer_image) ?>" alt="" style="width: 60px;">
             </td>
             <td style="width: 40%; vertical-align: middle;">
                 <div style="background: <?= $event->event_color ?>; height: 30px; width: 100%; vertical-align: middle; text-align: center; color: #fff">www.ideaspakistan.gov.pk</div>

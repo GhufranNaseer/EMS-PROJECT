@@ -597,6 +597,10 @@ $route['ecommerce_report-datatable.html']['post'] = "reports/ecommerce_report/cr
 
 #E Form Status And Reports
 
+#S active_order list
+$route['active_order_list.html']['get'] = "order_list/active_order_list";
+$route['active_order_list-datatable.html']['post'] = "order_list/active_order_list_datatable";
+
 #S order list
 $route['order_list.html']['get'] = "order_list/crd_list";
 $route['order_list-datatable.html']['post'] = "order_list/crd_list_datatable";

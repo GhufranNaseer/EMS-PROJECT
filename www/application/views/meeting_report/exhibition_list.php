@@ -152,6 +152,7 @@
 				'Meeting Time',
 				'Status',
 				'Action',
+				'Country',
 				'Meeting Agenda',
 				'Discussion Points',
 				'Is Conducted',

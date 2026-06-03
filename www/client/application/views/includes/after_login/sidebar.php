@@ -264,11 +264,15 @@
                     <ul class="treeview-menu">
                         <?php
                         $categories = $this->db
-                            ->where('parent_id', null)
-                            ->where('for_branding', 0)
-                            ->where('is_deleted', 0)
-                            //->limit(10)
-                            ->get('es_inventory_category')
+							->select('C.category_title, C.id')
+							->where('I.exhibition_id',$this->event->id)
+							->where('I.is_active', 1)
+                            ->where('C.parent_id', null)
+                            ->where('C.for_branding', 0)
+                            ->where('C.is_deleted', 0)
+							->group_by('C.id')
+                            ->join('es_inventory_category as C', 'C.id = I.category_id', 'LEFT')
+                            ->get('es_inventory_item as I')
                             ->result();
                         foreach ($categories as $category) {
                             echo '<li>

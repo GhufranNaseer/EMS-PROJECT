@@ -77,6 +77,7 @@ class Badges_report extends MY_Controller {
 
 
 	function crd_badge_list() {
+		
 		$this->load->view('includes/after_login/head');
 		$this->load->view('badges_report/badges_list');
 	}
@@ -206,12 +207,122 @@ class Badges_report extends MY_Controller {
 
 
 	function crd_invitation_list() {
+		$this->checkEditId();
+
+		$event_invitation_types = $this->db
+			->select('invitation_type')
+			->where('exhibition_id', $this->formdata->id)
+			->where('is_active', 1)
+			->group_by('invitation_type')
+			->get('es_package_badges')
+			->result();
+
+		$available_invitation_types = array();
+		foreach ($event_invitation_types as $t) {
+			$available_invitation_types[] = $t->invitation_type;
+		}
+
+
 		$this->load->view('includes/after_login/head');
-		$this->load->view('badges_report/invitation_list');
+		$this->load->view('badges_report/invitation_list', array(
+			'available_invitation_types' => $available_invitation_types
+		));
 	}
 
 	function crd_invitation_list_datatable() {
 		$this->checkEditId();
+
+		$event_invitation_types = $this->db
+			->select('invitation_type')
+			->where('exhibition_id', $this->formdata->id)
+			->where('is_active', 1)
+			->group_by('invitation_type')
+			->get('es_package_badges')
+			->result();
+
+		$available_invitation_types = array();
+		foreach ($event_invitation_types as $t) {
+			$available_invitation_types[] = $t->invitation_type;
+		}
+
+		// $columns = [
+		// 	'b.id            AS id',
+		// 	'b.exhibition_id AS exhibition_id',
+		// 	'b.booking_id    AS booking_id',
+		// 	'b.full_name     AS full_name',
+		// 	'b.designation   AS designation',
+		// 	'b.cnic          AS cnic',
+		// 	'b.passport      AS passport',
+		// 	'b.mobile        AS mobile',
+		// 	'c.company       AS company',
+		// 	'c.address       AS company_address',
+		// 	'(SELECT created_on FROM es_exhibition_badges_invitation WHERE badge_id = B.id GROUP BY badge_id ORDER BY created_on DESC) AS last_update_date'
+		// ];
+
+		// foreach ($available_invitation_types as $invitation_type) {
+		// 	if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == $invitation_type) {
+		// 		$columns[] = "IF(((SELECT COUNT(0) FROM `es_exhibition_badges_invitation` WHERE ((`es_exhibition_badges_invitation`.`badge_id` = `b`.`id`) AND (`es_exhibition_badges_invitation`.`invitation_type` = '".$invitation_type."'))) > 0),1,0) AS `has_".$invitation_type."`";
+		// 	}
+		// }
+		// echo '<pre>'; print_r(implode(', ', $columns)); die;
+
+		$this->load->library('datatables');
+		$this->datatables
+		->select('
+				b.id            AS id,
+				b.exhibition_id AS exhibition_id,
+			  	b.booking_id    AS booking_id,
+				b.full_name     AS full_name,
+				b.designation   AS designation,
+				b.cnic          AS cnic,
+				b.passport      AS passport,
+				b.mobile        AS mobile,
+				c.company       AS company,
+				c.address       AS company_address,
+				(SELECT created_on FROM es_exhibition_badges_invitation WHERE badge_id = b.id GROUP BY badge_id ORDER BY created_on DESC) AS last_update_date
+			', false)
+			->unset_column('exhibition_id')
+			->unset_column('booking_id')
+			->unset_column('last_update_date')
+			->where('b.exhibition_id', $this->formdata->id)
+			->where('b.is_active', 1)
+			->join('es_exhibition_booking as o', 'b.booking_id = o.id', 'LEFT')
+			->join('es_customers as c', 'o.customer_id = c.id', 'LEFT')
+			->from('es_exhibition_badges as b');
+			
+			$this->datatables->where('(SELECT COUNT(*) FROM es_exhibition_badges_invitation 
+                            WHERE badge_id = b.id) > 0');
+
+		$this->datatables->add_column('last_update_date', function ($row) {
+			$date = $row['last_update_date'];
+			if (!$date) return '-';
+
+			return date('d, M Y', strtotime($date));
+		}, NULL);
+
+		foreach ($available_invitation_types as $invitation_type) {
+			if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == $invitation_type) {
+				$this->datatables->add_column($invitation_type, function ($row) use ($invitation_type) {
+					$check = $this->db
+						->where('es_exhibition_badges_invitation.badge_id', $row['id'])
+						->where('es_exhibition_badges_invitation.invitation_type', $invitation_type)
+						->count_all_results('es_exhibition_badges_invitation');
+					
+					$html = ($check > 0) ? '<i class="fa fa-check text-green"><span>Yes</span></i>' : '<i class="fa fa-times text-red"><span>No</span></i>';
+
+					return '<div class="text-center">' . $html . '</div>';
+				}, NULL);
+			}
+		}
+
+		if (!$this->input->is_ajax_request()) {
+			$this->db->order_by('company', 'ASC');
+		}
+
+		print ($this->datatables->generate());
+		die;
+
+		// ***** BOTTOM CODE AND THIS VIEW IS NOW NOT IN USE *****
 
 		/*
 		 CREATE VIEW invitation_list_datatable AS
@@ -442,7 +553,7 @@ END:VCARD';
 			foreach (array_rand($number_seed, 4) as $k) $random_number .= $number_seed[$k]; // get 4 number characters
 
 			$barcode_data = $random_number . '' . $random_alpha . '' .$this->badge->id;
-
+			$this->badge->barcode_data = $barcode_data;
 			$this->db
 				->where('id', $this->badge->id)
 				->update('es_exhibition_badges', array(
@@ -483,14 +594,14 @@ END:VCARD';
 			$html2pdf = new HTML2PDF('L', array($card_size_w, $card_size_h), 'en', true, 'UTF-8', array(0, 0, 0, 0));
 			$html2pdf->pdf->SetDisplayMode('fullpage');
 			$html2pdf->writeHTML($html);
-			$html2pdf->pdf->ImageSVG(
-				$file=base_url('uploads/qr-codes/' . $output), 
-				$x=($card_size_w - 22), 
-				$y=($card_size_h - 24), 
-				$w=18, 
-				$h=18, 
-				$link='', 
-				$align='', $palign='', $border=0, $fitonpage=false);
+			//$html2pdf->pdf->ImageSVG(
+			//	$file= LOCAL_EXHIBIT_URL . ('uploads/qr-codes/' . $output), 
+			//	$x=($card_size_w - 22), 
+			//	$y=($card_size_h - 26), 
+			//	$w=18, 
+			//	$h=18, 
+			//	$link='', 
+			//	$align='', $palign='', $border=0, $fitonpage=false);
 			$html2pdf->Output('print-badge-'.$badge_id.'.pdf');
 		}
 		catch(HTML2PDF_exception $e) {
@@ -768,9 +879,9 @@ END:VCARD';
 			$html .= '<td style="width: 15%">'.$r->country.'</td>';
 			$html .= '<td style="width: 15%">'.$r->cnic.'</td>';
 			$html .= '<td style="width: 15%">'.$r->passport.'</td>';
-			if ($r->user_image && $r->user_image != null && $r->user_image != '') {
+			if (false && $r->user_image && $r->user_image != null && $r->user_image != '') {
 				//$html .= '<td width="10%">'.base_url('client/' . $r->user_image).'</td>';
-				$html .= '<td style="width: 10%"><img src="'.base_url('client/' . $r->user_image).'" width="30" height="30" /></td>';
+				$html .= '<td style="width: 10%"><img src="'.LOCAL_EXHIBIT_URL . ('client/' . $r->user_image).'" width="30" height="30" /></td>';
 			} else {
 				$html .= '<td style="width: 10%"></td>';
 			}

@@ -105,7 +105,17 @@ class Funcs extends CI_Model
 			return false;
 		}
 		
-		$result = @file_get_contents("http://api.m4sms.com/api/Sendsms?id=ideas72&pass=1172&mobile=".urlencode($phone_number)."&brandname=IDEAS&msg=" . urlencode($msg), null);
+		// https://bsms.its.com.pk/api.php?key=be6596824b3f1995e9394c005238bd16&msgdata=test&receiver=923331347148&sender=BADAR EXPO
+
+		$params = array(
+			'key' => 'be6596824b3f1995e9394c005238bd16',
+			'msgdata' => $msg,
+			'receiver' => $phone_number,
+			'sender' => 'BADAR EXPO',
+		);
+
+		// $result = @file_get_contents("http://api.m4sms.com/api/Sendsms?id=ideas72&pass=1172&mobile=".urlencode($phone_number)."&brandname=IDEAS&msg=" . urlencode($msg), null);
+		$result = @file_get_contents("https://bsms.its.com.pk/api.php?" . http_build_query($params), null);
 
 		if ($result !== false) {
 			return true;

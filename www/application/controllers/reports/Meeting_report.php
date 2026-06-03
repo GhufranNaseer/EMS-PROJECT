@@ -179,6 +179,12 @@ class Meeting_report extends MY_Controller
             ->from('my_appointments_datatable');
 
 		if ($this->input->get('export_type') && $this->input->get('export_type') != '') {
+			
+			$this->datatables->add_column('country', function ($row) {
+				$customer_data = $this->db->select('appointment_from')->where('id', $row['id'])->get('es_exhibition_appointments')->row();
+				$data = $this->db->select('country')->where('id', $customer_data->appointment_from)->get('es_customers')->row();
+				return $data->country;
+			}, NULL);
 
 			$this->datatables->add_column('agenda_of_meeting', function ($row) {
 				$data = $this->db->select('agenda_of_meeting')->where('id', $row['id'])->get('es_exhibition_appointments')->row();

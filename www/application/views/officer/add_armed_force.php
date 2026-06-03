@@ -70,6 +70,10 @@
 
                             <div class="form-group row">
                                 <div class="col-sm-6">
+                                    <label>Profile</label>
+                                    <input type="text" class="form-control" name="profile"  id="profile">
+                                </div>
+                                <div class="col-sm-6">
                                     <label>Email<span class="text-red">*</span></label>
                                     <input type="email" class="form-control" name="email" id="email">
                                 </div>

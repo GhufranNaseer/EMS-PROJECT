@@ -105,7 +105,7 @@ $stalls = $this->db
 	<table style="width: 100%">
 		<tr>
 			<td style="width: 15%;">
-				<img src="<?= base_url('../' . $this->event->event_logo) ?>" alt="" class="event_logo">
+				<img src="<?= LOCAL_EXHIBIT_URL . ($this->event->event_logo) ?>" alt="" class="event_logo">
 			</td>
 			<td style="width: 85%;">
 				<p style="font-size: 20px;"><?= $this->event->exhibition_title ?></p>

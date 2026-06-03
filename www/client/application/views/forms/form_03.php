@@ -271,7 +271,7 @@ $hall_data = $this->db
                                             <div class="col-sm-6">
                                                 <label>Upload your Company Ad</label>
                                                 <div id="company_ad_container"></div>
-                                                <p class="small text-red">Ad Artwork must be on 12(W) X 16(H) Cm <br>Format: JPEG, PNG, Gif</p>
+                                                <p class="small text-red">Ad Artwork must be on 12(W) X 15(H) Cm <br>Format: JPEG, PNG, Gif</p>
                                             </div>
                                         </div>
                                     </div>

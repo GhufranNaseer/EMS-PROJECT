@@ -62,8 +62,8 @@ class Form_19 extends MY_Controller {
 			return $this->common->doError(func_num_args(), 'You do not have enough limit to add more badge!');
 		}
 
-		$this->form_validation->set_rules('full_name', 'full_name*person full name', 'trim|required|max_length[19]');
-		$this->form_validation->set_rules('designation', 'designation*designation', 'trim|required|max_length[19]');
+		$this->form_validation->set_rules('full_name', 'full_name*person full name', 'trim|required|max_length[36]');
+		$this->form_validation->set_rules('designation', 'designation*designation', 'trim|required|max_length[36]');
 		$this->form_validation->set_rules('mobile', 'mobile*mobile', 'trim|required|numeric|min_length[12]');
 		$this->form_validation->set_rules('nationality', 'nationality*nationality', 'trim|required');
 		$this->form_validation->set_rules('email', 'email*email', 'trim|valid_email');
@@ -223,13 +223,16 @@ class Form_19 extends MY_Controller {
 		$badge_id = $this->input->post('badge_id');
 		$invitations = $this->input->post('invitations');
 
-		if (is_null($badge_id) || is_null($invitations)) {
+		if (is_null($badge_id)) {
 			echo json_encode(array(
 				'error' => 1,
 				'message' => 'required parameters is missing'
 			));
 			exit;
 		}
+		if(is_null($invitations)){
+			$invitations = [];
+		}	
 
 		$this->db
 			->where('exhibition_id', $this->event->id)

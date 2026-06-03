@@ -232,6 +232,15 @@ class Inventory_item extends MY_Controller {
 			->update('es_inventory_item_global');
 
 		$this->db->trans_complete();
+
+		$this->db
+		->set(array(
+			'item_title' => $this->input->post('item_title'),
+			'item_image' => $this->funcs->make_image_string($this->input->post('item_image')),
+		))
+		->where('global_item_id', $this->formdata->id)
+		->update('es_inventory_item');
+
 		$this->session->set_flashdata('message', 'Item has been updated successfully');
 		redirect($this->myparent);
 	}

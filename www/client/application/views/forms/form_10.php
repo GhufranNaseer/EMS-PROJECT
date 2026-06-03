@@ -1,6 +1,15 @@
 <?php $this->load->view('includes/after_login/header'); ?>
 <?php $this->load->view('includes/after_login/sidebar'); ?>
 
+<?php
+$booking_badges = $this->db
+	->where('exhibition_id', $this->event->id)
+	->where('booking_id', $this->booking->id)
+	->where('badge_type', 'visitor')
+	->where('is_active', 1)
+	->count_all_results('es_exhibition_badges');
+?>
+
 <style>
     .content-header > h1 {
         margin-top: 20px;
@@ -21,6 +30,16 @@
     .drop_pickup {
         border: 1px solid #d2d6de;
         padding: 5px;
+    }
+	.additional-box {
+        text-align: center;
+        background: #db4c3b;
+        padding: 10px 0;
+        color: #fff;
+        border-radius: 4px;
+    }
+    .additional-box h4 {
+        margin: 0;
     }
 </style>
 <?php $options = $this->db->where('type', 'country')->get('input_data_list')->result(); ?>
@@ -102,7 +121,17 @@
             <div class="col-xs-12">
                 <div class="box">
                     <div class="box-header">
-                        <h3>Visitor Personal Information</h3>
+						<div class="row">
+							<div class="col-sm-10">
+								<h3>Visitor Personal Information</h3>
+							</div>
+							<div class="col-sm-2">
+								<div class="additional-box">
+									<p>Total Badges</p>
+									<h4><?= $booking_badges ?>/<?= $this->booking->visitor_badges_limit ?></h4>
+								</div>
+							</div>
+						</div>
                     </div><!-- /.box-header -->
 
                     <div class="box-body">
@@ -325,7 +354,7 @@
                                 <th>Cell Phone #</th>
                                 <th>Organization Name</th>
                                 <th>Business Sector</th>
-                                <th>Action</th
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -359,9 +388,9 @@
                                         <td>'. $row->company_name.'</td>
                                         <td>'. $row->company_business_sector.'</td>
                                         <td>';
-									if ($badge_data && $badge_data->is_printed == 1) {
+									// if ($badge_data && $badge_data->is_printed == 1) {
 										$html .= '<a href="' . base_url('forms/form_10/delete_badge?id=' . $row->id) . '">Remove</a>';
-									}
+									// }
 									$html .= '</td>
                                         </tr>';
 									echo $html;

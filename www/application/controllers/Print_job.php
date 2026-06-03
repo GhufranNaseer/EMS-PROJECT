@@ -230,12 +230,21 @@ class Print_job extends MY_Controller {
 			$html2pdf->pdf->SetDisplayMode('fullpage');
 
 		foreach ($badges as $badge_id) {
-			$badge = $this->db
+			$filter_badge = $this->input->get('filter_badge');
+				
+			$query = $this->db
 				->where('id', $badge_id)
 				->where('is_printed', 0)
-				->where('is_hold', 0)
-				->get('es_exhibition_badges')
-				->row();
+				->where('is_hold', 0);
+
+			// Apply the filter_badge condition if it's set
+			if (!empty($filter_badge)) {
+				$query->where('badge_type', $filter_badge);
+			}
+
+			// Execute the query
+			$badge = $query->get('es_exhibition_badges')->row();
+
 
 			if (!isset($badge)) {
 				show_404();
@@ -286,7 +295,7 @@ END:VCARD';
 				foreach (array_rand($number_seed, 4) as $k) $random_number .= $number_seed[$k]; // get 4 number characters
 
 				$barcode_data = $random_number . '' . $random_alpha . '' . $badge->id;
-
+				$badge->barcode_data = $barcode_data;
 				$this->db
 					->where('id', $badge_id)
 					->update('es_exhibition_badges', array(
@@ -310,14 +319,14 @@ END:VCARD';
 			), true);
 
 			$html2pdf->writeHTML($html);
-			$html2pdf->pdf->ImageSVG(
-				$file=base_url('uploads/qr-codes/' . $output), 
-				$x=($card_size_w - 22), 
-				$y=($card_size_h - 24), 
-				$w=18, 
-				$h=18, 
-				$link='', 
-				$align='', $palign='', $border=0, $fitonpage=false);
+			//$html2pdf->pdf->ImageSVG(
+			//	$file= LOCAL_EXHIBIT_URL . ('uploads/qr-codes/' . $output), 
+			//	$x=($card_size_w - 22), 
+			//	$y=($card_size_h - 26), 
+			//	$w=18, 
+			//	$h=18, 
+			//	$link='', 
+			//	$align='', $palign='', $border=0, $fitonpage=false);
 
 
 			$this->db

@@ -60,7 +60,7 @@ class Form_03 extends MY_Controller {
 		$this->form_validation->set_rules('exhibit[fax]', 'exhibit[fax]*fax', 'trim');
 		$this->form_validation->set_rules('exhibit[email]', 'exhibit[email]*email', 'trim|required|valid_email');
 		$this->form_validation->set_rules('exhibit[address]', 'exhibit[address]*Address', 'trim|required');
-		$this->form_validation->set_rules('exhibit[company_logo]', 'exhibit[company_logo]*company logo', 'trim');
+		$this->form_validation->set_rules('exhibit[company_logo]', 'exhibit[company_logo]*company logo', 'trim|required');
 		$this->form_validation->set_rules('exhibit[company_ad]', 'exhibit[company_ad]*company ad', 'trim');
 		$this->form_validation->set_rules('exhibit[contact_person][name]', 'exhibit[contact_person][name]*contact person name', 'trim|required');
 		$this->form_validation->set_rules('exhibit[contact_person][designation]', 'exhibit[contact_person][designation]*contact person designation', 'trim');

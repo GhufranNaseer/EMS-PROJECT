@@ -20,6 +20,7 @@ class Ecommerce extends MY_Controller {
 		$get_products = $this->db
 			->where(mycolumn('category_id'),$category_id)
 			->where('exhibition_id',$this->event->id)
+			->where('is_active', 1)
 			->get('es_inventory_item')
 			->result_array();
 

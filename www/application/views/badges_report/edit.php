@@ -62,7 +62,7 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label for="passport">Passport Number</label>
-                                        <input type="number" class="form-control" name="passport"
+                                        <input type="text" class="form-control" name="passport"
                                                value="<?= html_escape($data->passport) ?>"
                                                id="passport" placeholder="Passport">
                                     </div>

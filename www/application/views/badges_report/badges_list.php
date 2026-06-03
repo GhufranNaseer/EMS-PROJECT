@@ -168,7 +168,7 @@
 
 
     function update_print_btn_link() {
-
+		var filter_badge = '<?= $this->input->get('filter_badge'); ?>';
         $('.print_selected_btn').attr('href', '');
         $('.print_selected_btn').attr('disabled', true);
         var selected = [];
@@ -178,7 +178,7 @@
 
 
         if (selected.length > 0) {
-            $('.print_selected_btn').attr('href', '<?= base_url('print-multiple-badges.html?booking_id=' . time()) ?>&&badges=' + selected.join(','));
+            $('.print_selected_btn').attr('href', '<?= base_url('print-multiple-badges.html?booking_id=' . time()) ?>&&badges=' + selected.join(',') + '&filter_badge=' + filter_badge);
             $('.print_selected_btn').attr('disabled', false);
         }
     }

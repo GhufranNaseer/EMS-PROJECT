@@ -293,7 +293,16 @@ $active_invitation_types = $this->db
                                 <tbody>
                                 <?php
                                 if (!is_null($this->formdata)) {
-                                    foreach ($exhibitors_badges as $badge) {
+									foreach ($exhibitors_badges as $badge) {
+										$action = '';
+										if($badge->is_printed == 1){
+											$action .= 'Your card is printed';
+										} else{
+											$action .= '<a href="javascript:void(0)" class="edit_badge_btn" data-id="' . $badge->id . '">Edit</a>';
+											$action .= '| <a href="javascript:void(0)" class="delete_badge_btn" data-id="' . $badge->id . '">Delete</a>';
+										}	
+										
+										
                                         $html = '<tr>
                                         <td>'. $badge->full_name .'</td>
                                         <td>'. $badge->designation .'</td>
@@ -307,11 +316,7 @@ $active_invitation_types = $this->db
                                         <img src="'. base_url($badge->user_image) .'" alt="" width="50px">
                                         </a>
                                         </td>
-                                        <td>';
-											$html .= '<a href="javascript:void(0)" class="edit_badge_btn" data-id="' . $badge->id . '">Edit</a>';
-											$html .= '| <a href="javascript:void(0)" class="delete_badge_btn" data-id="' . $badge->id . '">Delete</a>';
-										
-										$html .= '</td>
+                                        <td>'. $action .'</td>
                                         </tr>';
 
                                         echo $html;
@@ -850,8 +855,8 @@ $active_invitation_types = $this->db
 			return;
         }
         if (inv.length == 0) {
-			alert('Please select atleast one invitation!');
-			return;
+			//alert('Please select atleast one invitation!');
+			//return;
         }
 
 		$.ajax({

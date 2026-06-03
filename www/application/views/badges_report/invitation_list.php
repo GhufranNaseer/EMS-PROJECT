@@ -5,6 +5,14 @@
     #crud-table i span {
         display: none;
     }
+	/* .dataTable th:not(:first-child), 
+	.dataTable td:not(:first-child) {
+		width: 100px !important;
+		white-space: break-spaces;
+		max-width: 100px;
+		min-width: 100px;
+		word-break: break-word;
+	} */
 </style>
 
 <div class="content-wrapper" data-page="badges_report">
@@ -38,14 +46,13 @@
                                         <label>Invitation</label>
                                         <select name="filter_invitation" class="form-control">
                                             <option value="">- select -</option>
-                                            <option value="inauguration" <?= (($this->input->get('filter_invitation') == 'inauguration') ? 'selected' : '') ?>>Inauguration</option>
-                                            <option value="seminar" <?= (($this->input->get('filter_invitation') == 'seminar') ? 'selected' : '') ?>>Seminar</option>
-                                            <option value="sideline_conference" <?= (($this->input->get('filter_invitation') == 'sideline_conference') ? 'selected' : '') ?>>Side Line</option>
-                                            <option value="governor_reception" <?= (($this->input->get('filter_invitation') == 'governor_reception') ? 'selected' : '') ?>>Gov. Reception</option>
-                                            <option value="gala_dinner" <?= (($this->input->get('filter_invitation') == 'gala_dinner') ? 'selected' : '') ?>>Gala Dinner</option>
-                                            <option value="closing_ceremony" <?= (($this->input->get('filter_invitation') == 'closing_ceremony') ? 'selected' : '') ?>>Closing Cer</option>
-                                            <option value="karachi_air_show" <?= (($this->input->get('filter_invitation') == 'karachi_air_show') ? 'selected' : '') ?>>Karachi Air Show</option>
-                                            <option value="cm_reception" <?= (($this->input->get('filter_invitation') == 'cm_reception') ? 'selected' : '') ?>>CM Reception</option>
+											<?php
+											foreach ($available_invitation_types as $invitation_type) {
+												echo '<option value="'.$invitation_type.'" 
+												'. (($this->input->get('filter_invitation') == $invitation_type) ? 'selected' : '') .'
+												>'. ucwords(str_replace('_', ' ', $invitation_type)) .'</option>';
+											}
+											?>
                                         </select>
                                     </div>
                                 </div>
@@ -69,30 +76,36 @@
                                     <th style="width: 200px">Company Address</th>
                                     <th style="width: 60px">Last Update Date</th>
                                     <?php
-                                    if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'inauguration') {
-                                        echo '<th style="width: 100px">Inauguration</th>';
-                                    }
-                                    if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'seminar') {
-                                        echo '<th style="width: 100px">Seminar</th>';
-                                    }
-                                    if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'sideline_conference') {
-                                        echo '<th style="width: 100px">Side Line</th>';
-                                    }
-                                    if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'governor_reception') {
-                                        echo '<th style="width: 100px">Gov. Reception</th>';
-                                    }
-                                    if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'gala_dinner') {
-                                        echo '<th style="width: 100px">Gala Dinner</th>';
-                                    }
-                                    if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'closing_ceremony') {
-                                        echo '<th style="width: 100px">Closing Cer</th>';
-                                    }
-                                    if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'karachi_air_show') {
-                                        echo '<th style="width: 100px">Karachi Air Show</th>';
-                                    }
-                                    if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'cm_reception') {
-                                        echo '<th style="width: 100px">CM Reception</th>';
-                                    }
+                                    // if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'inauguration') {
+                                    //     echo '<th style="width: 100px">Inauguration</th>';
+                                    // }
+                                    // if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'seminar') {
+                                    //     echo '<th style="width: 100px">Seminar</th>';
+                                    // }
+                                    // if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'sideline_conference') {
+                                    //     echo '<th style="width: 100px">Side Line</th>';
+                                    // }
+                                    // if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'governor_reception') {
+                                    //     echo '<th style="width: 100px">Gov. Reception</th>';
+                                    // }
+                                    // if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'gala_dinner') {
+                                    //     echo '<th style="width: 100px">Gala Dinner</th>';
+                                    // }
+                                    // if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'closing_ceremony') {
+                                    //     echo '<th style="width: 100px">Closing Cer</th>';
+                                    // }
+                                    // if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'karachi_air_show') {
+                                    //     echo '<th style="width: 100px">Karachi Air Show</th>';
+                                    // }
+                                    // if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'cm_reception') {
+                                    //     echo '<th style="width: 100px">CM Reception</th>';
+                                    // }
+
+									foreach ($available_invitation_types as $invitation_type) {
+										if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == $invitation_type) {
+											echo '<th style="width: 100px">'. ucwords(str_replace('_', ' ', $invitation_type)) .'</th>';
+										}
+									}
                                     ?>
                                 </tr>
                                 </thead>
@@ -113,6 +126,10 @@
 <script type="text/javascript">
 	$(document).ready(function () {
 		oTable = $('#crud-table').dataTable($.extend(datatable_settings, {
+			"bServerSide": true,
+			"bProcessing": true,
+			"fnRowCallback": null,
+			"fnInitComplete": null,
 			"sAjaxSource": '<?php echo base_url('invitation-report-datatable.html'); ?>' + location.search,
 			"aoColumns": [
 				{ "bSearchable": false },
@@ -123,32 +140,37 @@
 				null,
 				null,
 				null,
-				null,
+				{ "bSearchable": false },
                 <?php
-				if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'inauguration') {
-				    echo '{ "bSearchable": false },';
-                }
-				if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'seminar') {
-				    echo '{ "bSearchable": false },';
-                }
-				if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'sideline_conference') {
-				    echo '{ "bSearchable": false },';
-                }
-				if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'governor_reception') {
-				    echo '{ "bSearchable": false },';
-                }
-				if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'gala_dinner') {
-				    echo '{ "bSearchable": false },';
-                }
-				if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'closing_ceremony') {
-				    echo '{ "bSearchable": false },';
-                }
-				if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'karachi_air_show') {
-				    echo '{ "bSearchable": false },';
-                }
-				if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'cm_reception') {
-				    echo '{ "bSearchable": false },';
-                }
+				// if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'inauguration') {
+				//     echo '{ "bSearchable": false },';
+                // }
+				// if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'seminar') {
+				//     echo '{ "bSearchable": false },';
+                // }
+				// if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'sideline_conference') {
+				//     echo '{ "bSearchable": false },';
+                // }
+				// if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'governor_reception') {
+				//     echo '{ "bSearchable": false },';
+                // }
+				// if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'gala_dinner') {
+				//     echo '{ "bSearchable": false },';
+                // }
+				// if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'closing_ceremony') {
+				//     echo '{ "bSearchable": false },';
+                // }
+				// if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'karachi_air_show') {
+				//     echo '{ "bSearchable": false },';
+                // }
+				// if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == 'cm_reception') {
+				//     echo '{ "bSearchable": false },';
+                // }
+				foreach ($available_invitation_types as $invitation_type) {
+					if (!$this->input->get('filter_invitation') || $this->input->get('filter_invitation') == $invitation_type) {
+						echo '{ "bSearchable": false },';
+					}
+				}
                 ?>
 			]
 		}));

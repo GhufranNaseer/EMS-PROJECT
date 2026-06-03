@@ -250,6 +250,7 @@ class Form_22 extends MY_Controller {
 		try {
 			$html2pdf = new HTML2PDF('P', 'A4', 'en', true, 'UTF-8');
 			$html2pdf->pdf->SetDisplayMode('fullpage');
+			$html2pdf->setTestTdInOnePage(false);
 			$html2pdf->pdf->setFontSubsetting(false);
 			$html2pdf->writeHTML($html);
 			$html2pdf->Output('end-user-certificate-'.myid($this->userdata->id).'.pdf');

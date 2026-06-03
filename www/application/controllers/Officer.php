@@ -129,7 +129,8 @@ class Officer extends MY_Controller {
 				  IF(officer_type="foreign_delegates",
 				  	IF(is_representative=1, CONCAT(officer_designation, " (Representative)"), CONCAT(officer_designation, " (Self)")),
 				  	officer_designation) as designation, 
-				  officer_country, 
+				  officer_country,
+                  profile, 
 				  contact_person, 
 				  officer_phone, 
 				  officer_email,
@@ -413,6 +414,7 @@ class Officer extends MY_Controller {
             'officer_type' => 'foreign_delegates',
             'officer_designation' => $this->input->post('officer_designation'),
             'officer_country' => $this->input->post('officer_country'),
+			'profile' => $this->input->post('profile'),
             'is_representative' => (is_null($this->input->post('representative')) ? 0 : 1),
             'contact_person' => $this->input->post('contact_person_name'),
             'officer_phone' => $this->input->post('mobile_number'),
@@ -438,7 +440,8 @@ class Officer extends MY_Controller {
 
         $this->form_validation->set_rules('officer_designation', 'officer_designation*Officer designation', 'trim|required');
         $this->form_validation->set_rules('officer_country', 'officer_country*Officer country', 'trim|required');
-        $this->form_validation->set_rules('representative', 'representative*Representative', 'trim');
+        $this->form_validation->set_rules('profile', 'profile*Profile', 'trim');
+		$this->form_validation->set_rules('representative', 'representative*Representative', 'trim');
         $this->form_validation->set_rules('contact_person_name', 'contact_person_name*Contact person name', 'trim|required');
         $this->form_validation->set_rules('mobile_number', 'mobile_number*Mobile number', 'trim');
         $this->form_validation->set_rules('email', 'email*Email', 'trim');
@@ -468,7 +471,7 @@ class Officer extends MY_Controller {
             'officer_type' => 'local_delegates',
             'officer_designation' => $this->input->post('officer_designation'),
             'officer_country' => $this->input->post('officer_country'),
-            'officer_rank' => $this->input->post('officer_rank'),
+            'profile' => $this->input->post('profile'),
             'officer_company' => $this->input->post('organization'),
             'contact_person' => $this->input->post('contact_person_name'),
             'officer_phone' => $this->input->post('mobile_number'),
@@ -493,7 +496,7 @@ class Officer extends MY_Controller {
 
         $this->form_validation->set_rules('officer_designation', 'officer_designation*Officer designation', 'trim|required');
         $this->form_validation->set_rules('officer_country', 'officer_country*Officer country', 'trim|required');
-        $this->form_validation->set_rules('officer_rank', 'officer_rank*officer rank', 'trim');
+        $this->form_validation->set_rules('profile', 'profile*Profile', 'trim');
         $this->form_validation->set_rules('organization', 'organization*Organization', 'trim|required');
         $this->form_validation->set_rules('contact_person_name', 'contact_person_name*Contact person name', 'trim|required');
         $this->form_validation->set_rules('mobile_number', 'mobile_number*Mobile number', 'trim|required');
@@ -524,6 +527,7 @@ class Officer extends MY_Controller {
             'officer_type' => 'chief_of_servicing',
             'officer_designation' => $this->input->post('officer_designation'),
             'officer_country' => $this->input->post('officer_country'),
+			'profile' => $this->input->post('profile'),
             'contact_person' => $this->input->post('contact_person_name'),
             'officer_phone' => $this->input->post('mobile_number'),
             'officer_email' => $this->input->post('email'),
@@ -547,7 +551,8 @@ class Officer extends MY_Controller {
 
         $this->form_validation->set_rules('officer_designation', 'officer_designation*Officer designation', 'trim|required');
         $this->form_validation->set_rules('officer_country', 'officer_country*Officer country', 'trim|required');
-        $this->form_validation->set_rules('contact_person_name', 'contact_person_name*Contact person name', 'trim|required');
+        $this->form_validation->set_rules('profile', 'profile*Profile', 'trim');
+		$this->form_validation->set_rules('contact_person_name', 'contact_person_name*Contact person name', 'trim|required');
         $this->form_validation->set_rules('mobile_number', 'mobile_number*Mobile number', 'trim|required');
         $this->form_validation->set_rules('email', 'email*Email', 'trim|required');
         $this->form_validation->set_rules('password', 'password*Password', 'trim|required');
@@ -590,6 +595,7 @@ class Officer extends MY_Controller {
            // 'officer_type' => 'foreign_delegations',
             'officer_designation' => $this->input->post('officer_designation'),
             'officer_country' => $this->input->post('officer_country'),
+			'profile' => $this->input->post('profile'),
             'is_representative' => (is_null($this->input->post('representative')) ? 0 : 1),
             'contact_person' => $this->input->post('contact_person_name'),
             'officer_phone' => $this->input->post('mobile_number'),
@@ -627,7 +633,8 @@ class Officer extends MY_Controller {
         $this->form_validation->set_rules('officer_designation', 'officer_designation*Officer designation', 'trim|required');
         $this->form_validation->set_rules('officer_country', 'officer_country*Officer country', 'trim|required');
        // $this->form_validation->set_rules('representative', 'representative*Representative', 'trim|required');
-        $this->form_validation->set_rules('contact_person_name', 'contact_person_name*Contact person name', 'trim|required');
+        $this->form_validation->set_rules('profile', 'profile*Profile', 'trim');
+		$this->form_validation->set_rules('contact_person_name', 'contact_person_name*Contact person name', 'trim|required');
         $this->form_validation->set_rules('mobile_number', 'mobile_number*Mobile number', 'trim|required');
         $this->form_validation->set_rules('email', 'email*Email', 'trim|required');
         $this->form_validation->set_rules('password', 'password*Password', 'trim|required');
@@ -669,7 +676,7 @@ class Officer extends MY_Controller {
             //'officer_type' => 'local_delegates',
             'officer_designation' => $this->input->post('officer_designation'),
             'officer_country' => $this->input->post('officer_country'),
-            'officer_rank' => $this->input->post('officer_rank'),
+            'profile' => $this->input->post('profile'),
             'officer_company' => $this->input->post('organization'),
             'contact_person' => $this->input->post('contact_person_name'),
             'officer_phone' => $this->input->post('mobile_number'),
@@ -707,7 +714,7 @@ class Officer extends MY_Controller {
 
         $this->form_validation->set_rules('officer_designation', 'officer_designation*Officer designation', 'trim|required');
         //$this->form_validation->set_rules('officer_country', 'officer_country*Officer country', 'trim|required');
-        $this->form_validation->set_rules('officer_rank', 'officer_rank*officer rank', 'trim');
+        $this->form_validation->set_rules('profile', 'profile*Profile', 'trim');
         $this->form_validation->set_rules('organization', 'organization*Organization', 'trim|required');
         $this->form_validation->set_rules('contact_person_name', 'contact_person_name*Contact person name', 'trim|required');
         $this->form_validation->set_rules('mobile_number', 'mobile_number*Mobile number', 'trim|required');
@@ -751,6 +758,7 @@ class Officer extends MY_Controller {
             //'officer_type' => 'chief_of_servicing',
             'officer_designation' => $this->input->post('officer_designation'),
             'officer_country' => $this->input->post('officer_country'),
+			'profile' => $this->input->post('profile'),
             'contact_person' => $this->input->post('contact_person_name'),
             'officer_phone' => $this->input->post('mobile_number'),
             'officer_email' => $this->input->post('email'),
@@ -786,7 +794,8 @@ class Officer extends MY_Controller {
 
         $this->form_validation->set_rules('officer_designation', 'officer_designation*Officer designation', 'trim|required');
         //$this->form_validation->set_rules('officer_country', 'officer_country*Officer country', 'trim|required');
-        $this->form_validation->set_rules('contact_person_name', 'contact_person_name*Contact person name', 'trim|required');
+        $this->form_validation->set_rules('profile', 'profile*Profile', 'trim');
+		$this->form_validation->set_rules('contact_person_name', 'contact_person_name*Contact person name', 'trim|required');
         $this->form_validation->set_rules('mobile_number', 'mobile_number*Mobile number', 'trim|required');
         $this->form_validation->set_rules('email', 'email*Email', 'trim|required');
         $this->form_validation->set_rules('password', 'password*Password', 'trim|required');
@@ -815,7 +824,7 @@ class Officer extends MY_Controller {
         $this->form_validation->set_rules('mobile_number', 'mobile_number*Mobile number', 'trim|required');
         $this->form_validation->set_rules('email', 'email*Email', 'trim|required');
         $this->form_validation->set_rules('password', 'password*Password', 'trim|required');
-
+        $this->form_validation->set_rules('profile', 'profile*Profile', 'trim');
 
 
         if ($this->form_validation->run() == false)
@@ -835,6 +844,7 @@ class Officer extends MY_Controller {
             'officer_type' => 'armed_force',
             'officer_designation' => $this->input->post('officer_designation'),
             'officer_country' => $this->input->post('officer_country'),
+            'profile' => $this->input->post('profile'),
             'officer_rank' => $this->input->post('officer_rank'),
             'officer_company' => $this->input->post('organization'),
             'contact_person' => $this->input->post('contact_person_name'),
@@ -897,6 +907,7 @@ class Officer extends MY_Controller {
         $this->form_validation->set_rules('mobile_number', 'mobile_number*Mobile number', 'trim|required');
         $this->form_validation->set_rules('email', 'email*Email', 'trim|required');
         $this->form_validation->set_rules('password', 'password*Password', 'trim|required');
+        $this->form_validation->set_rules('profile', 'profile*Profile', 'trim');
 
         if ($this->form_validation->run() == false)
             return $this->common->doError(func_num_args(), $this->common->getFVError());
@@ -916,6 +927,7 @@ class Officer extends MY_Controller {
             //'officer_type' => 'armed_force',
             'officer_designation' => $this->input->post('officer_designation'),
             'officer_country' => $this->input->post('officer_country'),
+            'profile' => $this->input->post('profile'),
             'officer_rank' => $this->input->post('officer_rank'),
             'officer_company' => $this->input->post('organization'),
             'contact_person' => $this->input->post('contact_person_name'),
@@ -949,7 +961,8 @@ class Officer extends MY_Controller {
 
         $this->form_validation->set_rules('officer_designation', 'officer_designation*Officer designation', 'trim|required');
         $this->form_validation->set_rules('officer_country', 'officer_country*Officer country', 'trim|required');
-        $this->form_validation->set_rules('contact_person_name', 'contact_person_name*Contact person name', 'trim|required');
+        $this->form_validation->set_rules('profile', 'profile*Profile', 'trim');
+		$this->form_validation->set_rules('contact_person_name', 'contact_person_name*Contact person name', 'trim|required');
         $this->form_validation->set_rules('mobile_number', 'mobile_number*Mobile number', 'trim');
         $this->form_validation->set_rules('email', 'email*Email', 'trim|required');
         $this->form_validation->set_rules('password', 'password*Password', 'trim|required');
@@ -973,6 +986,7 @@ class Officer extends MY_Controller {
             'officer_type' => 'government_officials',
             'officer_designation' => $this->input->post('officer_designation'),
             'officer_country' => $this->input->post('officer_country'),
+			'profile' => $this->input->post('profile'),
             'is_representative' => (is_null($this->input->post('representative')) ? 0 : 1),
             'contact_person' => $this->input->post('contact_person_name'),
             'officer_phone' => $this->input->post('mobile_number'),
@@ -1028,7 +1042,8 @@ class Officer extends MY_Controller {
 
         $this->form_validation->set_rules('officer_designation', 'officer_designation*Officer designation', 'trim|required');
         $this->form_validation->set_rules('contact_person_name', 'contact_person_name*Contact person name', 'trim|required');
-        $this->form_validation->set_rules('mobile_number', 'mobile_number*Mobile number', 'trim');
+        $this->form_validation->set_rules('profile', 'profile*Profile', 'trim');
+		$this->form_validation->set_rules('mobile_number', 'mobile_number*Mobile number', 'trim');
         $this->form_validation->set_rules('email', 'email*Email', 'trim|required');
         $this->form_validation->set_rules('password', 'password*Password', 'trim|required');
 
@@ -1050,6 +1065,7 @@ class Officer extends MY_Controller {
             //'officer_type' => 'government_officials',
             'officer_designation' => $this->input->post('officer_designation'),
             'officer_country' => $this->input->post('officer_country'),
+			'profile' => $this->input->post('profile'),
             'is_representative' => (is_null($this->input->post('representative')) ? 0 : 1),
             'contact_person' => $this->input->post('contact_person_name'),
             'officer_phone' => $this->input->post('mobile_number'),
@@ -1082,7 +1098,7 @@ class Officer extends MY_Controller {
 
         $this->form_validation->set_rules('officer_designation', 'officer_designation*Officer designation', 'trim|required');
         // $this->form_validation->set_rules('officer_country', 'officer_country*Officer country', 'trim|required');
-        // $this->form_validation->set_rules('officer_rank', 'officer_rank*officer rank', 'trim');
+        $this->form_validation->set_rules('profile', 'profile*Profile', 'trim');
         $this->form_validation->set_rules('organization', 'organization*Organization', 'trim|required');
         $this->form_validation->set_rules('contact_person_name', 'contact_person_name*Contact person name', 'trim|required');
         $this->form_validation->set_rules('mobile_number', 'mobile_number*Mobile number', 'trim');
@@ -1108,6 +1124,7 @@ class Officer extends MY_Controller {
             'officer_type' => 'organizer',
             'officer_designation' => $this->input->post('officer_designation'),
             'officer_company' => $this->input->post('organization'),
+			'profile' => $this->input->post('profile'),
             'contact_person' => $this->input->post('contact_person_name'),
             'officer_phone' => $this->input->post('mobile_number'),
             'officer_email' => $this->input->post('email'),
@@ -1163,6 +1180,7 @@ class Officer extends MY_Controller {
         $this->form_validation->set_rules('officer_designation', 'officer_designation*Officer designation', 'trim|required');
         //$this->form_validation->set_rules('officer_country', 'officer_country*Officer country', 'trim|required');
         // $this->form_validation->set_rules('officer_rank', 'officer_rank*officer rank', 'trim');
+		$this->form_validation->set_rules('profile', 'profile*Profile', 'trim');
         $this->form_validation->set_rules('organization', 'organization*Organization', 'trim|required');
         $this->form_validation->set_rules('contact_person_name', 'contact_person_name*Contact person name', 'trim|required');
         $this->form_validation->set_rules('mobile_number', 'mobile_number*Mobile number', 'trim');
@@ -1185,6 +1203,7 @@ class Officer extends MY_Controller {
         $data = array(
            // 'exhibition_id' => $exhibition_id,
             //'officer_type' => 'organizer',
+			'profile' => $this->input->post('profile'),
             'officer_designation' => $this->input->post('officer_designation'),
             'officer_company' => $this->input->post('organization'),
             'contact_person' => $this->input->post('contact_person_name'),

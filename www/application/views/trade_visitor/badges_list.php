@@ -31,7 +31,9 @@
                                 <?php
                                 if ($this->userdata->user_group_id == SALES_PERSON) {
                                     echo '<div class="col-xs-5"></div>';
-								} else {
+								} elseif ($this->userdata->user_group_id == 11)  {
+									echo '<div class="col-xs-5"></div>';
+								}else {
                                 ?>
                                 <div class="col-xs-3">
                                     <label>Sales Person</label>
@@ -39,10 +41,13 @@
                                         <option value="">- select -</option>
                                         <?php
                                         $users = $this->db
-                                            ->where('is_deleted', 0)
-                                            ->where('user_group_id', SALES_PERSON)
-                                            ->get('users')
-                                            ->result();
+											->where('is_deleted', 0)
+											->group_start() // Start a group for OR conditions
+											->where('user_group_id', SALES_PERSON)
+											->or_where('user_group_id', 11)
+											->group_end() // End group
+											->get('users')
+											->result();
                                         foreach ($users as $user) {
                                             $total = $this->db
 												->where('is_active', 1)

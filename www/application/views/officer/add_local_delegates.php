@@ -42,7 +42,7 @@
                             <div class="form-group row">
                                 <div class="col-sm-6">
                                     <label>Profile</label>
-                                    <input type="text" class="form-control" name="officer_rank"  id="officer_rank">
+                                    <input type="text" class="form-control" name="profile"  id="profile">
                                 </div>
                                 <div class="col-sm-6">
                                     <label>Contact Person Name <span class="text-red">*</span></label>

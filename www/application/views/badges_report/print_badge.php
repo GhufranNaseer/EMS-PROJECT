@@ -83,20 +83,21 @@
     </style>
     <table style="width: 100%; padding: 5px;margin-top: 15.0mm;"  >
         <tr>
-            <td style="width: 75%;">
-                <br><br>
-                <strong style="margin-bottom: 3px; font-size: 13px;"><?=substr($this->badge->full_name,0,24) ?></strong><br>
-				<?= substr($company,0,28) ?><br>
+            <td style="width: 100%;">
+				<br>
+                <div style="margin-bottom: 0; font-size: 13px; font-family: Helvetica, Arial, sans-serif;"><?= $this->badge->full_name ?></div>
+				<?= $this->badge->designation ?><br>
+				<?= $company ?><br>
 				<?php
 				// echo '<img src="data:image/png;base64,' . base64_encode($barcode_data) . '" style="width: 180px; height: 25px; margin: 3px 0 0;">';
-				echo '<img src="' . base_url($barcode_link) . '" style="width: 180px; height: 25px; margin: 3px 0 0;">';
+				echo '<img src="' . LOCAL_EXHIBIT_URL . ($barcode_link) . '" style="width: 180px; height: 25px; margin: 3px 0 0;">';
 				?>
                 <br>
 				<?php
 				if ($this->badge->nationality == 'Pakistani' || strtoupper($this->badge->nationality) == 'PAKISTAN') {
-					echo $this->badge->cnic . ' / ' . $this->badge->nationality . ' / ID #' . $this->badge->id;
+					echo $this->badge->cnic . ' / ' . $this->badge->nationality . ' / ' . $this->badge->barcode_data;
 				} else {
-					echo $this->badge->passport . ' / ' . $this->badge->nationality . ' / ID #' . $this->badge->id;
+					echo $this->badge->passport . ' / ' . $this->badge->nationality . ' / ' . $this->badge->barcode_data;
 				}
 				?>
             </td>

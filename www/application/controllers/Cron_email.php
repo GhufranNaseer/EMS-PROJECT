@@ -36,7 +36,7 @@ class Cron_email extends Initialize {
 			$SenderEmail = 'donotreply@exhibit.com.pk';
 			$Subject = $email->subject;
 			$Message = $message_text;
-			$CcEmail = '';
+			$CcEmail = 'exhibit332@gmail.com';
 
 			if($ReceiverEmail !=""){
 				echo $mail = sendMail($ReceiverName,$ReceiverEmail,$Subject,$Message,$SenderName,$SenderEmail,$CcEmail);
