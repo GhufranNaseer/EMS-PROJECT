@@ -503,3 +503,20 @@ SECTION 18: POST-REBOOT AUTOSTART VERIFICATION - 2026-06-04
     * Request to `http://localhost:8002/client/login/23-Dummy-Event-2026` successfully establishes connection and receives CI session initialization headers and HTML payload.
 ================================================================================
 
+================================================================================
+SECTION 19: NGINX DOMAIN MAPPING & SSL CONFIGURATION - 2026-06-04
+================================================================================
+[2026-06-04 22:52:00] DOMAIN CONFIGURATION & SSL:
+  - Checked existing Nginx virtual hosts. Legacy site '/etc/nginx/sites-enabled/exhibit.com.pk' mapped to FPM socket on port 80/443.
+  - Deactivated legacy configuration link: 'sudo rm -f /etc/nginx/sites-enabled/exhibit.com.pk'.
+  - Overwrote '/etc/nginx/sites-available/ems_prod' to serve 'exhibit.com.pk' and 'www.exhibit.com.pk' proxying port 8002.
+  - Tested Nginx syntax (Success) and reloaded configuration safely.
+  - Checked Certbot presence. Installed Certbot and Nginx plugin: 'sudo apt update && sudo apt install -y certbot python3-certbot-nginx'.
+  - Executed Certbot to fetch and install Let's Encrypt certificates under email 'ghufran.naseer0987@gmail.com' with auto-redirection:
+    'sudo certbot --nginx -d exhibit.com.pk -d www.exhibit.com.pk --non-interactive --agree-tos --email ghufran.naseer0987@gmail.com --redirect'
+  - Verified SSL auto-renewal is active: 'certbot.timer' running in background (10h until next check).
+  - Executed remote loopback tests to verify domain connectivity:
+    * HTTP requests redirect (301) cleanly to HTTPS.
+    * HTTPS requests successfully hand-shake with Let's Encrypt certificates and proxy-pass to port 8002, initializing CI session cookies.
+================================================================================
+
