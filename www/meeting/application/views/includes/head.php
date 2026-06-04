@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html dir="ltr" lang="en-US">
+
 <head>
 
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <meta name="author" content="Raheel Khan" />
-    <meta name="description" content="miniMAX initial template">
+    <meta name="author" content="EMS" />
+    <meta name="description" content="BadarExpoSolutions">
     <meta name="keywords" content="Xoopr,xoopr,xooper,zoopr,zooper,zoopar,travel,earn,luggage,send">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
@@ -24,6 +25,6 @@
 
     <!-- Document Title
     ============================================= -->
-    <title><?php $this->common->echoTitle (isset($this->title_web)?$this->title_web: null); ?></title>
+    <title><?php $this->common->echoTitle(isset($this->title_web) ? $this->title_web : null); ?></title>
 
 </head>
