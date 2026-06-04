@@ -102,4 +102,4 @@ define('EMAIL_DOMAIN_NAME', 'exhibit.com.pk');
 define('BADGE_INVENTORY_CATEGORY', 5); /* es_inventory_category.id */
 define('BADGE_GLOBAL_INVENTORY_ITEM', 4); /* es_inventory_item_global.id */
 
-define('LOCAL_EXHIBIT_URL', 'http://exhibit.com.pk:8000/'); // use in image path for pdf
+define('LOCAL_EXHIBIT_URL', FCPATH); // use in image path for pdf

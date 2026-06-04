@@ -22,7 +22,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: "rUbfOA!WE8XjfyS5"
-      MYSQL_DATABASE: ems_main_db
+      MYSQL_DATABASE: ems_main_db1
       MYSQL_USER: ems_web_user
       MYSQL_PASSWORD: "EWEpYe3TJTTT@gKl"
     ports:

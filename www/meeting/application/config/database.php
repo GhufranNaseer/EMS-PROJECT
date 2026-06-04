@@ -74,11 +74,11 @@ $active_group = 'default';
 $query_builder = TRUE;
 
 $db['default'] = array(
-	'dsn'	=> '',
+	'dsn' => '',
 	'hostname' => 'mysql-db',
 	'username' => 'ems_web_user',
-        'password' => 'EWEpYe3TJTTT@gKl',
-        'database' => 'ems_main_db',
+	'password' => 'EWEpYe3TJTTT@gKl',
+	'database' => 'ems_main_db1',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,

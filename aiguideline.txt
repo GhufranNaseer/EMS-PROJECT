@@ -1,0 +1,378 @@
+================================================================================
+           AI DEPLOYMENT GUIDELINE - VPS SERVER MANAGEMENT
+           FILE: aiguideline.txt
+           PURPOSE: AI ko complete context dena deployment ke liye
+           LAST UPDATED: Auto-updated with each inspection/action
+================================================================================
+
+============================
+SECTION 1: SERVER INFORMATION
+============================
+
+Server IP        : 184.168.125.171
+Operating System : Ubuntu 22.04 LTS
+Docker           : Installed & Running
+Nginx            : Installed & Running
+SSH User         : kamran
+SSH Password     : Hosting###123
+SSH Command      : ssh kamran@184.168.125.171
+
+============================
+SECTION 2: AI INSTRUCTIONS - READ CAREFULLY
+============================
+
+Tu ek expert DevOps AI hai. Tera kaam hai is VPS par ek naya Docker project deploy karna
+WITHOUT existing live production project ko touch kiye.
+
+RULES (KABHI VIOLATE MAT KARNA):
+  [X] Production containers KABHI band mat karna
+  [X] Production docker-compose files KABHI modify mat karna
+  [X] Production environment files KABHI modify mat karna
+  [X] Existing Nginx virtual hosts KABHI modify mat karna
+  [X] docker system prune KABHI mat chalana
+  [X] docker compose down existing projects par KABHI mat chalana
+  [X] /home/kamran/exhibition_system folder KABHI touch mat karna jab tak confirm na ho
+  [X] Ports 8000, 8001, 3307 KABHI use mat karna naye project ke liye
+
+BEFORE DOING ANYTHING:
+  1. Pehle pura inspection karo (Section 4 commands)
+  2. Existing infrastructure samjho
+  3. Conflicts identify karo
+  4. Phir deploy karo
+
+============================
+SECTION 3: EXISTING LIVE PROJECT (READ-ONLY - DO NOT TOUCH)
+============================
+
+Project Name     : exhibition_system
+Path             : /var/www/html/exhibition_system
+Domain           : exhibit.com.pk, www.exhibit.com.pk
+Nginx Points To  : /var/www/html/exhibition_system/www
+
+--- Running Containers (TOUCH MAT KARNA) ---
+
+Container 1: exhibition_system (Web Server)
+  Port Mapping : Host 8000 -> Container 80
+  Status       : Running (LEAVE AS IS)
+
+Container 2: ems_qr_service
+  Port Mapping : Host 8001 -> Container 8000
+  Status       : Running (LEAVE AS IS)
+
+Container 3: MySQL Container
+  Port Mapping : Host 3307 -> Container 3306
+  Status       : Running (LEAVE AS IS)
+
+--- Docker Network ---
+  Name         : exhibition_system_ems_network
+  Type         : EXISTING (TOUCH MAT KARNA)
+
+--- Docker Volumes ---
+  exhibition_system_db
+  exhibition_system_mysql-db_1
+  exhibition_system_www
+
+--- Active Ports (YE NAYE PROJECT KE LIYE USE NAHI HONGE) ---
+  80    (Nginx - HTTP)
+  443   (Nginx - HTTPS)
+  8000  (exhibition_system web container)
+  8001  (ems_qr_service container)
+  3307  (MySQL container)
+
+============================
+SECTION 4: INSPECTION COMMANDS (RUN THESE FIRST)
+============================
+
+Jab bhi tu connect kare, pehle yeh commands chala aur results is file mein SECTION 8 mein add kar:
+
+  docker ps -a
+  docker network ls
+  docker volume ls
+  docker compose ls
+  sudo nginx -T
+  ss -tulpn
+  df -h
+  free -h
+  pwd
+  ls -la /var/www/
+  ls -la /var/www/exhibition_system_prod/
+  cat /var/www/exhibition_system_prod/docker-compose.yml
+  cat /var/www/exhibition_system_prod/Dockerfile
+  ls -la /var/www/exhibition_system_prod/
+  cat /var/www/exhibition_system_prod/DEPLOYMENT_GUIDE.md
+
+============================
+SECTION 5: NEW PROJECT TO DEPLOY
+============================
+
+Project Name     : exhibition_system_prod
+Path             : /var/www/exhibition_system_prod
+Status           : Cloned, Needs Deployment
+
+--- Confirmed Files in Project ---
+  docker-compose.yml
+  Dockerfile
+  exhibition_system.sql
+  qr_service/
+  www/
+  cron/
+  DEPLOYMENT_GUIDE.md
+  TECHNICAL_DOCUMENTATION.md
+
+--- Analysis Required ---
+  1. docker-compose.yml ko carefully read karo - ports, services, volumes, networks dekho
+  2. Dockerfile ko read karo - build process samjho
+  3. Environment variables identify karo
+  4. Database requirements identify karo (exhibition_system.sql import karna hoga)
+  5. QR service requirements identify karo
+  6. Cron service requirements identify karo
+
+============================
+SECTION 6: DEPLOYMENT REQUIREMENTS (NEW PROJECT)
+============================
+
+Naye project ke liye yeh cheezen UNIQUE aur SEPARATE honi chahiye:
+
+  Docker Project Name  : ems_prod (ya koi unique naam)
+  Docker Network       : ems_prod_network (new, isolated)
+  Container Names      : ems_prod_web, ems_prod_qr, ems_prod_mysql (unique prefix)
+  Docker Volumes       : ems_prod_db, ems_prod_www (new volumes)
+  Ports                : 8002+ (koi bhi available port, 8000/8001/3307 nahi)
+  Environment File     : /var/www/exhibition_system_prod/.env.prod (separate)
+  Log Location         : Separate container logs
+  Nginx Config         : New virtual host file (existing ko touch mat karna)
+
+--- Port Selection Strategy ---
+  Currently used: 80, 443, 8000, 8001, 3307
+  Try these for new project:
+    Web Service  : 8002 (agar available ho, warna 8003, 8004...)
+    QR Service   : 8003 (agar available ho, warna agli available)
+    MySQL        : 3308 (agar available ho, warna 3309...)
+  Check with: ss -tulpn | grep LISTEN
+
+--- Restart Policy ---
+  All containers: restart: unless-stopped
+  (Ensures auto-start after VPS reboot)
+
+============================
+SECTION 7: DEPLOYMENT PROCESS STEP BY STEP
+============================
+
+Step 1: Infrastructure Check
+  - CPU check       : top -bn1 | head -5
+  - RAM check       : free -h
+  - Disk check      : df -h
+  - Docker health   : docker info
+  - Port conflicts  : ss -tulpn
+
+Step 2: Analyze New Project Files
+  - Read docker-compose.yml
+  - Read Dockerfile
+  - Find all ENV variables needed
+  - Note existing port assignments in compose file
+
+Step 3: Prepare Environment
+  - Create .env file with correct values
+  - Modify docker-compose.yml for new project:
+      * Change container names (unique prefix)
+      * Change port mappings (avoid conflicts)
+      * Change network name (unique)
+      * Change volume names (unique)
+      * Add project name
+
+Step 4: Database Setup
+  - Start MySQL container first
+  - Wait for MySQL to be ready
+  - Import exhibition_system.sql
+  - Verify database import
+
+Step 5: Build & Start
+  - cd /var/www/exhibition_system_prod
+  - docker compose -p ems_prod up -d --build
+  - Watch build logs
+
+Step 6: Verify Health
+  - docker ps (check all containers running)
+  - docker logs [container_name] (check for errors)
+  - curl http://localhost:[new_port] (check HTTP response)
+
+Step 7: Configure Nginx
+  - Create NEW file: /etc/nginx/sites-available/ems_prod
+  - DO NOT modify: /etc/nginx/sites-available/exhibit.com.pk
+  - Test config: sudo nginx -t
+  - Reload: sudo nginx -s reload (DO NOT restart)
+
+Step 8: SSL (if domain provided)
+  - sudo certbot --nginx -d [new_domain]
+
+Step 9: Final Verification
+  - All containers healthy: docker ps
+  - Application responding: curl
+  - Database connected: check app logs
+  - Existing production still working: curl https://exhibit.com.pk
+
+============================
+SECTION 8: LIVE INSPECTION RESULTS (AI YAHAN UPDATE KARTA RAHE)
+============================
+
+--- Last Inspection Date/Time ---
+[AI: Jab bhi inspection karo, timestamp yahan likho]
+NOT YET INSPECTED
+
+--- docker ps -a Output ---
+[AI: Yahan paste karo]
+PENDING
+
+--- docker network ls Output ---
+[AI: Yahan paste karo]
+PENDING
+
+--- docker volume ls Output ---
+[AI: Yahan paste karo]
+PENDING
+
+--- docker compose ls Output ---
+[AI: Yahan paste karo]
+PENDING
+
+--- ss -tulpn Output (Active Ports) ---
+[AI: Yahan paste karo]
+PENDING
+
+--- df -h Output (Disk Space) ---
+[AI: Yahan paste karo]
+PENDING
+
+--- free -h Output (RAM) ---
+[AI: Yahan paste karo]
+PENDING
+
+--- nginx -T Output Summary ---
+[AI: Yahan virtual hosts list karo]
+PENDING
+
+--- New Project docker-compose.yml Content ---
+[AI: Yahan paste karo after reading]
+PENDING
+
+--- New Project Dockerfile Content ---
+[AI: Yahan paste karo after reading]
+PENDING
+
+============================
+SECTION 9: DEPLOYMENT LOG (AI YEH MAINTAIN KARE)
+============================
+
+[AI: Har action ka record yahan rakhna. Format:]
+[TIMESTAMP] ACTION: description
+[TIMESTAMP] RESULT: success/failure + details
+
+Example:
+[2024-01-01 12:00] ACTION: Ran docker ps -a
+[2024-01-01 12:00] RESULT: SUCCESS - Found 3 running containers
+
+--- Deployment Actions ---
+NONE YET
+
+============================
+SECTION 10: FINAL DEPLOYMENT REPORT (AI FILL KARE AFTER DEPLOYMENT)
+============================
+
+--- New Project Container Details ---
+Container Name (Web)    : [PENDING]
+Container Name (QR)     : [PENDING]
+Container Name (MySQL)  : [PENDING]
+
+--- Port Mappings ---
+Web Service             : Host [PORT] -> Container [PORT]
+QR Service              : Host [PORT] -> Container [PORT]
+MySQL                   : Host [PORT] -> Container 3306
+
+--- Docker Details ---
+Network Name            : [PENDING]
+Volume Names            : [PENDING]
+Project Name (-p flag)  : [PENDING]
+Compose File Location   : /var/www/exhibition_system_prod/docker-compose.yml
+
+--- Environment Variables ---
+.env File Location      : [PENDING]
+Key Variables           : [PENDING - list them after reading project]
+
+--- Nginx Configuration ---
+Config File             : /etc/nginx/sites-available/[PENDING]
+Domain/IP               : [PENDING]
+SSL Status              : [PENDING]
+
+--- Startup Procedure ---
+Command to start        : cd /var/www/exhibition_system_prod && docker compose -p ems_prod up -d
+Command to stop         : docker compose -p ems_prod down (ONLY NEW PROJECT)
+Command to check logs   : docker compose -p ems_prod logs -f
+
+--- Backup Procedure ---
+Database backup         : docker exec [mysql_container] mysqldump -u root -p[password] [dbname] > backup.sql
+Volume backup           : docker run --rm -v [volume]:/data -v $(pwd):/backup ubuntu tar czf /backup/backup.tar.gz /data
+
+--- Rollback Plan ---
+If new deployment fails:
+  1. docker compose -p ems_prod down
+  2. Remove new nginx config: sudo rm /etc/nginx/sites-available/ems_prod
+  3. Reload nginx: sudo nginx -s reload
+  4. Existing production is UNAFFECTED (it was never touched)
+
+============================
+SECTION 11: WARNINGS & NOTES
+============================
+
+WARNING 1: /home/kamran/exhibition_system
+  Yeh folder possibly existing live containers se related hai.
+  KABHI DELETE, MODIFY, ya OVERWRITE mat karna.
+  Pehle confirm karo iska relation running containers se kya hai.
+  Command to check: docker inspect [container_name] | grep -i volume
+
+WARNING 2: DATABASE IMPORT
+  exhibition_system.sql import karte waqt ensure karo ke:
+  - Naye MySQL container mein import ho
+  - Existing MySQL (port 3307) mein NAHI
+
+WARNING 3: NGINX RELOAD vs RESTART
+  Hamesha: sudo nginx -s reload (SAFE - no downtime)
+  KABHI NAHI: sudo systemctl restart nginx (causes brief downtime)
+
+WARNING 4: PORT CONFLICTS
+  Agar koi port already use ho raha ho:
+  - ss -tulpn se check karo
+  - Automatically next available port select karo
+  - document karo kaunsa port use kiya
+
+WARNING 5: ENVIRONMENT FILES
+  .env files mein sensitive data hota hai.
+  Naye project ka .env sirf naye project ke liye hoga.
+  Existing project ka .env KABHI modify mat karna.
+
+============================
+SECTION 12: QUICK REFERENCE COMMANDS
+============================
+
+Check running containers     : docker ps
+Check all containers         : docker ps -a
+Check specific container log : docker logs [container_name]
+Check container health       : docker inspect [container_name]
+Check port usage             : ss -tulpn | grep LISTEN
+Check disk space             : df -h
+Check RAM                    : free -h
+Check nginx config           : sudo nginx -t
+Reload nginx (safe)          : sudo nginx -s reload
+Check nginx virtual hosts    : ls /etc/nginx/sites-enabled/
+Enter container shell        : docker exec -it [container_name] bash
+Check docker networks        : docker network ls
+Check docker volumes         : docker volume ls
+Check compose projects       : docker compose ls
+
+============================
+END OF GUIDELINE FILE
+============================
+NOTE TO AI: Is file ko har session mein update karte raho.
+Section 8 mein inspection results add karo.
+Section 9 mein har action log karo.
+Section 10 mein final details fill karo deployment ke baad.
+================================================================================
