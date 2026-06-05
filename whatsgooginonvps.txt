@@ -520,3 +520,32 @@ SECTION 19: NGINX DOMAIN MAPPING & SSL CONFIGURATION - 2026-06-04
     * HTTPS requests successfully hand-shake with Let's Encrypt certificates and proxy-pass to port 8002, initializing CI session cookies.
 ================================================================================
 
+================================================================================
+SECTION 20: GIT SYNCHRONIZATION AND LEGACY PROJECT DECOMMISSIONING - 2026-06-05
+================================================================================
+[2026-06-05 17:21:00] GIT SYNCHRONIZATION:
+  - Verified local master is pushed and synced with GitHub remote main.
+  - Logged into VPS and pulled latest main branch changes into /var/www/exhibition_system_prod.
+  - Protected host-specific configuration files (docker-compose.yml and database.php configs) by stashing them before hard reset and restoring them after.
+  - Verified layout view files (head.php) are updated with correct metadata (author "EMS", description "BadarExpoSolutions").
+
+[2026-06-05 18:20:00] PRE-DELETION AUDIT & DEPENDENCY CHECK:
+  - Audited legacy resources: 4 legacy Docker containers, 1 network, 3 volumes, 3 images, and directories `/var/www/html/exhibition_system` (40 GB) and `/home/kamran/exhibition_system` (189 MB).
+  - Inspected mounts of all running containers and verified that the new system (exhibition_system_prod) has zero dependencies on any legacy paths, volumes, or networks.
+  - Compiled and generated a final Audit and Decommissioning Report.
+
+[2026-06-05 18:28:00] DECOMMISSIONING & REMOVAL:
+  - Stopped and removed legacy compose containers, network, and volumes: `docker compose down -v`.
+  - Deleted legacy Docker images (`exhibition_system-webserver:latest`, `exhibition_system-cronjob:latest`, `exhibition_system-ems_qr_service:latest`), reclaiming ~42.9 GB of disk space.
+  - Recursively deleted filesystem directories `/var/www/html/exhibition_system` (40 GB) and `/home/kamran/exhibition_system` (189 MB) from the host.
+  - Deleted old inactive Nginx configuration file `/etc/nginx/sites-available/exhibit.com.pk`.
+  - Removed old named volumes `exhibition_system_db`, `exhibition_system_mysql-db_1`, and `exhibition_system_www`.
+  - Disabled the default Nginx catch-all configuration symbolic link `/etc/nginx/sites-enabled/default` to prevent routing conflicts.
+  - Reloaded Nginx successfully.
+
+[2026-06-05 18:30:00] POST-CLEANUP VERIFICATION:
+  - Verified host storage: Used space dropped from 143 GB to 65 GB (Available space increased from 44 GB to 123 GB, drop from 77% to 35% utilization).
+  - Verified that only the four production containers (`ems_prod_web`, `ems_prod_mysql`, `ems_prod_qr`, `ems_prod_cron`) are running.
+  - Confirmed the active production site at https://exhibit.com.pk/login remains online and serves pages with HTTP 200 OK.
+================================================================================
+
