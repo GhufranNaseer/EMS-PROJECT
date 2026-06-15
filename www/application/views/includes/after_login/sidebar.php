@@ -615,6 +615,20 @@
                 </ul>
             </li>
 			<?php } ?>
+            <?php if (get_instance()->hasRight('Emailconfiguration') || (defined('SUPER_ADMIN') && $this->userdata->user_group_id == SUPER_ADMIN)) { ?>
+            <li data-page="email_configuration">
+                <a href="<?= base_url('email-configuration'); ?>">
+                    <i class="fa fa-envelope"></i>
+                    <span>Email Configuration</span>
+                </a>
+            </li>
+            <li data-page="email_logs">
+                <a href="<?= base_url('email-logs.html'); ?>">
+                    <i class="fa fa-history"></i>
+                    <span>Email Logs</span>
+                </a>
+            </li>
+            <?php } ?>
         </ul>
     </section>
     <!-- /.sidebar -->

@@ -1,76 +1,85 @@
 <?php
 
-
-
-
-function sendMail($ReceiverName, $ReceiverEmail,$Subject,$Message, $SenderName, $SenderEmail, $CcEmail){
+function sendMail($ReceiverName, $ReceiverEmail, $Subject, $Message, $SenderName, $SenderEmail, $CcEmail, $options = array())
+{
 	require_once 'PHPMailer/PHPMailerAutoload.php';
+
+	$CI =& get_instance();
+	$settings = isset($options['settings']) ? $options['settings'] : null;
+	$echo = array_key_exists('echo', $options) ? (bool) $options['echo'] : true;
+	$debug = array_key_exists('debug', $options) ? (bool) $options['debug'] : false;
+
+	if (!is_array($settings)) {
+		$CI->load->model('email_configuration_model');
+		$settings = $CI->email_configuration_model->get_mailer_settings();
+	}
+
 	$mail = new PHPMailer();
-	//Set Enable SMTP debugging.
-	// $mail->SMTPDebug = 1;
-	//Set PHPMailer to use SMTP.
-	$mail->isSMTP();
-//Set SMTP host name
-	$mail->Host = "ssl://smtp.gmail.com";
-	$mail->SMTPOptions = array(
-		'ssl' => array(
-			'verify_peer' => false,
-			'verify_peer_name' => false,
-			'allow_self_signed' => true
-		)
-	);
-	//Set this to true if SMTP host requires authentication to send email
-	$mail->SMTPAuth = true;
-	//Provide username and password
-	$mail->Username = "facilitatio.exhibit@gmail.com";
-	$mail->Password = "wiixhnvfijyuxddy";
-	
-	//If SMTP requires TLS encryption then set it
-	$mail->SMTPSecure = "ssl";
+	$debugOutput = '';
 
-//Set TCP port to connect to
-	$mail->Port = 465;
+	if ($settings['mail_driver'] === 'smtp') {
+		$mail->isSMTP();
+		$mail->Host = ($settings['mail_encryption'] === 'ssl' && strpos($settings['mail_host'], 'ssl://') !== 0)
+			? 'ssl://' . $settings['mail_host']
+			: $settings['mail_host'];
+		$mail->SMTPOptions = array(
+			'ssl' => array(
+				'verify_peer' => false,
+				'verify_peer_name' => false,
+				'allow_self_signed' => true
+			)
+		);
+		$mail->SMTPAuth = true;
+		$mail->Username = $settings['mail_username'];
+		$mail->Password = $settings['mail_password'];
 
+		if ($settings['mail_encryption'] !== 'starttls') {
+			$mail->SMTPSecure = $settings['mail_encryption'];
+		} else {
+			$mail->SMTPSecure = 'tls';
+			$mail->SMTPAutoTLS = true;
+		}
 
-//Set Sender Information //
-	$mail->From = $SenderEmail;
+		$mail->Port = (int) $settings['mail_port'];
+	} else {
+		$mail->isMail();
+	}
 
-// Change Sender Name  //
-	$mail->FromName = $SenderName;
+	if ($debug) {
+		$mail->SMTPDebug = 2;
+		$mail->Debugoutput = function ($str, $level) use (&$debugOutput) {
+			$debugOutput .= trim($str) . "\n";
+		};
+	}
 
+	$mail->From = !empty($SenderEmail) ? $SenderEmail : $settings['mail_from_email'];
+	$mail->FromName = !empty($SenderName) ? $SenderName : $settings['mail_from_name'];
+	$mail->addAddress($ReceiverEmail, $ReceiverName);
 
-	// Set Receiver Information //
-	$mail->addAddress($ReceiverEmail,$ReceiverName);
-
-// Set Mail CC / BCC //
-	if($CcEmail !=""){
+	if ($CcEmail != "") {
 		$mail->addCC($CcEmail);
 	}
 
-	$mail->addReplyTo('facilitatio.exhibit@gmail.com','Exhibit Facilitation');
-	// $mail->addBCC('ieeep2018@gmail.com');
-
-
-//Attachments//
-	//$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
-	//$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
-
-
+	$mail->addReplyTo($settings['mail_from_email'], $settings['mail_from_name']);
 	$mail->isHTML(true);
-
 	$mail->Subject = $Subject;
 	$mail->Body = $Message;
 	$mail->AltBody = "This is the plain text version of the email content";
 
-	if(!$mail->send())
-	{
-		echo "Mailer Error: " . $mail->ErrorInfo;
-	}
-	else
-	{
-		echo "Message has been sent successfully ".$ReceiverName."  ". $ReceiverEmail;;
+	$success = $mail->send();
+	$error = $success ? '' : $mail->ErrorInfo;
+
+	$result = array(
+		'success' => $success,
+		'message' => $success ? "Message has been sent successfully " . $ReceiverName . "  " . $ReceiverEmail : "Mailer Error: " . $error,
+		'error' => $error,
+		'debug' => $debugOutput,
+	);
+
+	if ($echo) {
+		echo $result['message'];
 	}
 
-
+	return $result;
 }
 

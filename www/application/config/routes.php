@@ -681,6 +681,13 @@ $route['other-settings.html']['get'] = "settings/view_settings";
 $route['tax-update.html']['get'] = "settings/tax_update";
 $route['tex-update-validate.html']['post'] = "settings/crd_edit_validate/doError";
 $route['tex-update-submit.html']['post'] = "settings/crd_edit_submit";
+$route['email-configuration']['get'] = 'email_configuration/index';
+$route['email-configuration-validate.html']['post'] = 'email_configuration/crd_edit_validate/doError';
+$route['email-configuration-submit.html']['post'] = 'email_configuration/crd_edit_submit';
+$route['email-configuration-test-email.html']['post'] = 'email_configuration/test_email';
+$route['email-logs.html']['get'] = 'email_configuration/email_logs';
+$route['email-logs-datatable.html']['post'] = 'email_configuration/email_logs_datatable';
+
 
 
 #S badges report

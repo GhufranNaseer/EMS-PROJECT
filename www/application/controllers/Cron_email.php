@@ -14,13 +14,28 @@ class Cron_email extends Initialize {
 	}
 
 	function send_messages() {
-		$emails = $this->db
-			->where('is_sent', 0)
-			->limit(10)
-			->get('es_emails_cron')
-			->result();
+		$this->load->model('email_configuration_model');
 		$this->load->helper('phpmailer');
+
+		$settings = $this->email_configuration_model->get_mailer_settings();
+		$limit = max(1, (int) $settings['emails_per_cron']);
+		$retry_attempts = max(1, (int) $settings['retry_attempts']);
+
+		$this->db
+			->where('status', 'processing')
+			->where('processing_started_on <', date('Y-m-d H:i:s', strtotime('-30 minutes')))
+			->update('es_emails_cron', array(
+				'status' => 'pending',
+				'processing_started_on' => null,
+				'updated_on' => date('Y-m-d H:i:s')
+			));
+
+		$emails = $this->email_configuration_model->get_pending_emails($limit, $retry_attempts);
+
 		foreach ($emails as $email) {
+			if (!$this->email_configuration_model->mark_processing($email->id)) {
+				continue;
+			}
 
 			$title = (isset($email->from_name) && !is_null($email->from_name)) ? $email->from_name : PROJECT_NAME;
 			
@@ -33,36 +48,64 @@ class Cron_email extends Initialize {
 			$ReceiverName = $email->email;
 			$ReceiverEmail = $email->email;
 			$SenderName = $title;
-			$SenderEmail = 'donotreply@exhibit.com.pk';
+			$SenderEmail = $settings['mail_from_email'];
 			$Subject = $email->subject;
 			$Message = $message_text;
-			$CcEmail = 'exhibit332@gmail.com';
+			$CcEmail = '';
+			$attempts = isset($email->attempts) ? ((int) $email->attempts + 1) : 1;
+			$result = array('success' => false, 'error' => 'Receiver email is empty', 'debug' => '');
 
 			if($ReceiverEmail !=""){
-				echo $mail = sendMail($ReceiverName,$ReceiverEmail,$Subject,$Message,$SenderName,$SenderEmail,$CcEmail);
+				$result = sendMail($ReceiverName, $ReceiverEmail, $Subject, $Message, $SenderName, $SenderEmail, $CcEmail, array(
+					'settings' => $settings,
+					'echo' => true,
+					'debug' => $settings['smtp_debug'] === 'yes',
+				));
 			}
 
-			$this->db
-				->where('id', $email->id)
-				->update('es_emails_cron', array(
-					'is_sent' => 1,
-					'sent_on' => date('Y-m-d H:i:s')
+			if ($result['success']) {
+				$this->email_configuration_model->mark_sent($email->id);
+
+				$this->email_configuration_model->log_email(array(
+					'email_queue_id' => $email->id,
+					'email_type' => $email->type,
+					'recipient_email' => $ReceiverEmail,
+					'subject' => $Subject,
+					'driver' => $settings['mail_driver'],
+					'status' => 'sent',
+					'attempts' => $attempts,
+					'debug_message' => $settings['smtp_debug'] === 'yes' ? $result['debug'] : null,
 				));
 
-			if ($email->type && $email->type == 'EVENT_INVITATION') {
-				try {
-					$booking = json_decode($email->data);
+				if ($email->type && $email->type == 'EVENT_INVITATION') {
+					try {
+						$booking = json_decode($email->data);
 
-					if (isset($booking) && $booking->order_id) {
-						$this->db
-						->where('id', $booking->order_id)
-						->update('es_exhibition_booking', array(
-							'invitation_sent' => 1
-						));
+						if (isset($booking) && $booking->order_id) {
+							$this->db
+							->where('id', $booking->order_id)
+							->update('es_exhibition_booking', array(
+								'invitation_sent' => 1
+							));
+						}
+					} catch (Exception $e) {
+
 					}
-				} catch (Exception $e) {
-
 				}
+			} else {
+				$this->email_configuration_model->mark_failed($email->id, $result['error'], $retry_attempts);
+
+				$this->email_configuration_model->log_email(array(
+					'email_queue_id' => $email->id,
+					'email_type' => $email->type,
+					'recipient_email' => $ReceiverEmail,
+					'subject' => $Subject,
+					'driver' => $settings['mail_driver'],
+					'status' => $attempts >= $retry_attempts ? 'failed' : 'retry',
+					'attempts' => $attempts,
+					'error_message' => $result['error'],
+					'debug_message' => $settings['smtp_debug'] === 'yes' ? $result['debug'] : null,
+				));
 			}
 		}
 
