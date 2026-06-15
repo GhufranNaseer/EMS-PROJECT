@@ -35,6 +35,25 @@
             </select>
         </div>
     </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label>Thank You Email Template</label>
+            <select name="thank_you_template_id" class="form-control">
+                <option value="">- select -</option>
+                <?php
+                $templates = $this->db
+                    ->where('title', 'THANK_YOU_EXHIBITOR')
+                    ->where('(exhibition_id IS NULL OR exhibition_id = ' . (isset($edit_data) ? $edit_data->id : 0) . ')')
+                    ->get('email_template')
+                    ->result();
+                foreach ($templates as $template) {
+                    $selected = (isset($edit_data) && $edit_data->thank_you_template_id == $template->id) ? 'selected' : '';
+                    echo '<option value="'.$template->id.'" '.$selected.'>'.$template->subject.'</option>';
+                }
+                ?>
+            </select>
+        </div>
+    </div>
 </div>
 
 <div class="panel panel-default panel-body">

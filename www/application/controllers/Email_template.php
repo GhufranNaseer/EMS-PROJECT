@@ -148,6 +148,7 @@ class Email_template extends MY_Controller
 			'MOU_SIGNING_CANCELED' => 'This template is use to send MoU sign cancel email notification.',
 			'MOU_SIGNING_ACCEPTED' => 'This template is use to send MoU sign accepted email notification.',
 			'MOU_SIGNING_RE_SCHEDULE' => 'This template is use to send MoU sign re-schedule email notification.',
+			'THANK_YOU_EXHIBITOR' => 'This template is used to send a thank you email to exhibitors after event completion.',
 		);
 
 		$PLACEHOLDERS = array(
@@ -160,6 +161,7 @@ class Email_template extends MY_Controller
 			'MOU_SIGNING_CANCELED' => '{NAME},{EMAIL},{PHONE},{COMPANY},{SENDER_NAME},{SENDER_EMAIL},{SENDER_PHONE},{SENDER_COMPANY},{SENDER_WEBSITE},{SCHEDULE_TIME},{DESCRIPTION},{COMMERCIAL_VALUE}',
 			'MOU_SIGNING_ACCEPTED' => '{NAME},{EMAIL},{PHONE},{COMPANY},{SENDER_NAME},{SENDER_EMAIL},{SENDER_PHONE},{SENDER_COMPANY},{SENDER_WEBSITE},{SCHEDULE_TIME},{DESCRIPTION},{COMMERCIAL_VALUE}',
 			'MOU_SIGNING_RE_SCHEDULE' => '{NAME},{EMAIL},{PHONE},{COMPANY},{SENDER_NAME},{SENDER_EMAIL},{SENDER_PHONE},{SENDER_COMPANY},{SENDER_WEBSITE},{SCHEDULE_TIME},{DESCRIPTION},{COMMERCIAL_VALUE}',
+			'THANK_YOU_EXHIBITOR' => '{EVENT_NAME},{EXHIBITOR_NAME},{EXHIBITOR_COMPANY}',
 		);
 
 		$data = array(

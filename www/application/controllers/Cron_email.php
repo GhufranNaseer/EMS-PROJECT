@@ -5,7 +5,7 @@ class Cron_email extends Initialize {
 	protected function rule() {
 
 		$crd = array(
-			'send_messages,send_text_message,temp_excel_create' => array(
+			'send_messages,send_text_message,temp_excel_create,send_thank_you_emails' => array(
 				'rule' => '*'
 			)
 		);
@@ -92,6 +92,23 @@ class Cron_email extends Initialize {
 
 					}
 				}
+
+				if ($email->type && $email->type == 'THANK_YOU_EXHIBITOR') {
+					try {
+						$log_info = json_decode($email->data);
+						if (isset($log_info) && isset($log_info->event_id) && isset($log_info->exhibitor_id)) {
+							$this->db
+								->where('event_id', $log_info->event_id)
+								->where('exhibitor_id', $log_info->exhibitor_id)
+								->update('es_event_email_log', array(
+									'status' => 'sent',
+									'sent_at' => date('Y-m-d H:i:s')
+								));
+						}
+					} catch (Exception $e) {
+
+					}
+				}
 			} else {
 				$this->email_configuration_model->mark_failed($email->id, $result['error'], $retry_attempts);
 
@@ -106,6 +123,24 @@ class Cron_email extends Initialize {
 					'error_message' => $result['error'],
 					'debug_message' => $settings['smtp_debug'] === 'yes' ? $result['debug'] : null,
 				));
+
+				if ($email->type && $email->type == 'THANK_YOU_EXHIBITOR') {
+					try {
+						$log_info = json_decode($email->data);
+						if (isset($log_info) && isset($log_info->event_id) && isset($log_info->exhibitor_id)) {
+							$status = $attempts >= $retry_attempts ? 'failed' : 'pending';
+							$this->db
+								->where('event_id', $log_info->event_id)
+								->where('exhibitor_id', $log_info->exhibitor_id)
+								->update('es_event_email_log', array(
+									'status' => $status,
+									'error_message' => $result['error']
+								));
+						}
+					} catch (Exception $e) {
+
+					}
+				}
 			}
 		}
 
@@ -222,5 +257,100 @@ class Cron_email extends Initialize {
 		die();
 
 
+	}
+
+	function send_thank_you_emails() {
+		$this->load->model('email_configuration_model');
+		$current_date = date('Y-m-d');
+		$events = $this->db
+			->where('is_deleted', 0)
+			->where('booking_expire_date <', $current_date)
+			->where('thank_you_template_id IS NOT NULL')
+			->get('es_exhibitions')
+			->result();
+
+		$queued_count = 0;
+
+		foreach ($events as $event) {
+			$template = $this->db
+				->where('id', $event->thank_you_template_id)
+				->get('email_template')
+				->row();
+
+			if (!$template) {
+				continue;
+			}
+
+			$exhibitors = $this->db
+				->select('B.id as booking_id, C.id as customer_id, C.name as exhibitor_name, C.company as exhibitor_company, C.email as exhibitor_email')
+				->from('es_exhibition_booking as B')
+				->join('es_customers as C', 'B.customer_id = C.id')
+				->where('B.exhibition_id', $event->id)
+				->where('B.is_approved', 1)
+				->where('B.is_canceled', 0)
+				->get()
+				->result();
+
+			foreach ($exhibitors as $exhibitor) {
+				if (empty($exhibitor->exhibitor_email)) {
+					continue;
+				}
+
+				$already_logged = $this->db
+					->where('event_id', $event->id)
+					->where('exhibitor_id', $exhibitor->customer_id)
+					->where('template_id', $template->id)
+					->count_all_results('es_event_email_log');
+
+				if ($already_logged > 0) {
+					continue;
+				}
+
+				$subject = $template->subject;
+				$message = $template->message;
+
+				$replacements = array(
+					'{EVENT_NAME}' => $event->exhibition_title,
+					'{EXHIBITOR_NAME}' => $exhibitor->exhibitor_name,
+					'{EXHIBITOR_COMPANY}' => $exhibitor->exhibitor_company,
+				);
+
+				foreach ($replacements as $key => $val) {
+					$subject = str_replace($key, $val, $subject);
+					$message = str_replace($key, $val, $message);
+				}
+
+				$this->db->trans_start();
+
+				$log_data = array(
+					'event_id' => $event->id,
+					'exhibitor_id' => $exhibitor->customer_id,
+					'template_id' => $template->id,
+					'status' => 'pending',
+					'created_on' => date('Y-m-d H:i:s'),
+				);
+				$this->db->insert('es_event_email_log', $log_data);
+
+				$queue_data = array(
+					'type' => 'THANK_YOU_EXHIBITOR',
+					'data' => json_encode(array(
+						'event_id' => $event->id,
+						'exhibitor_id' => $exhibitor->customer_id,
+					)),
+					'from_name' => $event->exhibition_title,
+					'email' => $exhibitor->exhibitor_email,
+					'subject' => $subject,
+					'message' => $message,
+					'created_on' => date('Y-m-d H:i:s'),
+				);
+				$this->db->insert('es_emails_cron', $queue_data);
+
+				$this->db->trans_complete();
+				$queued_count++;
+			}
+		}
+
+		echo 'Queued ' . $queued_count . ' thank you emails.';
+		exit;
 	}
 }

@@ -38,12 +38,12 @@
                     </div>
 
                     <div class="form-group has-feedback">
-                        <input type="password" class="form-control"  placeholder="Password" name="password">
-                        <span class="fa fa-lock form-control-feedback"></span>
+                        <input type="password" class="form-control"  placeholder="Password" name="password" id="password">
+                        <span class="fa fa-eye form-control-feedback" id="toggle-password" style="cursor: pointer; pointer-events: auto;"></span>
                     </div>
 
                     <div class="row">
-                        <div class="col-sm-12 text-center" id="msg-box" style="color:#F00;">&nbsp;</div>
+                        <div class="col-sm-12 text-center" id="msg-box" style="color:#F00;"></div>
 						<?php
 						$error = $this->session->flashdata('error');
 						if (is_string($error)) {
@@ -103,6 +103,17 @@
 
 
 <script>
+	$('#toggle-password').on('click', function () {
+		var passwordInput = $('#password');
+		if (passwordInput.attr('type') === 'password') {
+			passwordInput.attr('type', 'text');
+			$(this).removeClass('fa-eye').addClass('fa-eye-slash');
+		} else {
+			passwordInput.attr('type', 'password');
+			$(this).removeClass('fa-eye-slash').addClass('fa-eye');
+		}
+	});
+
 	$('#remember').iCheck({
 		checkboxClass: 'icheckbox_square-green',
 		radioClass:    'iradio_square-green',

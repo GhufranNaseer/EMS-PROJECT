@@ -150,6 +150,7 @@ class Exhibitions extends MY_Controller {
         $this->form_validation->set_rules('event_organizer', 'event_organizer*event organizer', 'trim|required');
 		$this->form_validation->set_rules('location_id', 'location_id*Location', 'trim|required');
 		$this->form_validation->set_rules('price_type', 'price_type*Price type', 'trim|required');
+		$this->form_validation->set_rules('thank_you_template_id', 'thank_you_template_id*Thank You Template', 'trim|integer');
 
 		$this->form_validation->set_rules('event_logo[0]', 'event_logo[0]*event logo', 'trim|required');
 		$this->form_validation->set_rules('event_logo_link', 'event_logo_link*event logo link', 'trim');
@@ -211,6 +212,7 @@ class Exhibitions extends MY_Controller {
 			'exhibition_title' => $this->input->post('exhibition_title'),
 			'booking_expire_date' => date('Y-m-d', strtotime($expire_date)),
 			'price_type' => $this->input->post('price_type'),
+			'thank_you_template_id' => $this->input->post('thank_you_template_id') ?: null,
 			'event_color' => $this->input->post('event_color'),
 			'event_background' => $this->input->post('event_background')[0],
 			'event_logo' => $this->input->post('event_logo')[0],
@@ -276,6 +278,7 @@ class Exhibitions extends MY_Controller {
         $this->form_validation->set_rules('event_organizer', 'event_organizer*event organizer', 'trim|required');
 		$this->form_validation->set_rules('location_id', 'location_id*Location', 'trim|required');
 		$this->form_validation->set_rules('price_type', 'price_type*Price type', 'trim|required');
+		$this->form_validation->set_rules('thank_you_template_id', 'thank_you_template_id*Thank You Template', 'trim|integer');
 
 		$this->form_validation->set_rules('event_logo[0]', 'event_logo[0]*event logo', 'trim|required');
 		$this->form_validation->set_rules('event_logo_link', 'event_logo_link*event logo link', 'trim');
@@ -331,6 +334,7 @@ class Exhibitions extends MY_Controller {
 			'exhibition_title' => $this->input->post('exhibition_title'),
 			'booking_expire_date' => date('Y-m-d', strtotime($expire_date)),
 			'price_type' => $this->input->post('price_type'),
+			'thank_you_template_id' => $this->input->post('thank_you_template_id') ?: null,
 			'event_color' => $this->input->post('event_color'),
 			'event_background' => $this->funcs->make_image_string($this->input->post('event_background')),
 			'event_logo' => $this->funcs->make_image_string($this->input->post('event_logo')),

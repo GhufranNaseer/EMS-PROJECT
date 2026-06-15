@@ -39,9 +39,10 @@
 											<option value="APPOINTMENT_ACCEPTED">APPOINTMENT ACCEPTED</option>
 											<option value="APPOINTMENT_CANCELED">APPOINTMENT CANCELED</option>
 											<option value="APPOINTMENT_RE_SCHEDULE">APPOINTMENT RE SCHEDULE</option>
-											<option value="MOU SIGNING CANCELED">MOU SIGNING CANCELED</option>
+											<option value="MOU_SIGNING_CANCELED">MOU SIGNING CANCELED</option>
 											<option value="MOU_SIGNING_ACCEPTED">MOU SIGNING ACCEPTED</option>
 											<option value="MOU_SIGNING_RE_SCHEDULE">MOU SIGNING RE SCHEDULE</option>
+											<option value="THANK_YOU_EXHIBITOR">THANK YOU EXHIBITOR</option>
 										</select>
 									</div>
 								</div>
@@ -60,6 +61,11 @@
 										<textarea class="form-control" name="email_template_message" id="email_template_message" rows="5"></textarea>
 									</div>
 								</div>
+							</div>
+
+							<div id="placeholders_container" style="display: none; margin-bottom: 20px;">
+								<p><strong>Available Placeholders</strong></p>
+								<div id="placeholders_list" style="margin-bottom: 10px;"></div>
 							</div>
 
 
@@ -91,14 +97,54 @@
 <script src="<?= base_url('assets') ?>/ckeditor/ckeditor.js"></script>
 
 <script>
-	$(function() {
+	var placeholdersMap = {
+		'EVENT_INVITATION': ['{EMAIL}', '{PASSWORD}', '{LOGIN_URL}', '{EVENT_NAME}'],
+		'RESET_PASSWORD_LINK': ['{PASSWORD_RESET_LINK}', '{CUSTOMER_COMPANY}', '{CUSTOMER_NAME}', '{CUSTOMER_EMAIL}', '{EVENT_NAME}'],
+		'APPOINTMENT_SCHEDULE': ['{EVENT_NAME}', '{NAME}', '{EMAIL}', '{PHONE}', '{COMPANY}', '{SENDER_NAME}', '{SENDER_EMAIL}', '{SENDER_PHONE}', '{SENDER_COMPANY}', '{SENDER_WEBSITE}', '{APPOINTMENT_TIME}', '{APPOINTMENT_AGENDA}'],
+		'APPOINTMENT_ACCEPTED': ['{EVENT_NAME}', '{NAME}', '{EMAIL}', '{PHONE}', '{COMPANY}', '{SENDER_NAME}', '{SENDER_EMAIL}', '{SENDER_PHONE}', '{SENDER_COMPANY}', '{SENDER_WEBSITE}', '{APPOINTMENT_TIME}', '{APPOINTMENT_AGENDA}'],
+		'APPOINTMENT_CANCELED': ['{EVENT_NAME}', '{NAME}', '{EMAIL}', '{PHONE}', '{COMPANY}', '{SENDER_NAME}', '{SENDER_EMAIL}', '{SENDER_PHONE}', '{SENDER_COMPANY}', '{SENDER_WEBSITE}', '{APPOINTMENT_TIME}', '{APPOINTMENT_AGENDA}'],
+		'APPOINTMENT_RE_SCHEDULE': ['{EVENT_NAME}', '{NAME}', '{EMAIL}', '{PHONE}', '{COMPANY}', '{SENDER_NAME}', '{SENDER_EMAIL}', '{SENDER_PHONE}', '{SENDER_COMPANY}', '{SENDER_WEBSITE}', '{APPOINTMENT_TIME}', '{APPOINTMENT_AGENDA}'],
+		'MOU_SIGNING_CANCELED': ['{NAME}', '{EMAIL}', '{PHONE}', '{COMPANY}', '{SENDER_NAME}', '{SENDER_EMAIL}', '{SENDER_PHONE}', '{SENDER_COMPANY}', '{SENDER_WEBSITE}', '{SCHEDULE_TIME}', '{DESCRIPTION}', '{COMMERCIAL_VALUE}'],
+		'MOU_SIGNING_ACCEPTED': ['{NAME}', '{EMAIL}', '{PHONE}', '{COMPANY}', '{SENDER_NAME}', '{SENDER_EMAIL}', '{SENDER_PHONE}', '{SENDER_COMPANY}', '{SENDER_WEBSITE}', '{SCHEDULE_TIME}', '{DESCRIPTION}', '{COMMERCIAL_VALUE}'],
+		'MOU_SIGNING_RE_SCHEDULE': ['{NAME}', '{EMAIL}', '{PHONE}', '{COMPANY}', '{SENDER_NAME}', '{SENDER_EMAIL}', '{SENDER_PHONE}', '{SENDER_COMPANY}', '{SENDER_WEBSITE}', '{SCHEDULE_TIME}', '{DESCRIPTION}', '{COMMERCIAL_VALUE}'],
+		'THANK_YOU_EXHIBITOR': ['{EVENT_NAME}', '{EXHIBITOR_NAME}', '{EXHIBITOR_COMPANY}']
+	};
 
+	$(function() {
 		doFormValidation({
 			'form': '#crd_form',
 			'msgbox': '#crd_form .js-msgbox',
 			'btnClick': '#crd_form .js-form_btn',
 			'urlValidator': "<?php echo base_url("email_template-validate.html"); ?>?id=<?= $this->input->get('id') ?>",
 			'loadingImg': "<?php echo base_url("assets/img/load-indicator.gif"); ?>"
+		});
+
+		$('select[name="email_template_title"]').change(function() {
+			var val = $(this).val();
+			var container = $('#placeholders_container');
+			var list = $('#placeholders_list');
+			list.empty();
+
+			if (val && placeholdersMap[val]) {
+				var placeholders = placeholdersMap[val];
+				$.each(placeholders, function(index, placeholder) {
+					var badge = $('<span class="badge" title="Click to copy text"></span>')
+						.text(placeholder)
+						.css({
+							'padding': '0.6rem 1rem',
+							'margin-right': '5px',
+							'font-size': '1.3rem',
+							'cursor': 'pointer'
+						})
+						.click(function() {
+							navigator.clipboard.writeText(placeholder);
+						});
+					list.append(badge);
+				});
+				container.show();
+			} else {
+				container.hide();
+			}
 		});
 	});
 

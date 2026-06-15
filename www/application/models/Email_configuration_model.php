@@ -32,6 +32,7 @@ class Email_configuration_model extends CI_Model
         $this->ensure_table();
         $this->ensure_log_table();
         $this->ensure_queue_columns();
+        $this->ensure_thank_you_table();
     }
 
     public function get_settings($include_password = false)
@@ -362,5 +363,32 @@ class Email_configuration_model extends CI_Model
                 `updated_on` = COALESCE(`sent_on`, `created_on`, NOW())
             WHERE `status` IS NULL OR `status` = ''
         ");
+    }
+
+    private function ensure_thank_you_table()
+    {
+        if (!$this->db->table_exists('es_event_email_log')) {
+            $this->db->query("
+                CREATE TABLE IF NOT EXISTS `es_event_email_log` (
+                    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+                    `event_id` INT UNSIGNED NOT NULL,
+                    `exhibitor_id` INT UNSIGNED NOT NULL,
+                    `template_id` INT UNSIGNED NOT NULL,
+                    `status` ENUM('pending', 'sent', 'failed') NOT NULL DEFAULT 'pending',
+                    `sent_at` DATETIME DEFAULT NULL,
+                    `error_message` TEXT DEFAULT NULL,
+                    `created_on` DATETIME NOT NULL,
+                    PRIMARY KEY (`id`),
+                    UNIQUE KEY `idx_event_exhibitor_template` (`event_id`, `exhibitor_id`, `template_id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+            ");
+        }
+
+        if ($this->db->table_exists('es_exhibitions')) {
+            $fields = $this->db->list_fields('es_exhibitions');
+            if (!in_array('thank_you_template_id', $fields)) {
+                $this->db->query("ALTER TABLE `es_exhibitions` ADD COLUMN `thank_you_template_id` INT UNSIGNED NULL DEFAULT NULL");
+            }
+        }
     }
 }

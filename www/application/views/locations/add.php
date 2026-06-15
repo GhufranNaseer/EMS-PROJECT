@@ -143,8 +143,8 @@
 </div><!-- /.content-wrapper -->
 
 <?php $this->load->view('includes/after_login/footer'); ?>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCK7Llb8gm-vuU71quxIkYghf1kT03gQB8&libraries=places"
-        async defer></script>
+<!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCK7Llb8gm-vuU71quxIkYghf1kT03gQB8&libraries=places"
+        async defer></script> -->
 <script>
 	$(function () {
 
