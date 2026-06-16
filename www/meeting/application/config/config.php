@@ -24,7 +24,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 $protocol = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on' || $_SERVER['HTTPS'] == 1)) || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ? 'https://' : 'http://';
-$config['base_url'] = $protocol.$_SERVER['HTTP_HOST'].'/meeting/';
+$config['base_url'] = env('BASE_URL_MEETING', $protocol.$_SERVER['HTTP_HOST'].'/meeting/');
 
 /*
 |--------------------------------------------------------------------------
@@ -224,7 +224,7 @@ $config['allow_get_array'] = TRUE;
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = 0;
+$config['log_threshold'] = env('LOG_THRESHOLD', 0);
 
 /*
 |--------------------------------------------------------------------------
@@ -325,7 +325,7 @@ $config['cache_query_string'] = FALSE;
 | https://codeigniter.com/user_guide/libraries/encryption.html
 |
 */
-$config['encryption_key'] = 'Kx3piZIuin5He31fGN9elUk8fn7bKCMm';
+$config['encryption_key'] = env('ENCRYPTION_KEY', 'Kx3piZIuin5He31fGN9elUk8fn7bKCMm');
 
 /*
 |--------------------------------------------------------------------------

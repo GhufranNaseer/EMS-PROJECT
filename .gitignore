@@ -13,3 +13,4 @@
 */.DS_Store
 
 /www/application/third_party/htmltopdf/_tcpdf_6.3.2/cache/*
+/www/.env

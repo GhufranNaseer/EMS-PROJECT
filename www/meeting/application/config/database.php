@@ -75,11 +75,11 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn' => '',
-	'hostname' => 'mysql-db',
-	'username' => 'ems_web_user',
-	'password' => 'EWEpYe3TJTTT@gKl',
-	'database' => 'ems_main_db1',
-	'dbdriver' => 'mysqli',
+	'hostname' => env('DB_HOST', '127.0.0.1'),
+	'username' => env('DB_USER', 'root'),
+	'password' => env('DB_PASS', ''),
+	'database' => env('DB_NAME', 'ems_main_db1'),
+	'dbdriver' => env('DB_DRIVER', 'mysqli'),
 	'dbprefix' => '',
 	'pconnect' => FALSE,
 	'db_debug' => (ENVIRONMENT !== 'production'),

@@ -46,3 +46,5 @@ client/application/cache/
 officer/application/cache/
 
 meeting/application/cache/
+
+.env

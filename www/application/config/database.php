@@ -75,34 +75,11 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn' => '',
-	'hostname' => '127.0.0.1',
-	'username' => 'root',
-	'password' => '',
-	'database' => 'ems_main_db1',
-	'dbdriver' => 'mysqli',
-	'dbprefix' => '',
-	'pconnect' => FALSE,
-	'db_debug' => (ENVIRONMENT !== 'production'),
-	'cache_on' => FALSE,
-	'cachedir' => '',
-	'char_set' => 'utf8',
-	'dbcollat' => 'utf8_general_ci',
-	'swap_pre' => '',
-	'encrypt' => FALSE,
-	'compress' => FALSE,
-	'stricton' => FALSE,
-	'failover' => array(),
-	'save_queries' => TRUE
-);
-
-
-$db['live_db'] = array(
-	'dsn' => '',
-	'hostname' => '160.153.92.102',
-	'username' => 'exhibition_syste',
-	'password' => 'aS12!AS12!',
-	'database' => 'exhibition_system',
-	'dbdriver' => 'mysqli',
+	'hostname' => env('DB_HOST', '127.0.0.1'),
+	'username' => env('DB_USER', 'root'),
+	'password' => env('DB_PASS', ''),
+	'database' => env('DB_NAME', 'ems_main_db1'),
+	'dbdriver' => env('DB_DRIVER', 'mysqli'),
 	'dbprefix' => '',
 	'pconnect' => FALSE,
 	'db_debug' => (ENVIRONMENT !== 'production'),

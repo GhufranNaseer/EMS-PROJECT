@@ -1,4 +1,36 @@
 <?php
+// Load parent Composer autoloader and Dotenv library
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+}
+if (file_exists(__DIR__ . '/../.env')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+    $dotenv->load();
+}
+
+if (!function_exists('env')) {
+    function env($key, $default = null) {
+        $val = null;
+        if (isset($_ENV[$key])) {
+            $val = $_ENV[$key];
+        } elseif (isset($_SERVER[$key])) {
+            $val = $_SERVER[$key];
+        } else {
+            $val = getenv($key);
+        }
+        if ($val === false || $val === null) {
+            return $default;
+        }
+        switch (strtolower($val)) {
+            case 'true': return true;
+            case 'false': return false;
+            case 'empty': return '';
+            case 'null': return null;
+        }
+        return $val;
+    }
+}
+
 /**
  * CodeIgniter
  *
@@ -53,8 +85,7 @@
  *
  * NOTE: If you change these, also change the error_reporting() code below
  */
-	// define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
-	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'production');
+	define('ENVIRONMENT', env('ENVIRONMENT', 'production'));
 
 /*
  *---------------------------------------------------------------
