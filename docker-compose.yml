@@ -1,61 +1,61 @@
 version: '3.9'
 services:
   webserver:
-    container_name: exhibition_system
+    container_name: ems_stage_web
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
       - ./www:/var/www/html
     ports:
-      - 8000:80
+      - "8004:80"             # Staging web interface (Host port 8004 -> Container port 80)
     depends_on:
       - mysql-db
     networks:
-      - ems_network
+      - ems_stage_network
 
   mysql-db:
+    container_name: ems_stage_mysql
     image: mysql:8.0
     command: --default-authentication-plugin=mysql_native_password
     volumes:
-      - ./db:/var/lib/mysql
-    restart: always
+      - ems_stage_db:/var/lib/mysql
+    restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: "rUbfOA!WE8XjfyS5"
-      MYSQL_DATABASE: ems_main_db1
-      MYSQL_USER: ems_web_user
-      MYSQL_PASSWORD: "EWEpYe3TJTTT@gKl"
+      MYSQL_ROOT_PASSWORD: "StageRootPass###123"
+      MYSQL_DATABASE: ems_stage_db
+      MYSQL_USER: ems_stage_user
+      MYSQL_PASSWORD: "StagePass###123"
     ports:
-      - "3307:3306"
+      - "3309:3306"           # Staging database (Host port 3309 -> Container port 3306)
     networks:
-      - ems_network
+      - ems_stage_network
 
   cronjob:
-    container_name: ems_cron
+    container_name: ems_stage_cron
     build:
       context: .
       dockerfile: cron/Dockerfile
     depends_on:
       - webserver
     networks:
-      - ems_network
+      - ems_stage_network
 
   ems_qr_service:
-    container_name: ems_qr_service
+    container_name: ems_stage_qr
     build:
       context: .
       dockerfile: qr_service/Dockerfile
     ports:
-      - "8001:8000"
+      - "8005:8000"           # Staging QR service (Host port 8005 -> Container port 8000)
     depends_on:
       - webserver
     networks:
-      - ems_network
+      - ems_stage_network
 
 networks:
-  ems_network:
+  ems_stage_network:
     driver: bridge
 
 volumes:
-  db:
-  www:
+  ems_stage_db:
