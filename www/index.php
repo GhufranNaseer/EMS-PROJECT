@@ -95,6 +95,18 @@ if (!function_exists('env')) {
 	//define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
 	define('ENVIRONMENT', env('ENVIRONMENT', 'production'));
 
+if (defined('ENVIRONMENT') && ENVIRONMENT === 'development') {
+    if (isset($_SERVER['HTTP_HOST'])) {
+        $host_lower = strtolower($_SERVER['HTTP_HOST']);
+        if (strpos($host_lower, 'localhost') !== false || strpos($host_lower, '127.0.0.1') !== false) {
+            $protocol = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on' || $_SERVER['HTTPS'] == 1)) || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ? 'https://' : 'http://';
+            $newHost = str_replace(array('localhost', '127.0.0.1'), '[::1]', $_SERVER['HTTP_HOST']);
+            header('Location: ' . $protocol . $newHost . $_SERVER['REQUEST_URI']);
+            exit;
+        }
+    }
+}
+
 /*
  *---------------------------------------------------------------
  * ERROR REPORTING

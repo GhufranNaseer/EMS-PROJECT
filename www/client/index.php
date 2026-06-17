@@ -45,7 +45,7 @@ if (!function_exists('env')) {
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * furnished to do so, subject to the conditions:
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
@@ -86,6 +86,18 @@ if (!function_exists('env')) {
  * NOTE: If you change these, also change the error_reporting() code below
  */
 	define('ENVIRONMENT', env('ENVIRONMENT', 'production'));
+
+if (defined('ENVIRONMENT') && ENVIRONMENT === 'development') {
+    if (isset($_SERVER['HTTP_HOST'])) {
+        $host_lower = strtolower($_SERVER['HTTP_HOST']);
+        if (strpos($host_lower, 'localhost') !== false || strpos($host_lower, '127.0.0.1') !== false) {
+            $protocol = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on' || $_SERVER['HTTPS'] == 1)) || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ? 'https://' : 'http://';
+            $newHost = str_replace(array('localhost', '127.0.0.1'), '[::1]', $_SERVER['HTTP_HOST']);
+            header('Location: ' . $protocol . $newHost . $_SERVER['REQUEST_URI']);
+            exit;
+        }
+    }
+}
 
 /*
  *---------------------------------------------------------------

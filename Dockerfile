@@ -14,6 +14,14 @@ RUN apt-get update \
 
 RUN docker-php-ext-install mbstring
 
+# Install sendmail for PHP's mail() function
+RUN apt-get update && apt-get install -y sendmail && rm -rf /var/lib/apt/lists/*
+
+# Automatically start sendmail and configure /etc/hosts on container startup
+RUN sed -i '/#!\/bin\/sh/aservice sendmail restart' /usr/local/bin/docker-php-entrypoint
+RUN sed -i '/#!\/bin\/sh/aecho "$(hostname -i)\t$(hostname) $(hostname).localhost" >> /etc/hosts' /usr/local/bin/docker-php-entrypoint
+
+
 # modify php ini
 ADD ./custom-php.ini /usr/local/etc/php/conf.d/custom-php.ini
 
