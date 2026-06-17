@@ -1816,7 +1816,7 @@ UNLOCK TABLES;
 -- Current Database: `exhibition_system`
 --
 
-USE `exhibition_system`;
+-- USE `exhibition_system`;
 
 --
 -- Final view structure for view `invitation_list_datatable`
