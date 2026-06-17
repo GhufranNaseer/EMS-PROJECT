@@ -23,7 +23,7 @@ Staging setup ko hum direct production ke sath baghair kisi conflict ke install 
 VPS par ja kar staging codebase ke liye ek naya folder banayenge aur target branch (develop) clone karenge.
 ```bash
 # Git se develop/staging branch ko naye stage folder me clone karne ke liye
-sudo git clone -b develop https://github.com/GhufranNaseer/EMS-PROJECT.git /var/www/exhibition_system_stage
+sudo git clone -b developer https://github.com/GhufranNaseer/EMS-PROJECT.git /var/www/exhibition_system_stage
 ```
 * **Kyu kar rahe hain (Why):** Production aur staging ka source code bilkul isolated hona chahiye. Agar hum ek hi folder me files edit karenge to live production site crash ho sakti hai.
 
@@ -42,25 +42,37 @@ sudo chmod -R 777 /var/www/exhibition_system_stage/www/uploads
 ---
 
 ### Step 3: Staging Environment File Config (`.env`)
-Staging database credentials aur mode set karne ke liye alag configuration file set karna.
-* **File path VPS par:** `/var/www/exhibition_system_stage/www/.env`
-* **Content:**
-```ini
-ENVIRONMENT=development
-ENCRYPTION_KEY=Kx3piZIuin5He31fGN9elUk8fn7bKCMm_stage
-LOG_THRESHOLD=2
+Staging database credentials, mode aur Base URLs set karne ke liye configuration file create karna.
 
-# Note: CodeIgniter 3 strictly supports: 'development', 'testing', or 'production' only.
-# Hum staging environment par bugs debug karne ke liye 'development' set kar rahe hain.
+1. **VPS terminal par .env file create aur open karne ke liye ye command chalayein:**
+   ```bash
+   sudo nano /var/www/exhibition_system_stage/www/.env
+   ```
 
-# Database settings pointing to staging mysql service container name
-DB_HOST=ems_stage_mysql
-DB_USER=ems_stage_user
-DB_PASS=StagePass###123
-DB_NAME=ems_stage_db
-DB_DRIVER=mysqli
-```
-* **Kyu kar rahe hain (Why):** Environment variables key/secrets ko codebase se door rakhte hain. Is config se staging application production database se connect nahi hogi balkey apne isolated staging container database se connect karegi.
+2. **Neeche diya gaya configuration data copy kar ke paste karein:**
+   ```ini
+   # Application Settings
+   ENVIRONMENT=development
+   ENCRYPTION_KEY=Kx3piZIuin5He31fGN9elUk8fn7bKCMm_stage
+   LOG_THRESHOLD=2
+
+   # Database Settings
+   DB_HOST=ems_stage_mysql
+   DB_USER=ems_stage_user
+   DB_PASS="StagePass###123"
+   DB_NAME=ems_stage_db
+   DB_DRIVER=mysqli
+
+   # Base URL Settings (For staging website)
+   BASE_URL=https://stage.exhibit.com.pk/
+   BASE_URL_MEETING=https://stage.exhibit.com.pk/meeting/
+   BASE_URL_CLIENT=https://stage.exhibit.com.pk/client/
+   ```
+
+   > [!IMPORTANT]
+   > alert : password me agr ### laga rhe ho to password ko  " " me rkhna wrna ### ko comment smj lega aur database se connect nhi hoga aur error ayeaga
+
+* **Kyu kar rahe hain (Why):** Environment variables key/secrets ko codebase se door rakhte hain. Is config se staging application production database se connect nahi hogi balkey apne isolated staging container database se connect karegi, aur Base URLs staging domain ko resolve karenge.
 
 ---
 
@@ -78,6 +90,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./www:/var/www/html
+      # ye cheez new he vendor wali 
+      - /var/www/html/vendor
     ports:
       - "8004:80"             # Staging web interface (Host port 8004 -> Container port 80)
     depends_on:
