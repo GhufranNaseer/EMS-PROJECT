@@ -445,3 +445,185 @@ INFO - 2026-06-18 05:50:14 --> Model "Dbvars" initialized
 INFO - 2026-06-18 05:50:14 --> Model "Funcs" initialized
 INFO - 2026-06-18 05:50:14 --> Controller Class Initialized
 INFO - 2026-06-18 05:50:14 --> Model "Db_log" initialized
+INFO - 2026-06-18 06:27:43 --> Config Class Initialized
+INFO - 2026-06-18 06:27:43 --> Hooks Class Initialized
+DEBUG - 2026-06-18 06:27:43 --> UTF-8 Support Enabled
+INFO - 2026-06-18 06:27:43 --> Utf8 Class Initialized
+INFO - 2026-06-18 06:27:43 --> URI Class Initialized
+INFO - 2026-06-18 06:27:43 --> Router Class Initialized
+INFO - 2026-06-18 06:27:43 --> Output Class Initialized
+INFO - 2026-06-18 06:27:43 --> Security Class Initialized
+DEBUG - 2026-06-18 06:27:43 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-06-18 06:27:43 --> Input Class Initialized
+INFO - 2026-06-18 06:27:43 --> Language Class Initialized
+INFO - 2026-06-18 06:27:43 --> Loader Class Initialized
+INFO - 2026-06-18 06:27:43 --> Helper loaded: url_helper
+INFO - 2026-06-18 06:27:43 --> Helper loaded: portalid_helper
+INFO - 2026-06-18 06:27:43 --> Database Driver Class Initialized
+INFO - 2026-06-18 06:27:43 --> Email Class Initialized
+INFO - 2026-06-18 06:27:43 --> Session: Class initialized using 'files' driver.
+INFO - 2026-06-18 06:27:43 --> Helper loaded: form_helper
+INFO - 2026-06-18 06:27:43 --> Form Validation Class Initialized
+DEBUG - 2026-06-18 06:27:43 --> Session class already loaded. Second attempt ignored.
+INFO - 2026-06-18 06:27:43 --> Cart Class Initialized
+INFO - 2026-06-18 06:27:43 --> MY_Model class loaded
+INFO - 2026-06-18 06:27:43 --> Model "Dbvars" initialized
+INFO - 2026-06-18 06:27:43 --> Model "Funcs" initialized
+INFO - 2026-06-18 06:27:43 --> Controller Class Initialized
+INFO - 2026-06-18 06:27:43 --> File loaded: C:\laragon\www\EMS-PROJECT\www\client\application\views\includes/after_login/head.php
+INFO - 2026-06-18 06:27:43 --> File loaded: C:\laragon\www\EMS-PROJECT\www\client\application\views\includes/after_login/header.php
+INFO - 2026-06-18 06:27:43 --> File loaded: C:\laragon\www\EMS-PROJECT\www\client\application\views\includes/after_login/sidebar.php
+INFO - 2026-06-18 06:27:43 --> File loaded: C:\laragon\www\EMS-PROJECT\www\client\application\views\includes/after_login/footer.php
+INFO - 2026-06-18 06:27:43 --> File loaded: C:\laragon\www\EMS-PROJECT\www\client\application\views\dashboard.php
+INFO - 2026-06-18 06:27:43 --> Final output sent to browser
+DEBUG - 2026-06-18 06:27:43 --> Total execution time: 0.1429
+INFO - 2026-06-18 06:27:43 --> Model "Db_log" initialized
+INFO - 2026-06-18 06:27:45 --> Config Class Initialized
+INFO - 2026-06-18 06:27:45 --> Hooks Class Initialized
+DEBUG - 2026-06-18 06:27:45 --> UTF-8 Support Enabled
+INFO - 2026-06-18 06:27:45 --> Utf8 Class Initialized
+INFO - 2026-06-18 06:27:45 --> URI Class Initialized
+INFO - 2026-06-18 06:27:45 --> Router Class Initialized
+INFO - 2026-06-18 06:27:45 --> Output Class Initialized
+INFO - 2026-06-18 06:27:45 --> Security Class Initialized
+DEBUG - 2026-06-18 06:27:45 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-06-18 06:27:45 --> Input Class Initialized
+INFO - 2026-06-18 06:27:45 --> Language Class Initialized
+INFO - 2026-06-18 06:27:45 --> Loader Class Initialized
+INFO - 2026-06-18 06:27:45 --> Helper loaded: url_helper
+INFO - 2026-06-18 06:27:45 --> Helper loaded: portalid_helper
+INFO - 2026-06-18 06:27:45 --> Database Driver Class Initialized
+INFO - 2026-06-18 06:27:45 --> Email Class Initialized
+INFO - 2026-06-18 06:27:45 --> Session: Class initialized using 'files' driver.
+INFO - 2026-06-18 06:27:45 --> Helper loaded: form_helper
+INFO - 2026-06-18 06:27:45 --> Form Validation Class Initialized
+DEBUG - 2026-06-18 06:27:45 --> Session class already loaded. Second attempt ignored.
+INFO - 2026-06-18 06:27:45 --> Cart Class Initialized
+INFO - 2026-06-18 06:27:45 --> MY_Model class loaded
+INFO - 2026-06-18 06:27:45 --> Model "Dbvars" initialized
+INFO - 2026-06-18 06:27:45 --> Model "Funcs" initialized
+INFO - 2026-06-18 06:27:45 --> Controller Class Initialized
+INFO - 2026-06-18 06:27:45 --> File loaded: C:\laragon\www\EMS-PROJECT\www\client\application\views\includes/after_login/head.php
+INFO - 2026-06-18 06:27:45 --> File loaded: C:\laragon\www\EMS-PROJECT\www\client\application\views\includes/after_login/header.php
+INFO - 2026-06-18 06:27:45 --> File loaded: C:\laragon\www\EMS-PROJECT\www\client\application\views\includes/after_login/sidebar.php
+INFO - 2026-06-18 06:27:45 --> File loaded: C:\laragon\www\EMS-PROJECT\www\client\application\views\includes/after_login/footer.php
+INFO - 2026-06-18 06:27:45 --> File loaded: C:\laragon\www\EMS-PROJECT\www\client\application\views\dashboard.php
+INFO - 2026-06-18 06:27:45 --> Final output sent to browser
+DEBUG - 2026-06-18 06:27:45 --> Total execution time: 0.0779
+INFO - 2026-06-18 06:27:45 --> Model "Db_log" initialized
+INFO - 2026-06-18 06:28:10 --> Config Class Initialized
+INFO - 2026-06-18 06:28:10 --> Hooks Class Initialized
+DEBUG - 2026-06-18 06:28:10 --> UTF-8 Support Enabled
+INFO - 2026-06-18 06:28:10 --> Utf8 Class Initialized
+INFO - 2026-06-18 06:28:10 --> URI Class Initialized
+DEBUG - 2026-06-18 06:28:10 --> No URI present. Default controller set.
+INFO - 2026-06-18 06:28:10 --> Router Class Initialized
+INFO - 2026-06-18 06:28:10 --> Output Class Initialized
+INFO - 2026-06-18 06:28:10 --> Security Class Initialized
+DEBUG - 2026-06-18 06:28:10 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-06-18 06:28:10 --> Input Class Initialized
+INFO - 2026-06-18 06:28:10 --> Language Class Initialized
+INFO - 2026-06-18 06:28:10 --> Loader Class Initialized
+INFO - 2026-06-18 06:28:10 --> Helper loaded: url_helper
+INFO - 2026-06-18 06:28:10 --> Helper loaded: portalid_helper
+INFO - 2026-06-18 06:28:10 --> Database Driver Class Initialized
+INFO - 2026-06-18 06:28:10 --> Email Class Initialized
+INFO - 2026-06-18 06:28:10 --> Session: Class initialized using 'files' driver.
+INFO - 2026-06-18 06:28:10 --> Helper loaded: form_helper
+INFO - 2026-06-18 06:28:10 --> Form Validation Class Initialized
+DEBUG - 2026-06-18 06:28:10 --> Session class already loaded. Second attempt ignored.
+INFO - 2026-06-18 06:28:10 --> Cart Class Initialized
+INFO - 2026-06-18 06:28:10 --> MY_Model class loaded
+INFO - 2026-06-18 06:28:10 --> Model "Dbvars" initialized
+INFO - 2026-06-18 06:28:10 --> Model "Funcs" initialized
+INFO - 2026-06-18 06:28:10 --> Controller Class Initialized
+INFO - 2026-06-18 06:28:10 --> Model "Db_log" initialized
+INFO - 2026-06-18 06:28:10 --> Config Class Initialized
+INFO - 2026-06-18 06:28:10 --> Hooks Class Initialized
+DEBUG - 2026-06-18 06:28:10 --> UTF-8 Support Enabled
+INFO - 2026-06-18 06:28:10 --> Utf8 Class Initialized
+INFO - 2026-06-18 06:28:10 --> URI Class Initialized
+INFO - 2026-06-18 06:28:10 --> Router Class Initialized
+INFO - 2026-06-18 06:28:10 --> Output Class Initialized
+INFO - 2026-06-18 06:28:10 --> Security Class Initialized
+DEBUG - 2026-06-18 06:28:10 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-06-18 06:28:10 --> Input Class Initialized
+INFO - 2026-06-18 06:28:10 --> Language Class Initialized
+INFO - 2026-06-18 06:28:10 --> Loader Class Initialized
+INFO - 2026-06-18 06:28:10 --> Helper loaded: url_helper
+INFO - 2026-06-18 06:28:10 --> Helper loaded: portalid_helper
+INFO - 2026-06-18 06:28:10 --> Database Driver Class Initialized
+INFO - 2026-06-18 06:28:10 --> Email Class Initialized
+INFO - 2026-06-18 06:28:10 --> Session: Class initialized using 'files' driver.
+INFO - 2026-06-18 06:28:10 --> Helper loaded: form_helper
+INFO - 2026-06-18 06:28:10 --> Form Validation Class Initialized
+DEBUG - 2026-06-18 06:28:10 --> Session class already loaded. Second attempt ignored.
+INFO - 2026-06-18 06:28:10 --> Cart Class Initialized
+INFO - 2026-06-18 06:28:10 --> MY_Model class loaded
+INFO - 2026-06-18 06:28:10 --> Model "Dbvars" initialized
+INFO - 2026-06-18 06:28:10 --> Model "Funcs" initialized
+INFO - 2026-06-18 06:28:10 --> Controller Class Initialized
+INFO - 2026-06-18 06:28:10 --> File loaded: C:\laragon\www\EMS-PROJECT\www\client\application\views\includes/after_login/head.php
+INFO - 2026-06-18 06:28:10 --> File loaded: C:\laragon\www\EMS-PROJECT\www\client\application\views\includes/after_login/header.php
+INFO - 2026-06-18 06:28:10 --> File loaded: C:\laragon\www\EMS-PROJECT\www\client\application\views\includes/after_login/sidebar.php
+INFO - 2026-06-18 06:28:10 --> File loaded: C:\laragon\www\EMS-PROJECT\www\client\application\views\includes/after_login/footer.php
+INFO - 2026-06-18 06:28:10 --> File loaded: C:\laragon\www\EMS-PROJECT\www\client\application\views\dashboard.php
+INFO - 2026-06-18 06:28:10 --> Final output sent to browser
+DEBUG - 2026-06-18 06:28:10 --> Total execution time: 0.0832
+INFO - 2026-06-18 06:28:10 --> Model "Db_log" initialized
+INFO - 2026-06-18 06:28:14 --> Config Class Initialized
+INFO - 2026-06-18 06:28:14 --> Hooks Class Initialized
+DEBUG - 2026-06-18 06:28:14 --> UTF-8 Support Enabled
+INFO - 2026-06-18 06:28:14 --> Utf8 Class Initialized
+INFO - 2026-06-18 06:28:14 --> URI Class Initialized
+INFO - 2026-06-18 06:28:14 --> Router Class Initialized
+INFO - 2026-06-18 06:28:14 --> Output Class Initialized
+INFO - 2026-06-18 06:28:14 --> Security Class Initialized
+DEBUG - 2026-06-18 06:28:14 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-06-18 06:28:14 --> Input Class Initialized
+INFO - 2026-06-18 06:28:14 --> Language Class Initialized
+INFO - 2026-06-18 06:28:14 --> Loader Class Initialized
+INFO - 2026-06-18 06:28:14 --> Helper loaded: url_helper
+INFO - 2026-06-18 06:28:14 --> Helper loaded: portalid_helper
+INFO - 2026-06-18 06:28:14 --> Database Driver Class Initialized
+INFO - 2026-06-18 06:28:14 --> Email Class Initialized
+INFO - 2026-06-18 06:28:14 --> Session: Class initialized using 'files' driver.
+INFO - 2026-06-18 06:28:14 --> Helper loaded: form_helper
+INFO - 2026-06-18 06:28:14 --> Form Validation Class Initialized
+DEBUG - 2026-06-18 06:28:14 --> Session class already loaded. Second attempt ignored.
+INFO - 2026-06-18 06:28:14 --> Cart Class Initialized
+INFO - 2026-06-18 06:28:14 --> MY_Model class loaded
+INFO - 2026-06-18 06:28:14 --> Model "Dbvars" initialized
+INFO - 2026-06-18 06:28:14 --> Model "Funcs" initialized
+INFO - 2026-06-18 06:28:14 --> Controller Class Initialized
+INFO - 2026-06-18 06:28:14 --> Model "Db_log" initialized
+INFO - 2026-06-18 06:28:14 --> Config Class Initialized
+INFO - 2026-06-18 06:28:14 --> Hooks Class Initialized
+DEBUG - 2026-06-18 06:28:14 --> UTF-8 Support Enabled
+INFO - 2026-06-18 06:28:14 --> Utf8 Class Initialized
+INFO - 2026-06-18 06:28:14 --> URI Class Initialized
+INFO - 2026-06-18 06:28:14 --> Router Class Initialized
+INFO - 2026-06-18 06:28:14 --> Output Class Initialized
+INFO - 2026-06-18 06:28:14 --> Security Class Initialized
+DEBUG - 2026-06-18 06:28:14 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-06-18 06:28:14 --> Input Class Initialized
+INFO - 2026-06-18 06:28:14 --> Language Class Initialized
+INFO - 2026-06-18 06:28:14 --> Loader Class Initialized
+INFO - 2026-06-18 06:28:14 --> Helper loaded: url_helper
+INFO - 2026-06-18 06:28:14 --> Helper loaded: portalid_helper
+INFO - 2026-06-18 06:28:14 --> Database Driver Class Initialized
+INFO - 2026-06-18 06:28:14 --> Email Class Initialized
+INFO - 2026-06-18 06:28:14 --> Session: Class initialized using 'files' driver.
+INFO - 2026-06-18 06:28:14 --> Helper loaded: form_helper
+INFO - 2026-06-18 06:28:14 --> Form Validation Class Initialized
+DEBUG - 2026-06-18 06:28:14 --> Session class already loaded. Second attempt ignored.
+INFO - 2026-06-18 06:28:14 --> Cart Class Initialized
+INFO - 2026-06-18 06:28:14 --> MY_Model class loaded
+INFO - 2026-06-18 06:28:14 --> Model "Dbvars" initialized
+INFO - 2026-06-18 06:28:14 --> Model "Funcs" initialized
+INFO - 2026-06-18 06:28:14 --> Controller Class Initialized
+INFO - 2026-06-18 06:28:14 --> File loaded: C:\laragon\www\EMS-PROJECT\www\client\application\views\includes/head.php
+INFO - 2026-06-18 06:28:14 --> File loaded: C:\laragon\www\EMS-PROJECT\www\client\application\views\login.php
+INFO - 2026-06-18 06:28:14 --> Final output sent to browser
+DEBUG - 2026-06-18 06:28:14 --> Total execution time: 0.0640
+INFO - 2026-06-18 06:28:14 --> Model "Db_log" initialized
