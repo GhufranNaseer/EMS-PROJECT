@@ -203,8 +203,10 @@
                     ->where('exhibition_id' , $event->id)
                     ->get('es_exhibition_advertisment')
                     ->row();
-                ?>
-                <img src="<?= base_url('../' . $advertisment->attachment) ?>"  alt=""  height="640px" width="100%">
+                
+                if ($advertisment && !empty($advertisment->attachment)): ?>
+                    <img src="<?= base_url('../' . $advertisment->attachment) ?>"  alt=""  height="640px" width="100%">
+                <?php endif; ?>
             </div>
         </div>
 
