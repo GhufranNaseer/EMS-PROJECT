@@ -75,9 +75,9 @@
                                 <div class="small-box bg-purple-active">
                                     <div class="inner">
                                         <h4 style="margin-bottom: 8px;">EVENT DATE</h4>
-                                        <div><?= date('d F Y', strtotime($event_date[0]->date)) ?></div>
+                                        <div><?= (isset($event_date[0]) && !empty($event_date[0]->date)) ? date('d F Y', strtotime($event_date[0]->date)) : '-' ?></div>
                                         <div style="margin: 5px 30px">To</div>
-                                        <div><?= date('d F Y', strtotime(end($event_date)->date)) ?></div>
+                                        <div><?= (!empty($event_date) && !empty(end($event_date)->date)) ? date('d F Y', strtotime(end($event_date)->date)) : '-' ?></div>
                                     </div>
                                     <div class="icon"><i class="fa fa-calendar"></i></div>
                                 </div>
@@ -88,7 +88,7 @@
                                     <div class="inner">
                                         <h4 style="margin-bottom: 8px;"><?= strtoupper('Hall') ?></h4>
                                         <div>Stalls: <?= count($stalls) ?></div>
-                                        <div style="margin: 5px 0">Stalls size in SQM: <?= $stalls[0]->stall_size ?></div>
+                                        <div style="margin: 5px 0">Stalls size in SQM: <?= count($stalls) > 0 ? $stalls[0]->stall_size : '-' ?></div>
                                     </div>
                                     <div class="icon"><i class="fa fa-archive"></i></div>
                                 </div>
@@ -129,7 +129,7 @@
                             <th>Stalls</th>
                             <td><?= implode(', ', array_map(function ($stall){ return $stall->stall_name; }, $stalls)) ?></td>
                             <th>Package</th>
-                            <td><?= $booking_package_items[0]->package_title ?></td>
+                            <td><?= count($booking_package_items) > 0 ? $booking_package_items[0]->package_title : '-' ?></td>
                         </tr>
                         <tr>
                             <th colspan="8" class="text-center">Items Summary</th>
