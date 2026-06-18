@@ -331,13 +331,13 @@ class Welcome extends Initialize {
 				} else {
 					$result = array(
 						'error' => true,
-						'message' => 'error while upload'
+						'message' => 'move_uploaded_file failed from: ' . $tmpFilePath . ' to: ' . $newFilePath . ' (CWD: ' . getcwd() . ')'
 					);
 				}
 			} else {
 				$result = array(
 					'error' => true,
-					'message' => 'error while upload'
+					'message' => 'Temp file path is empty. PHP Upload Error Code: ' . $_FILES['upload_files']['error']
 				);
 			}
 
