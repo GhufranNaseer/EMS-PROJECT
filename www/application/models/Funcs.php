@@ -4,6 +4,9 @@ class Funcs extends CI_Model
 
 
 	function make_image_string($images_array = array()) {
+		if (empty($images_array) || !is_array($images_array)) {
+			return '';
+		}
 		$images = array();
 		foreach ($images_array as $img) {
 			if (strpos($img, 'uploaded:') === false) {
