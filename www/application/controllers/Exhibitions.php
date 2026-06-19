@@ -89,6 +89,16 @@ class Exhibitions extends MY_Controller {
 				->where('exhibition_id', $this->input->get('exhibition_id'))
 				->get('bank_details')
 				->row();
+		if (!$bank_data) {
+			$bank_data = new stdClass();
+			$bank_data->bank_name = '';
+			$bank_data->title = '';
+			$bank_data->branch_name = '';
+			$bank_data->branch_code = '';
+			$bank_data->account_no = '';
+			$bank_data->iban_no = '';
+			$bank_data->swift_code = '';
+		}
 		$data['bank_data'] = $bank_data;
 		$this->load->view('includes/after_login/head');
         $this->load->view('exhibitions/bank_detail_add', $data);

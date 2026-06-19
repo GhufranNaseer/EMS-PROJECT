@@ -25,8 +25,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: "StageRootPass###123"
       MYSQL_DATABASE: ems_stage_db
-      MYSQL_USER: ems_stage_user
-      MYSQL_PASSWORD: "StagePass###123"
+      MYSQL_USER: ems_web_user
+      MYSQL_PASSWORD: "EWEpYe3TJTTT@gKl"
     ports:
       - "3309:3306"           # Staging database (Host port 3309 -> Container port 3306)
     networks:

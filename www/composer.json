@@ -22,6 +22,9 @@
 		"phpunit/phpunit": "4.* || 5.*"
 	},
 	"config": {
-		"policy.advisories.block": false
+		"policy.advisories.block": false,
+		"audit": {
+			"block-insecure": false
+		}
 	}
 }
