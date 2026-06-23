@@ -124,12 +124,27 @@ class Email_template extends MY_Controller
 
 	function crd_add_validate()
 	{
+		$this->form_validation->set_rules('email_template_title', 'email_template_title*Email Title', 'trim|required');
 		$this->form_validation->set_rules('email_template_subject', 'email_template_subject*Email Subject', 'trim|required');
 
-		if ($this->form_validation->run() == false)
+		if ($this->form_validation->run() == false) {
 			return $this->common->doError(func_num_args(), $this->common->getFVError());
-		else
+		} else {
+			$exhibition_id = $this->input->post('exhibition_id');
+			$title = $this->input->post('email_template_title');
+
+			// Check for duplicate template of same type for the selected exhibition
+			$exists = $this->db
+				->where('exhibition_id', $exhibition_id)
+				->where('title', $title)
+				->count_all_results('email_template');
+
+			if ($exists > 0) {
+				return $this->common->doError(func_num_args(), "A template of type '" . str_replace('_', ' ', $title) . "' already exists for this exhibition. Please edit the existing template instead.");
+			}
+
 			return $this->common->doError(func_num_args(), "done", true);
+		}
 	}
 
 	function crd_add_submit()
