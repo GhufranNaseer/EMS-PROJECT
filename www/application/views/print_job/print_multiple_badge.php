@@ -91,7 +91,7 @@
     </style>
     <table style="width: 100%; padding: 5px;margin-top: 15.1mm;">
         <tr>
-            <td style="width: 75%;">
+            <td style="width: 100%;">
                 <br>
                 <div style="margin-bottom: 0; font-size: 13px; font-family: Helvetica, Arial, sans-serif;"><?= $badge->full_name ?></div>
                 <?= $badge->designation ?><br>
