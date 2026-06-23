@@ -21,7 +21,10 @@
             <div class="col-xs-12">
                 <div class="box">
                     <div class="box-header">
-                        <h3 class="box-title">Events List</h3>
+                        <h3 class="box-title" style="display: inline-block;">Events List</h3>
+                        <a href="<?= base_url('email_template.html?exhibition_id=0') ?>" class="btn btn-primary pull-right">
+                            <i class="fa fa-globe"></i> Manage Global Templates
+                        </a>
                     </div><!-- /.box-header -->
 
                     <div class="box-body">

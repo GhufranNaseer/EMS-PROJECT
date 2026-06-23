@@ -265,17 +265,27 @@ class Cron_email extends Initialize {
 		$events = $this->db
 			->where('is_deleted', 0)
 			->where('booking_expire_date <', $current_date)
-			->where('thank_you_template_id IS NOT NULL')
 			->get('es_exhibitions')
 			->result();
 
 		$queued_count = 0;
 
 		foreach ($events as $event) {
+			// 1. Try to fetch event-specific template
 			$template = $this->db
-				->where('id', $event->thank_you_template_id)
+				->where('title', 'THANK_YOU_EXHIBITOR')
+				->where('exhibition_id', $event->id)
 				->get('email_template')
 				->row();
+
+			// 2. Fallback to global template if no event-specific template exists
+			if (!$template) {
+				$template = $this->db
+					->where('title', 'THANK_YOU_EXHIBITOR')
+					->where('(exhibition_id IS NULL OR exhibition_id = 0)', NULL, FALSE)
+					->get('email_template')
+					->row();
+			}
 
 			if (!$template) {
 				continue;

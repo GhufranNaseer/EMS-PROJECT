@@ -16,7 +16,7 @@ class Email_template extends MY_Controller
 			)
 		);
 		$crd_dit = array(
-			'crd_edit' => array(
+			'crd_edit,crd_delete' => array(
 				'rule' => '@'
 			),
 			'crd_edit_validate' => array(
@@ -104,9 +104,12 @@ class Email_template extends MY_Controller
 				CONCAT(users.user_first_name, " ", users.user_last_name) as last_update_by
 			', false)
 
-			->add_column('col_action', function ($row) {
+			->add_column('col_action', function ($row) use ($exhibition_id) {
 				$id = $row['id'];
 				$html = '<a href="' . base_url() . 'email_template-edit.html?id=' . urlencode(myid($id)) . '">Edit</a>';
+				if (empty($exhibition_id)) {
+					$html .= ' | <a href="' . base_url() . 'email_template-delete.html?id=' . urlencode(myid($id)) . '" onclick="return confirm(\'Are you sure want to delete\');">Delete</a>';
+				}
 				return "<div class='text-center'>{$html}</div>";
 			}, NULL)
 			->where("email_template.exhibition_id", $exhibition_id)
@@ -244,5 +247,25 @@ class Email_template extends MY_Controller
 
 		$this->session->set_flashdata('message', 'Email template has been updated successfully');
 		redirect(base_url('email_template.html?exhibition_id=' . $this->formdata->exhibition_id));
+	}
+
+	function crd_delete()
+	{
+		$this->checkEditId();
+		$exhibition_id = $this->formdata->exhibition_id;
+
+		// Prevent deletion of event-specific templates (only allow if exhibition_id is NULL or 0)
+		if (!empty($exhibition_id)) {
+			$this->session->set_flashdata('error', 'You cannot delete event-specific templates.');
+			redirect(base_url('email_template.html?exhibition_id=' . $exhibition_id));
+			return;
+		}
+
+		$this->db
+			->where('id', $this->formdata->id)
+			->delete('email_template');
+
+		$this->session->set_flashdata('message', 'Email template has been deleted successfully');
+		redirect(base_url('email_template.html?exhibition_id=' . $exhibition_id));
 	}
 }
