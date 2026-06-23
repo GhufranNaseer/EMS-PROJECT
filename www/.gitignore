@@ -42,9 +42,15 @@ uploads/*
 /tests/results/
 
 client/application/cache/
+client/application/logs/*
+!client/application/logs/index.html
 
 officer/application/cache/
+officer/application/logs/*
+!officer/application/logs/index.html
 
 meeting/application/cache/
+meeting/application/logs/*
+!meeting/application/logs/index.html
 
 .env
