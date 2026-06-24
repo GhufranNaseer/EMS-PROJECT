@@ -178,6 +178,16 @@ class Welcome extends Initialize {
 	If have have changed the database column names
 	*/
 	function forget_password_submit () {
+		// S Rate Limiting check
+		$last_request = $this->session->userdata('last_fp_request_time');
+		$current_time = time();
+		if ($last_request && ($current_time - $last_request) < 60) {
+			$remaining = 60 - ($current_time - $last_request);
+			$this->common->showMsg("Too Many Requests", "Please wait " . $remaining . " seconds before requesting a password reset again.", base_url('forget-password'));
+			return;
+		}
+		// E Rate Limiting check
+
 		if ($this->forget_password_validate()!==true)
 			show_404();
 
@@ -210,19 +220,45 @@ class Welcome extends Initialize {
 		if ($user->user_email == "")
 			$this->common->showMsg ('No Email' , "There is no email set up for your account please contact administrator for future assistance", base_url() );
 
-		$this->email->initialize(array('mailtype'=>'html'));
+		// Load custom SMTP configuration and mailer helper
+		$this->load->model('email_configuration_model');
+		$this->load->helper('phpmailer');
 
-		$this->email->from( 'no-reply@'.EMAIL_DOMAIN_NAME , PROJECT_NAME.' '. 'Forgotten Password');
-		$this->email->to($user->user_email);
+		$settings = $this->email_configuration_model->get_mailer_settings();
+		$subject = PROJECT_NAME.' Forgotten Password';
 
-		$this->email->subject(PROJECT_NAME.' Forgotten Password');
+		// Direct SMTP (Gmail) sending
+		$sendResult = sendMail(
+			ucwords($user->user_first_name." ".$user->user_last_name),
+			$user->user_email,
+			$subject,
+			$messageBody,
+			$settings['mail_from_name'],
+			$settings['mail_from_email'],
+			'',
+			array(
+				'settings' => $settings,
+				'echo' => false,
+				'debug' => $settings['smtp_debug'] === 'yes'
+			)
+		);
 
-		$this->email->message( $messageBody );
+		// Set rate limit cooldown timestamp
+		$this->session->set_userdata('last_fp_request_time', time());
 
-		$mailResult = $this->email->send();
-		$this->email->clear();
+		// Log the email attempt in the email_logs table for administrator transparency
+		$this->email_configuration_model->log_email(array(
+			'email_type' => 'RESET_PASSWORD_LINK',
+			'recipient_email' => $user->user_email,
+			'subject' => $subject,
+			'driver' => $settings['mail_driver'],
+			'status' => $sendResult['success'] ? 'sent' : 'failed',
+			'attempts' => 1,
+			'error_message' => $sendResult['success'] ? null : $sendResult['error'],
+			'debug_message' => $settings['smtp_debug'] === 'yes' ? $sendResult['debug'] : null,
+		));
 
-		if (!$mailResult)
+		if (!$sendResult['success'])
 			$this->common->showMsg ("Unexpected Error", "We’re really sorry, we couldn't send you an email, we encountered an unexpected problem. We’ll try hard to resolve this issue.", "gb" );
 		else
 			$this->common->showMsg  ("Email Sent", "Please check your email where we have sent you the link to change the password", base_url ());
