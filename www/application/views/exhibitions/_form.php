@@ -193,6 +193,44 @@
 </fieldset>
 
 <fieldset>
+    <legend>Networking Settings</legend>
+
+    <div class="row">
+        <?php
+        $networking_options = array(
+            'exhibitors_to_exhibitors' => 'Exhibitors to Exhibitors',
+            'exhibitors_to_local_delegates' => 'Exhibitors to Local Delegates',
+            'exhibitors_to_foreign_delegates' => 'Exhibitors to Foreign Delegates',
+            'exhibitors_to_armed_force' => 'Exhibitors to Armed Force',
+            'exhibitors_to_government_officials' => 'Exhibitors to Government official',
+            'exhibitors_to_organizer' => 'Exhibitors to Organizer'
+        );
+
+        $selected_networking = array();
+        if (isset($edit_data)) {
+            if (!is_null($edit_data->networking_fields)) {
+                $selected_networking = !empty($edit_data->networking_fields) ? explode(',', $edit_data->networking_fields) : array();
+            } else {
+                $selected_networking = array_keys($networking_options);
+            }
+        } else {
+            $selected_networking = array_keys($networking_options);
+        }
+
+        foreach ($networking_options as $key => $label) {
+            $checked = in_array($key, $selected_networking) ? 'checked' : '';
+            echo '<div class="col-sm-2">
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="networking_fields[]" '.$checked.' value="'. $key .'"> '. $label .'</label>
+                        </div>
+                    </div>';
+        }
+        ?>
+    </div>
+</fieldset>
+
+
+<fieldset>
     <legend>Official Freight Forwarders</legend>
 
     <div class="row">

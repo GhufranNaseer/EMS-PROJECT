@@ -176,6 +176,7 @@ class Exhibitions extends MY_Controller {
 		$this->form_validation->set_rules('opening_closing[]', 'opening_closing[]*opening closing date', 'trim|required');
 		$this->form_validation->set_rules('stall_builder_contractors[]', 'stall_builder_contractors[]*stall builder contractors', 'trim|required');
 		$this->form_validation->set_rules('event_freight_forwarders[]', 'event_freight_forwarders[]*freight forwarders', 'trim|required');
+		$this->form_validation->set_rules('networking_fields[]', 'networking_fields[]*networking fields', 'trim');
 
 
 		if ($this->form_validation->run() == false) {
@@ -233,6 +234,7 @@ class Exhibitions extends MY_Controller {
 			'manager_logo_link' => $this->input->post('manager_logo_link'),
 			'stall_builder_contractors' => implode(',', $this->input->post('stall_builder_contractors')),
 			'event_freight_forwarders' => implode(',', $this->input->post('event_freight_forwarders')),
+			'networking_fields' => $this->input->post('networking_fields') ? implode(',', $this->input->post('networking_fields')) : '',
 			'created_on' => date('Y-m-d H:i:s'),
 		);
 
@@ -303,6 +305,7 @@ class Exhibitions extends MY_Controller {
 		$this->form_validation->set_rules('opening_closing[]', 'opening_closing[]*opening closing date', 'trim|required');
 		$this->form_validation->set_rules('stall_builder_contractors[]', 'stall_builder_contractors[]*stall builder contractors', 'trim|required');
 		$this->form_validation->set_rules('event_freight_forwarders[]', 'event_freight_forwarders[]*freight forwarders', 'trim|required');
+		$this->form_validation->set_rules('networking_fields[]', 'networking_fields[]*networking fields', 'trim');
 
 
 		if ($this->form_validation->run() == false) {
@@ -355,6 +358,7 @@ class Exhibitions extends MY_Controller {
 			'manager_logo_link' => $this->input->post('manager_logo_link'),
 			'stall_builder_contractors' => implode(',', $this->input->post('stall_builder_contractors')),
 			'event_freight_forwarders' => implode(',', $this->input->post('event_freight_forwarders')),
+			'networking_fields' => $this->input->post('networking_fields') ? implode(',', $this->input->post('networking_fields')) : '',
 		);
 
 		$this->db

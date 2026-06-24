@@ -285,6 +285,25 @@
                         ?>
                     </ul>
                 </li>
+            <?php
+            $enabled_networking = array();
+            if (isset($this->event)) {
+                if (is_null($this->event->networking_fields)) {
+                    // Default to all enabled for backward compatibility
+                    $enabled_networking = array(
+                        'exhibitors_to_exhibitors',
+                        'exhibitors_to_local_delegates',
+                        'exhibitors_to_foreign_delegates',
+                        'exhibitors_to_armed_force',
+                        'exhibitors_to_government_officials',
+                        'exhibitors_to_organizer'
+                    );
+                } else {
+                    $enabled_networking = !empty($this->event->networking_fields) ? explode(',', $this->event->networking_fields) : array();
+                }
+            }
+            ?>
+            <?php if (!empty($enabled_networking)): ?>
             <li class="treeview">
                 <a href="javascript:void(0)">
                     <i class="fa fa-folder"></i>
@@ -298,43 +317,59 @@
                             <span>Exhibitors to Exhibitors</span>
                         </a>
                     </li> -->
+                    <?php if (in_array('exhibitors_to_exhibitors', $enabled_networking)): ?>
                     <li data-page="search-product-profile">
                         <a href="<?= base_url('product-profile-list.html'); ?>">
                             <i class="fa fa-clock-o"></i>
                             <span>Exhibitors to Exhibitors</span>
                         </a>
                     </li>
+                    <?php endif; ?>
 
+                    <?php if (in_array('exhibitors_to_local_delegates', $enabled_networking)): ?>
                     <li data-page="meeting-officer-local_delegates">
                         <a href="<?= base_url('officer-list.html?type=local_delegates') ?>">
                             <i class="fa fa-clock-o"></i>
                             <span>Exhibitors to Local Delegates</span>
                         </a>
                     </li>
+                    <?php endif; ?>
+
+                    <?php if (in_array('exhibitors_to_foreign_delegates', $enabled_networking)): ?>
                     <li data-page="meeting-officer-foreign_delegates">
                         <a href="<?= base_url('officer-list.html?type=foreign_delegates') ?>">
                             <i class="fa fa-clock-o"></i>
                             <span>Exhibitors to Foreign Delegates</span>
                         </a>
                     </li>
+                    <?php endif; ?>
+
+                    <?php if (in_array('exhibitors_to_armed_force', $enabled_networking)): ?>
                     <li data-page="meeting-officer-armed_force">
                         <a href="<?= base_url('officer-list.html?type=armed_force') ?>">
                             <i class="fa fa-clock-o"></i>
                             <span>Exhibitors to Armed Force</span>
                         </a>
                     </li>
+                    <?php endif; ?>
+
+                    <?php if (in_array('exhibitors_to_government_officials', $enabled_networking)): ?>
                     <li data-page="meeting-officer-government_officials">
                         <a href="<?= base_url('officer-list.html?type=government_officials') ?>">
                             <i class="fa fa-clock-o"></i>
                             <span>Exhibitors to Government official</span>
                         </a>
                     </li>
+                    <?php endif; ?>
+
+                    <?php if (in_array('exhibitors_to_organizer', $enabled_networking)): ?>
                     <li data-page="meeting-officer-organizer">
                         <a href="<?= base_url('officer-list.html?type=organizer') ?>">
                             <i class="fa fa-clock-o"></i>
                             <span>Exhibitors to Organizer</span>
                         </a>
                     </li>
+                    <?php endif; ?>
 
                     <li data-page="my_meeting">
                         <?php
@@ -356,6 +391,7 @@
                     </li>
                 </ul>
             </li>
+            <?php endif; ?>
             <li class="treeview">
                 <a href="javascript:void(0)">
                     <i class="fa fa-folder"></i>
