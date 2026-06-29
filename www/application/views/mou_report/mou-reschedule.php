@@ -28,7 +28,7 @@ $book_to_name = $book_to_data->company;
         padding: 10px;
         text-align: center;
         margin: 0 0 15px;
-        background: <?= $this->event->event_color ?> ;
+        background: <?= (isset($this->event) && !is_null($this->event) && isset($this->event->event_color) && $this->event->event_color != '') ? $this->event->event_color : '#3c8dbc' ?> ;
         color: #fff;
         border-radius: 8px;
     }

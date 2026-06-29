@@ -207,9 +207,14 @@ class Mou_report extends MY_Controller {
 
 
 
+		$exhibition_data = $this->db
+			->where('id', $meeting->exhibition_id)
+			->get('es_exhibitions')
+			->row();
+
 		// send email
 		$email_data = null;
-		$title = $this->event->exhibition_title;
+		$title = $exhibition_data ? $exhibition_data->exhibition_title : '';
 		$ReceiverEmail = '';
 		$phone_number = '';
 		$text_msg = '';

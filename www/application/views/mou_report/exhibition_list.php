@@ -89,7 +89,7 @@
 			exportable: true,
 			file_name: 'Mou List',
 			export_type: ['excel', 'pdf'],
-			event_id: '<?= myid($this->event->id) ?>',
+			event_id: '<?= (isset($this->event) && !is_null($this->event)) ? myid($this->event->id) : "" ?>',
 		})
 	});
 
