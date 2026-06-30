@@ -48,8 +48,7 @@ class Mou_report extends MY_Controller {
 					B.is_canceled,
                     B.is_approved,
                     B.user_type_to,
-                    B.request_to_id,
-   				  ', false)
+                    B.request_to_id', false)
 
 			->unset_column('B.exhibition_id')
 			->unset_column('B.is_canceled')

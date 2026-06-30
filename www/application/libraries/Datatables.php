@@ -68,10 +68,17 @@ class Datatables
 	{
 		foreach($this->explode(',', $columns) as $val)
 		{
+			$val = trim($val);
+			if ($val === '') {
+				continue;
+			}
 			$column = trim(preg_replace('/(.*)\s+as\s+(\w*)/i', '$2', $val));
 			$this->columns[] =  $column;
 			$this->select[$column] =  trim(preg_replace('/(.*)\s+as\s+(\w*)/i', '$1', $val));
 		}
+
+		$columns = trim($columns);
+		$columns = rtrim($columns, ',');
 
 		$this->ci->db->select($columns, $backtick_protect);
 		return $this;
