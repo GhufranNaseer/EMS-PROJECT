@@ -1,39 +1,46 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Mou_report extends MY_Controller {
-	protected function rule() {
-        $this->activateRightsSystem();
-        $crd = array(
-            'crd_list,
+class Mou_report extends MY_Controller
+{
+	protected function rule()
+	{
+		$this->activateRightsSystem();
+		$crd = array(
+			'crd_list,
+			crd_add,
+			crd_add_submit,
 			cancel,
 			get_available_time,
 			schedule,
 			mou_re_schedule_validate,
 			mou_re_schedule_submit,
 			approved' => array(
-                'rule' => '@'
-            ),
-            'crd_list_datatable' => array(
-                'rule' => '@',
-            )
-        );
-        $this->load->model('usermdl');
-        $this->myparent = base_url('mou_sign.html');
-        return array_merge($crd);
-    }
+				'rule' => '@'
+			),
+			'crd_list_datatable,
+			crd_add_validate' => array(
+				'rule' => '@',
+			)
+		);
+		$this->load->model('usermdl');
+		$this->myparent = base_url('mou_sign.html');
+		return array_merge($crd);
+	}
 
-	function crd_list() {
+	function crd_list()
+	{
 		$this->load->view('includes/after_login/head');
 		$this->load->view('mou_report/exhibition_list');
 	}
 
 
-	function crd_list_datatable() {
+	function crd_list_datatable()
+	{
 
-    	$this->load->library('datatables');
-        $this->datatables
-            ->select('B.id,
+		$this->load->library('datatables');
+		$this->datatables
+			->select('B.id,
 					B.exhibition_id,
                     C.company as request_from_comapny,
                     D.company as request_to_comapny,
@@ -56,26 +63,26 @@ class Mou_report extends MY_Controller {
 			->unset_column('B.user_type_to')
 			->unset_column('B.request_to_id')
 
-            ->add_column('col_action', function ($row) {
-                $id = $row['id'];
-                $html = '';
+			->add_column('col_action', function ($row) {
+				$id = $row['id'];
+				$html = '';
 				$html .= '<a href="' . base_url() . 'mou_sign_re_schedule.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-info">Re-Schedule</a> ';
 				if ($row['is_approved'] == 1 || $row['is_canceled'] == 1) {
 					return $html;
 				}
-                $html .= '<a href="' . base_url() . 'mou_sign-cancel.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you would like to cancel the MoU request?\')">Decline</a> ';
+				$html .= '<a href="' . base_url() . 'mou_sign-cancel.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you would like to cancel the MoU request?\')">Decline</a> ';
 				$html .= '<a href="' . base_url() . 'mou_sign-approved.html?id=' . urlencode(myid($id)) . '" class="btn btn-xs btn-success" onclick="return confirm(\'Are you sure you would like to accept the MoU request\')">Accept</a> ';
 				return "<div class='text-right'>{$html}</div>";
-            }, NULL)
+			}, NULL)
 
-            ->where('B.is_deleted', 0)
-            ->join('es_customers as C', 'B.request_from_id = C.id')
+			->where('B.is_deleted', 0)
+			->join('es_customers as C', 'B.request_from_id = C.id')
 			->join('es_customers as D', 'B.request_to_id = D.id')
 			->join('es_exhibitions as E', 'B.exhibition_id = E.id')
-            ->from('es_exhibition_mou_sign as B');
+			->from('es_exhibition_mou_sign as B');
 
-        if ($this->input->get('filter_status') && $this->input->get('filter_status') != '') {
-        	if ($this->input->get('filter_status') == 'approved') {
+		if ($this->input->get('filter_status') && $this->input->get('filter_status') != '') {
+			if ($this->input->get('filter_status') == 'approved') {
 				$this->datatables->where('B.is_approved', 1);
 			} else if ($this->input->get('filter_status') == 'pending') {
 				$this->datatables->where('B.is_approved', 0);
@@ -87,28 +94,30 @@ class Mou_report extends MY_Controller {
 			$this->datatables->where('B.exhibition_day', $this->input->get('filter_day'));
 		}
 
-		
 
-        print ($this->datatables->generate());
+
+		print($this->datatables->generate());
 	}
 
-	function schedule() {
+	function schedule()
+	{
 		$this->load->view('includes/after_login/head');
 		$this->load->view('mou_report/mou-reschedule');
 	}
 
-	function get_available_time() {
+	function get_available_time()
+	{
 		$mou_sign = $this->db
-		->where('id', $this->input->post('mou_id'))
-		->get('es_exhibition_mou_sign')
-		->row();
-    	$day = $this->input->post('day');
-    	$date = $this->input->post('date');
+			->where('id', $this->input->post('mou_id'))
+			->get('es_exhibition_mou_sign')
+			->row();
+		$day = $this->input->post('day');
+		$date = $this->input->post('date');
 		$open_time = strtotime("09:00");
 		$close_time = strtotime("19:00");
 		$html = '';
-		$condition = "((user_type_from = 'exhibitor' AND request_from_id = ".$mou_sign->request_from_id.") OR (user_type_to = 'exhibitor' AND request_to_id = ".$mou_sign->request_to_id."))";
-		for( $i=$open_time; $i<$close_time; $i+=1800) {
+		$condition = "((user_type_from = 'exhibitor' AND request_from_id = " . $mou_sign->request_from_id . ") OR (user_type_to = 'exhibitor' AND request_to_id = " . $mou_sign->request_to_id . "))";
+		for ($i = $open_time; $i < $close_time; $i += 1800) {
 
 			$check = $this->db
 				->where('exhibition_id', $mou_sign->exhibition_id)
@@ -125,13 +134,13 @@ class Mou_report extends MY_Controller {
 						->where(mycolumn(), $this->input->post('id'))
 						->get('es_officer')
 						->row();
-					$condition_other = "((user_type_from = 'officer' AND request_from_id = ".$book_to_data->id.") OR (user_type_to = 'officer' AND request_to_id = ".$book_to_data->id."))";
+					$condition_other = "((user_type_from = 'officer' AND request_from_id = " . $book_to_data->id . ") OR (user_type_to = 'officer' AND request_to_id = " . $book_to_data->id . "))";
 				} else {
 					$book_to_data = $this->db
 						->where(mycolumn(), $this->input->post('id'))
 						->get('es_customers')
 						->row();
-					$condition_other = "((user_type_from = 'exhibitor' AND request_from_id = ".$book_to_data->id.") OR (user_type_to = 'exhibitor' AND request_to_id = ".$book_to_data->id."))";
+					$condition_other = "((user_type_from = 'exhibitor' AND request_from_id = " . $book_to_data->id . ") OR (user_type_to = 'exhibitor' AND request_to_id = " . $book_to_data->id . "))";
 				}
 				$other_user = $this->db
 					->where('exhibition_id', $mou_sign->exhibition_id)
@@ -145,10 +154,10 @@ class Mou_report extends MY_Controller {
 			$is_booked = ($check > 0 || $other_user > 0) ? 'booked' : '';
 			$is_booked_status = ($check > 0 || $other_user > 0) ? '<div class="small-box-footer">BOOKED</div>' : '';
 			$html .= '<div class="col-lg-3 col-xs-6">
-				<div class="small-box '.$is_booked.'" data-time="'. date('H:i', $i) .'">
+				<div class="small-box ' . $is_booked . '" data-time="' . date('H:i', $i) . '">
 					<div class="inner">
-						<h3 style="font-size: 20px; margin: 0">'.date("H:i",$i).'</h3>
-					</div>'.$is_booked_status.'
+						<h3 style="font-size: 20px; margin: 0">' . date("H:i", $i) . '</h3>
+					</div>' . $is_booked_status . '
 				</div>
 			</div>';
 		}
@@ -157,8 +166,9 @@ class Mou_report extends MY_Controller {
 		die();
 	}
 
-	function mou_re_schedule_validate() {
-        $this->form_validation->set_rules('mou_sign_location', 'mou_sign_location*MOU location', 'trim|required');
+	function mou_re_schedule_validate()
+	{
+		$this->form_validation->set_rules('mou_sign_location', 'mou_sign_location*MOU location', 'trim|required');
 		$this->form_validation->set_rules('booking_day', 'booking_day*Day', 'trim|required');
 		$this->form_validation->set_rules('booking_date', 'booking_date*Date', 'trim|required');
 		$this->form_validation->set_rules('booking_time', 'booking_time*Time', 'trim|required');
@@ -170,7 +180,8 @@ class Mou_report extends MY_Controller {
 	}
 
 
-	function mou_re_schedule_submit() {
+	function mou_re_schedule_submit()
+	{
 		if ($this->mou_re_schedule_validate() !== true)
 			show_404();
 
@@ -182,10 +193,10 @@ class Mou_report extends MY_Controller {
 		$data = array(
 			'exhibition_id' => $meeting->exhibition_id,
 			'request_from_id' => $meeting->request_from_id,
-            'mou_sign_location' => $this->input->post('mou_sign_location'),
+			'mou_sign_location' => $this->input->post('mou_sign_location'),
 			'request_to_id' => $meeting->request_to_id,
 			'description' => $meeting->description,
-			'commercial_value' => $meeting->commercial_value.' '.$meeting->currency,
+			'commercial_value' => $meeting->commercial_value . ' ' . $meeting->currency,
 			'exhibition_day' => $this->input->post('booking_day'),
 			'mou_sign_date' => $this->input->post('booking_date'),
 			'mou_sign_time' => $this->input->post('booking_time') . ':00',
@@ -219,8 +230,8 @@ class Mou_report extends MY_Controller {
 		$text_msg = '';
 
 		$get_email_template = $this->db
-			->where("title" , "MOU_SIGNING_RE_SCHEDULE")
-			->where("exhibition_id" , $meeting->exhibition_id)
+			->where("title", "MOU_SIGNING_RE_SCHEDULE")
+			->where("exhibition_id", $meeting->exhibition_id)
 			->get('email_template')
 			->row();
 
@@ -247,7 +258,7 @@ class Mou_report extends MY_Controller {
 			$Subject = str_replace('{EMAIL}', $email_data->officer_email, $Subject);
 			$Subject = str_replace('{PHONE}', $email_data->officer_phone, $Subject);
 			$Subject = str_replace('{COMPANY}', $email_data->officer_company, $Subject);
-	
+
 			$message = str_replace('{NAME}', $email_data->contact_person, $message);
 			$message = str_replace('{EMAIL}', $email_data->officer_email, $message);
 			$message = str_replace('{PHONE}', $email_data->officer_phone, $message);
@@ -292,7 +303,7 @@ class Mou_report extends MY_Controller {
 		$message = str_replace('{APPOINTMENT_TIME}', date('M d', strtotime($this->input->post('booking_date'))) . ', ' . date('H:i', strtotime($this->input->post('booking_time'))), $message);
 		$message = str_replace('{APPOINTMENT_AGENDA}', $meeting->agenda_of_meeting, $message);
 
-		if($ReceiverEmail !=""){
+		if ($ReceiverEmail != "") {
 			$this->db->insert('es_emails_cron', array(
 				'type' => 'MOU_SIGNING_RE_SCHEDULE',
 				'data' => null,
@@ -303,7 +314,7 @@ class Mou_report extends MY_Controller {
 				'created_on' => date('Y-m-d H:i:s'),
 			));
 		}
-		
+
 		if ($phone_number != '') {
 			$this->funcs->send_sms($phone_number, $text_msg);
 		}
@@ -315,9 +326,10 @@ class Mou_report extends MY_Controller {
 
 
 
-	function cancel() {
+	function cancel()
+	{
 
-    	$data = $this->db
+		$data = $this->db
 			->where(mycolumn(), $this->input->get('id'))
 			->get('es_exhibition_mou_sign')
 			->row();
@@ -326,19 +338,19 @@ class Mou_report extends MY_Controller {
 			->where('id', $data->exhibition_id)
 			->get('es_exhibitions')
 			->row();
-		
-		
 
-        $this->db
-            ->where(mycolumn(), $this->input->get('id'))
-            ->update('es_exhibition_mou_sign', array(
-                'is_approved' => 0,
-                'approved_on' => null,
-                'approved_by' => null,
-                'is_canceled' => 1,
-                'canceled_by' => $this->userdata->id,
-                'canceled_on' => date('Y-m-d H:i:s')
-            ));
+
+
+		$this->db
+			->where(mycolumn(), $this->input->get('id'))
+			->update('es_exhibition_mou_sign', array(
+				'is_approved' => 0,
+				'approved_on' => null,
+				'approved_by' => null,
+				'is_canceled' => 1,
+				'canceled_by' => $this->userdata->id,
+				'canceled_on' => date('Y-m-d H:i:s')
+			));
 
 		// send email
 		$email_data = null;
@@ -348,8 +360,8 @@ class Mou_report extends MY_Controller {
 		$text_msg = '';
 
 		$get_email_template = $this->db
-			->where("title" , "MOU_SIGNING_CANCELED")
-			->where("exhibition_id" , $data->exhibition_id)
+			->where("title", "MOU_SIGNING_CANCELED")
+			->where("exhibition_id", $data->exhibition_id)
 			->get('email_template')
 			->row();
 
@@ -375,19 +387,18 @@ class Mou_report extends MY_Controller {
 				->get('es_customers')
 				->row();
 
-			$text_msg = 'Your MoU signing with ' . $email_customer_data->name . ' of '.$email_customer_data->company.' for ' . date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)) . ' has been declined.';
+			$text_msg = 'Your MoU signing with ' . $email_customer_data->name . ' of ' . $email_customer_data->company . ' for ' . date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)) . ' has been declined.';
 
 
 			$Subject = str_replace('{NAME}', $email_data->contact_person, $Subject);
 			$Subject = str_replace('{EMAIL}', $email_data->officer_email, $Subject);
 			$Subject = str_replace('{PHONE}', $email_data->officer_phone, $Subject);
 			$Subject = str_replace('{COMPANY}', $email_data->officer_company, $Subject);
-	
+
 			$message = str_replace('{NAME}', $email_data->contact_person, $message);
 			$message = str_replace('{EMAIL}', $email_data->officer_email, $message);
 			$message = str_replace('{PHONE}', $email_data->officer_phone, $message);
 			$message = str_replace('{COMPANY}', $email_data->officer_company, $message);
-
 		} else {
 			$email_data = $this->db
 				->where('id', $data->request_from_id)
@@ -397,7 +408,7 @@ class Mou_report extends MY_Controller {
 			$ReceiverEmail = $email_data->email;
 
 			$phone_number = $email_data->phone;
-			$text_msg = 'Your MoU singing with ' . $email_data->name . ' of '.$email_data->company.' for ' . date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)) . ' has been declined.';
+			$text_msg = 'Your MoU singing with ' . $email_data->name . ' of ' . $email_data->company . ' for ' . date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)) . ' has been declined.';
 
 
 			$Subject = str_replace('{NAME}', $email_data->name, $Subject);
@@ -411,9 +422,9 @@ class Mou_report extends MY_Controller {
 			$message = str_replace('{COMPANY}', $email_data->company, $message);
 		}
 		$customer_data = $this->db
-		->where('id', $data->request_from_id)
-		->get('es_customers')
-		->row();
+			->where('id', $data->request_from_id)
+			->get('es_customers')
+			->row();
 
 		$Subject = str_replace('{EVENT_NAME}', $title, $Subject);
 		$Subject = str_replace('{SENDER_NAME}', $customer_data->name, $Subject);
@@ -435,7 +446,7 @@ class Mou_report extends MY_Controller {
 		$message = str_replace('{DESCRIPTION}', $data->description, $message);
 		$Subject = str_replace('{COMMERCIAL_VALUE}', $data->commercial_value, $Subject);
 
-		if($ReceiverEmail !=""){
+		if ($ReceiverEmail != "") {
 			$this->db->insert('es_emails_cron', array(
 				'type' => 'MOU_SIGNING_CANCELED',
 				'data' => null,
@@ -450,11 +461,12 @@ class Mou_report extends MY_Controller {
 			$this->funcs->send_sms($phone_number, $text_msg);
 		}
 
-        $this->session->set_flashdata('message', 'MoU has been cancel successfully');
+		$this->session->set_flashdata('message', 'MoU has been cancel successfully');
 		redirect(base_url('mou_sign.html'));
-    }
+	}
 
-    function approved() {
+	function approved()
+	{
 		$data = $this->db
 			->where(mycolumn(), $this->input->get('id'))
 			->get('es_exhibition_mou_sign')
@@ -464,7 +476,7 @@ class Mou_report extends MY_Controller {
 			->where('id', $data->exhibition_id)
 			->get('es_exhibitions')
 			->row();
-		
+
 		$this->db
 			->where(mycolumn(), $this->input->get('id'))
 			->update('es_exhibition_mou_sign', array(
@@ -476,7 +488,7 @@ class Mou_report extends MY_Controller {
 				'canceled_on' => null
 			));
 
-		
+
 		// send email
 		$email_data = null;
 		$title = $exhibition_data->exhibition_title;
@@ -485,10 +497,10 @@ class Mou_report extends MY_Controller {
 		$text_msg = '';
 
 		$get_email_template = $this->db
-		->where("title" , "MOU_SIGNING_ACCEPTED")
-		->where("exhibition_id" , $data->exhibition_id)
-		->get('email_template')
-		->row();
+			->where("title", "MOU_SIGNING_ACCEPTED")
+			->where("exhibition_id", $data->exhibition_id)
+			->get('email_template')
+			->row();
 
 		$Subject = 'Email not configure!';
 		$message = 'Email not configure!';
@@ -511,13 +523,13 @@ class Mou_report extends MY_Controller {
 			$ReceiverEmail = $email_data->officer_email;
 
 			$phone_number = $email_data->officer_phone;
-			$text_msg = 'Your request for MOU Signing' . $email_customer_data->name . ' of '.$email_customer_data->company.' for ' . date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)) . ' has been accepted. Please login for further details.';
+			$text_msg = 'Your request for MOU Signing' . $email_customer_data->name . ' of ' . $email_customer_data->company . ' for ' . date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)) . ' has been accepted. Please login for further details.';
 
 			$Subject = str_replace('{NAME}', $email_data->contact_person, $Subject);
 			$Subject = str_replace('{EMAIL}', $email_data->officer_email, $Subject);
 			$Subject = str_replace('{PHONE}', $email_data->officer_phone, $Subject);
 			$Subject = str_replace('{COMPANY}', $email_data->officer_company, $Subject);
-	
+
 			$message = str_replace('{NAME}', $email_data->contact_person, $message);
 			$message = str_replace('{EMAIL}', $email_data->officer_email, $message);
 			$message = str_replace('{PHONE}', $email_data->officer_phone, $message);
@@ -531,7 +543,7 @@ class Mou_report extends MY_Controller {
 			$ReceiverEmail = $email_data->email;
 
 			$phone_number = $email_data->phone;
-			$text_msg = 'Your request for MOU Signing ' . $email_data->name . ' of '.$email_data->company.' for ' . date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)) . ' has been accepted. Please login for further details.';
+			$text_msg = 'Your request for MOU Signing ' . $email_data->name . ' of ' . $email_data->company . ' for ' . date('M d', strtotime($data->mou_sign_date)) . ' at ' . date('H:i', strtotime($data->mou_sign_time)) . ' has been accepted. Please login for further details.';
 
 			$Subject = str_replace('{NAME}', $email_data->name, $Subject);
 			$Subject = str_replace('{EMAIL}', $email_data->email, $Subject);
@@ -545,10 +557,10 @@ class Mou_report extends MY_Controller {
 		}
 
 		$customer_data = $this->db
-		->where('id', $data->request_from_id)
-		->get('es_customers')
-		->row();
-		
+			->where('id', $data->request_from_id)
+			->get('es_customers')
+			->row();
+
 		$Subject = str_replace('{EVENT_NAME}', $title, $Subject);
 		$Subject = str_replace('{SENDER_NAME}', $customer_data->name, $Subject);
 		$Subject = str_replace('{SENDER_EMAIL}', $customer_data->email, $Subject);
@@ -569,7 +581,7 @@ class Mou_report extends MY_Controller {
 		$message = str_replace('{DESCRIPTION}', $data->description, $message);
 		$Subject = str_replace('{COMMERCIAL_VALUE}', $data->commercial_value, $Subject);
 
-		if($ReceiverEmail !=""){
+		if ($ReceiverEmail != "") {
 			$this->db->insert('es_emails_cron', array(
 				'type' => 'MOU_SIGNING_ACCEPTED',
 				'data' => null,
@@ -586,6 +598,71 @@ class Mou_report extends MY_Controller {
 
 		$this->session->set_flashdata('message', 'Mou has been approved successfully');
 		redirect(base_url('mou_sign.html'));
-    }
+	}
 
+	function crd_add()
+	{
+		$data['exhibitions'] = $this->db
+			->select('id, exhibition_title')
+			->where('is_deleted', 0)
+			->get('es_exhibitions')
+			->result();
+
+		$data['customers'] = $this->db
+			->select('id, name, company')
+			->where('is_deleted', 0)
+			->where('is_active', 1)
+			->get('es_customers')
+			->result();
+
+		$this->load->view('includes/after_login/head');
+		$this->load->view('mou_report/add', $data);
+	}
+
+	function crd_add_validate()
+	{
+		$this->form_validation->set_rules('exhibition_id', 'exhibition_id*Exhibition', 'trim|required|integer');
+		$this->form_validation->set_rules('request_from_id', 'request_from_id*Request From Customer', 'trim|required|integer');
+		$this->form_validation->set_rules('request_to_id', 'request_to_id*Request To Customer', 'trim|required|integer');
+		$this->form_validation->set_rules('mou_sign_location', 'mou_sign_location*Signing Location', 'trim|required');
+		$this->form_validation->set_rules('exhibition_day', 'exhibition_day*Exhibition Day', 'trim|required');
+		$this->form_validation->set_rules('booking_date', 'booking_date*Date', 'trim|required');
+		$this->form_validation->set_rules('booking_time', 'booking_time*Time', 'trim|required');
+		$this->form_validation->set_rules('commercial_value', 'commercial_value*Commercial Value', 'trim|required');
+		$this->form_validation->set_rules('description', 'description*Description', 'trim|required');
+
+		if ($this->form_validation->run() == false)
+			return $this->common->doError(func_num_args(), $this->common->getFVError());
+		else
+			return $this->common->doError(func_num_args(), "done", true);
+	}
+
+	function crd_add_submit()
+	{
+		if ($this->crd_add_validate() !== true)
+			show_404();
+
+		$data = array(
+			'exhibition_id' => $this->input->post('exhibition_id'),
+			'request_from_id' => $this->input->post('request_from_id'),
+			'request_to_id' => $this->input->post('request_to_id'),
+			'mou_sign_location' => $this->input->post('mou_sign_location'),
+			'exhibition_day' => $this->input->post('exhibition_day'),
+			'mou_sign_date' => $this->input->post('booking_date'),
+			'mou_sign_time' => $this->input->post('booking_time') . ':00',
+			'user_type_from' => 'exhibitor',
+			'user_type_to' => 'exhibitor',
+			'description' => $this->input->post('description'),
+			'commercial_value' => $this->input->post('commercial_value'),
+			'is_approved' => 0,
+			'is_canceled' => 0,
+			'is_deleted' => 0,
+			'created_on' => date('Y-m-d H:i:s'),
+		);
+
+		$this->db->insert('es_exhibition_mou_sign', $data);
+
+		$this->session->set_flashdata('message', 'MoU Signing entry has been added successfully');
+		redirect($this->myparent);
+	}
 }

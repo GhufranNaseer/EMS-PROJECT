@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
 | -------------------------------------------------------------------------
@@ -765,3 +765,6 @@ $route['mou_sign_re_schedule.html']['get'] = "mou_report/schedule";
 $route['mou_re_schedule_validate.html']['post'] = "mou_report/mou_re_schedule_validate/doError";
 $route['mou_re_schedule_submit.html']['post'] = "mou_report/mou_re_schedule_submit";
 
+$route['mou_sign-add.html']['get'] = "mou_report/crd_add";
+$route['mou_sign-validate.html']['post'] = "mou_report/crd_add_validate/doError";
+$route['mou_sign-submit.html']['post'] = "mou_report/crd_add_submit";

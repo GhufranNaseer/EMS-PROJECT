@@ -1,11 +1,9 @@
 <?php $this->load->view('includes/after_login/header'); ?>
 <?php $this->load->view('includes/after_login/sidebar'); ?>
 <style>
-    .col-srialno
-    {
+    .col-srialno {
         width: 40px !important;
     }
-
 </style>
 
 <div class="content-wrapper" data-page="mou_signing_request">
@@ -28,6 +26,7 @@
                 <div class="box">
                     <div class="box-header">
                         <h3 class="box-title">My MoU's Signing</h3>
+                        <a href="<?= base_url('mou_sign-add.html'); ?>" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> Add MoU Signing</a>
                     </div><!-- /.box-header -->
 
                     <div class="box-body">
@@ -43,7 +42,7 @@
                                         <option value="my_requests" <?= (($this->input->get('filter_status') && $this->input->get('filter_status') == 'my_requests') ? 'selected' : '') ?>>My Requests</option>
                                     </select>
                                 </div>
-                                
+
                                 <div class="col-sm-2">
                                     <label>&nbsp;</label>
                                     <button type="submit" class="btn btn-primary btn-block">Filter</button>
@@ -53,19 +52,19 @@
 
                         <table class="table table-bordered table-striped" id="crud-table">
                             <thead>
-                            <tr class="">
-                                <th class="text-center col-srialno" >#</th>
-                                <th>Appointment From</th>
-                                <th>Appointment To</th>
-                                <th>Exhibition</th>
-                                <th>Event Day</th>
-                                <th>Appointment Date</th>
-                                <th>Appointment Time</th>
-                                <th>Description</th>
-                                <th>Commercial Value</th>
-                                <th>Status</th>
-                                <th class="text-center">Action</th>
-                            </tr>
+                                <tr class="">
+                                    <th class="text-center col-srialno">#</th>
+                                    <th>Appointment From</th>
+                                    <th>Appointment To</th>
+                                    <th>Exhibition</th>
+                                    <th>Event Day</th>
+                                    <th>Appointment Date</th>
+                                    <th>Appointment Time</th>
+                                    <th>Description</th>
+                                    <th>Commercial Value</th>
+                                    <th>Status</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
                             </thead>
 
                         </table>
@@ -81,21 +80,20 @@
 <?php $this->load->view('includes/after_login/footer'); ?>
 
 <script type="text/javascript">
-	$(document).ready(function () {
-		oTable = $('#crud-table').dataTable($.extend(datatable_settings, {
-			"sAjaxSource": '<?php echo base_url('mou_sign-datatable.html'); ?>' + location.search,
-		}));
-		my_datatable(oTable, {
-			exportable: true,
-			file_name: 'Mou List',
-			export_type: ['excel', 'pdf'],
-			event_id: '<?= (isset($this->event) && !is_null($this->event)) ? myid($this->event->id) : "" ?>',
-		})
-	});
-
-
+    $(document).ready(function() {
+        oTable = $('#crud-table').dataTable($.extend(datatable_settings, {
+            "sAjaxSource": '<?php echo base_url('mou_sign-datatable.html'); ?>' + location.search,
+        }));
+        my_datatable(oTable, {
+            exportable: true,
+            file_name: 'Mou List',
+            export_type: ['excel', 'pdf'],
+            event_id: '<?= (isset($this->event) && !is_null($this->event)) ? myid($this->event->id) : "" ?>',
+        })
+    });
 </script>
 
 
 </body>
+
 </html>

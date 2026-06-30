@@ -107,7 +107,7 @@ $book_to_name = $book_to_data->company;
                                         ->result();
                                     foreach($locations as $location){
                                     ?>    
-                                    <option value="<?= $location->location ?>" <?= ($meeting->meeting_location == $location) ? 'selected' : ''; ?>><?= $location->location ?></option>
+                                    <option value="<?= $location->location ?>" <?= ($meeting->mou_sign_location == $location->location) ? 'selected' : ''; ?>><?= $location->location ?></option>
                                     <?php }
                                     ?>
                                 </select>
