@@ -15,6 +15,10 @@ class Mou_report extends MY_Controller
 			schedule,
 			mou_re_schedule_validate,
 			mou_re_schedule_submit,
+			download_template,
+			bulk_import_validate,
+			bulk_import_confirm,
+			get_mou_locations_json,
 			approved' => array(
 				'rule' => '@'
 			),
@@ -664,5 +668,374 @@ class Mou_report extends MY_Controller
 
 		$this->session->set_flashdata('message', 'MoU Signing entry has been added successfully');
 		redirect($this->myparent);
+	}
+
+	function download_template()
+	{
+		$lib_path = APPPATH . 'libraries' . DIRECTORY_SEPARATOR . 'SimpleXLSXGen.php';
+		$lib_path = str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $lib_path);
+		require_once($lib_path);
+
+		$headers = array(
+			array(
+				'Exhibition Day', 
+				'Sign Date', 
+				'Sign Time', 
+				'Request From Email', 
+				'Request To Email', 
+				'Location', 
+				'Commercial Value', 
+				'Description'
+			),
+			array(
+				'Day 1',
+				'2026-07-01',
+				'12:00',
+				'sender@example.com',
+				'receiver@example.com',
+				'Meeting Room A',
+				'50000 USD',
+				"Sample MoU signing details.\nLine breaks within this cell are fully supported."
+			)
+		);
+
+		$xlsx = \Shuchkin\SimpleXLSXGen::fromArray($headers);
+		$xlsx->downloadAs('mou_bulk_import_template.xlsx');
+		exit;
+	}
+
+
+	function bulk_import_validate()
+	{
+		$exhibition_id = $this->input->post('exhibition_id');
+		if (empty($exhibition_id)) {
+			echo json_encode(array('status' => 'error', 'message' => 'Please select an Exhibition first.'));
+			return;
+		}
+
+		$exhibition = $this->db->select('id, exhibition_title')
+			->where('id', $exhibition_id)
+			->where('is_deleted', 0)
+			->get('es_exhibitions')
+			->row();
+
+		if (!$exhibition) {
+			echo json_encode(array('status' => 'error', 'message' => 'Selected Exhibition does not exist.'));
+			return;
+		}
+
+		if (empty($_FILES['import_file']['name'])) {
+			echo json_encode(array('status' => 'error', 'message' => 'Please upload an Excel file.'));
+			return;
+		}
+
+		$config['upload_path'] = FCPATH . 'uploads' . DIRECTORY_SEPARATOR;
+		$config['upload_path'] = str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $config['upload_path']);
+		
+		if (!is_dir($config['upload_path'])) {
+			mkdir($config['upload_path'], 0777, true);
+		}
+
+		$config['allowed_types'] = 'xlsx';
+		$config['max_size'] = 5120;
+		$config['encrypt_name'] = TRUE;
+
+		$this->load->library('upload', $config);
+
+		if (!$this->upload->do_upload('import_file')) {
+			echo json_encode(array('status' => 'error', 'message' => $this->upload->display_errors('', '')));
+			return;
+		}
+
+		$upload_data = $this->upload->data();
+		$file_path = $upload_data['full_path'];
+
+		$lib_path = APPPATH . 'libraries' . DIRECTORY_SEPARATOR . 'SimpleXLSX.php';
+		$lib_path = str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $lib_path);
+		require_once($lib_path);
+
+		if ($xlsx = \Shuchkin\SimpleXLSX::parse($file_path)) {
+			$rows = $xlsx->rows();
+			
+			if (is_file($file_path)) {
+				unlink($file_path);
+			}
+
+			if (count($rows) <= 1) {
+				echo json_encode(array('status' => 'error', 'message' => 'Excel file is empty or contains no records.'));
+				return;
+			}
+
+			$expected_headers = array(
+				'exhibition day',
+				'sign date',
+				'sign time',
+				'request from email',
+				'request to email',
+				'location',
+				'commercial value',
+				'description'
+			);
+
+			$file_headers = array_map(function($header) {
+				return trim(strtolower($header));
+			}, $rows[0]);
+
+			$header_errors = array();
+			for ($i = 0; $i < 8; $i++) {
+				if (!isset($file_headers[$i]) || $file_headers[$i] !== $expected_headers[$i]) {
+					$header_errors[] = "Column " . ($i + 1) . " should be '" . $expected_headers[$i] . "' (found: '" . ($file_headers[$i] ?? 'none') . "')";
+				}
+			}
+
+			if (!empty($header_errors)) {
+				echo json_encode(array(
+					'status' => 'error', 
+					'message' => 'Excel headers mismatch. Please use the downloaded template.', 
+					'details' => $header_errors
+				));
+				return;
+			}
+
+			$validated_rows = array();
+			$has_errors = false;
+
+			for ($idx = 1; $idx < count($rows); $idx++) {
+				$row = $rows[$idx];
+				
+				$is_empty_row = true;
+				foreach ($row as $cell) {
+					if (trim($cell) !== '') {
+						$is_empty_row = false;
+						break;
+					}
+				}
+				if ($is_empty_row) {
+					continue;
+				}
+
+				$row_errors = array();
+
+				$exhibition_day = trim($row[0] ?? '');
+				$booking_date = trim($row[1] ?? '');
+				if ($booking_date !== '') {
+					$date_parts = explode(' ', $booking_date);
+					$booking_date = trim($date_parts[0]);
+				}
+				
+				$booking_time = trim($row[2] ?? '');
+				if ($booking_time !== '') {
+					$time_parts = explode(' ', $booking_time);
+					$booking_time_val = end($time_parts);
+					$time_subparts = explode(':', $booking_time_val);
+					if (count($time_subparts) >= 2) {
+						$booking_time = $time_subparts[0] . ':' . $time_subparts[1];
+					} else {
+						$booking_time = $booking_time_val;
+					}
+				}
+				
+				$request_from_email = trim($row[3] ?? '');
+				$request_to_email = trim($row[4] ?? '');
+				$mou_sign_location = trim($row[5] ?? '');
+				$commercial_value = trim($row[6] ?? '');
+				$description = trim($row[7] ?? '');
+
+
+				if ($exhibition_day === '') $row_errors[] = 'Exhibition Day is required.';
+				if ($booking_date === '') $row_errors[] = 'Sign Date is required.';
+				if ($booking_time === '') $row_errors[] = 'Sign Time is required.';
+				if ($request_from_email === '') $row_errors[] = 'Request From Email is required.';
+				if ($request_to_email === '') $row_errors[] = 'Request To Email is required.';
+				if ($mou_sign_location === '') $row_errors[] = 'Location is required.';
+				if ($commercial_value === '') $row_errors[] = 'Commercial Value is required.';
+				if ($description === '') $row_errors[] = 'Description is required.';
+
+				$valid_days = array('Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5');
+				if ($exhibition_day !== '' && !in_array($exhibition_day, $valid_days)) {
+					$row_errors[] = 'Exhibition Day must be Day 1, Day 2, Day 3, Day 4, or Day 5.';
+				}
+
+				if ($booking_date !== '') {
+					$dt = \DateTime::createFromFormat('Y-m-d', $booking_date);
+					if (!$dt || $dt->format('Y-m-d') !== $booking_date) {
+						$row_errors[] = 'Sign Date must be a valid date in YYYY-MM-DD format.';
+					}
+				}
+
+				if ($booking_time !== '') {
+					if (!preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d)?$/', $booking_time)) {
+						$row_errors[] = 'Sign Time must be in HH:MM format.';
+					}
+				}
+
+				$customer_from_id = null;
+				$customer_from_name = '';
+				if ($request_from_email !== '') {
+					$cust_from = $this->db->select('id, name, company')
+						->where('email', $request_from_email)
+						->where('is_deleted', 0)
+						->where('is_active', 1)
+						->get('es_customers')
+						->row();
+					if ($cust_from) {
+						$customer_from_id = $cust_from->id;
+						$customer_from_name = $cust_from->company . ' (' . $cust_from->name . ')';
+					} else {
+						$row_errors[] = "Request From Email ('{$request_from_email}') is not registered as an active Exhibitor.";
+					}
+				}
+
+				$customer_to_id = null;
+				$customer_to_name = '';
+				if ($request_to_email !== '') {
+					$cust_to = $this->db->select('id, name, company')
+						->where('email', $request_to_email)
+						->where('is_deleted', 0)
+						->where('is_active', 1)
+						->get('es_customers')
+						->row();
+					if ($cust_to) {
+						$customer_to_id = $cust_to->id;
+						$customer_to_name = $cust_to->company . ' (' . $cust_to->name . ')';
+					} else {
+						$row_errors[] = "Request To Email ('{$request_to_email}') is not registered as an active Exhibitor.";
+					}
+				}
+
+				if ($request_from_email !== '' && $request_to_email !== '' && $request_from_email === $request_to_email) {
+					$row_errors[] = 'Sender and Receiver emails must be different.';
+				}
+
+				if ($customer_from_id && $customer_to_id && $booking_date !== '' && $booking_time !== '') {
+					$formatted_time = date('H:i:s', strtotime($booking_time));
+					$condition = "((user_type_from = 'exhibitor' AND request_from_id = {$customer_from_id}) OR (user_type_to = 'exhibitor' AND request_to_id = {$customer_to_id}))";
+					$conflict_count = $this->db->where('exhibition_id', $exhibition_id)
+						->where('is_approved', 1)
+						->where('is_deleted', 0)
+						->where('mou_sign_date', $booking_date)
+						->where('mou_sign_time', $formatted_time)
+						->where($condition)
+						->count_all_results('es_exhibition_mou_sign');
+					if ($conflict_count > 0) {
+						$row_errors[] = 'Scheduling conflict: Either Sender or Receiver is already booked for an approved MoU at this date and time.';
+					}
+				}
+
+				if (!empty($row_errors)) {
+					$has_errors = true;
+				}
+
+				$validated_rows[] = array(
+					'excel_row_num' => $idx + 1,
+					'exhibition_day' => $exhibition_day,
+					'booking_date' => $booking_date,
+					'booking_time' => $booking_time,
+					'request_from_email' => $request_from_email,
+					'request_from_id' => $customer_from_id,
+					'request_from_name' => $customer_from_name,
+					'request_to_email' => $request_to_email,
+					'request_to_id' => $customer_to_id,
+					'request_to_name' => $customer_to_name,
+					'mou_sign_location' => $mou_sign_location,
+					'commercial_value' => $commercial_value,
+					'description' => $description,
+					'status' => empty($row_errors) ? 'valid' : 'invalid',
+					'errors' => $row_errors
+				);
+			}
+
+			echo json_encode(array(
+				'status' => 'success',
+				'has_errors' => $has_errors,
+				'rows' => $validated_rows
+			));
+		} else {
+			if (is_file($file_path)) {
+				unlink($file_path);
+			}
+			echo json_encode(array('status' => 'error', 'message' => 'Failed to parse Excel file: ' . \Shuchkin\SimpleXLSX::parseError()));
+		}
+	}
+
+	function bulk_import_confirm()
+	{
+		$exhibition_id = $this->input->post('exhibition_id');
+		$auto_approve = $this->input->post('auto_approve') ? 1 : 0;
+		$rows_json = $this->input->post('rows');
+
+		if (empty($exhibition_id)) {
+			echo json_encode(array('status' => 'error', 'message' => 'Exhibition ID is missing.'));
+			return;
+		}
+
+		if (empty($rows_json)) {
+			echo json_encode(array('status' => 'error', 'message' => 'No import data provided.'));
+			return;
+		}
+
+		$import_rows = json_decode($rows_json, true);
+		if (!is_array($import_rows)) {
+			echo json_encode(array('status' => 'error', 'message' => 'Invalid import data format.'));
+			return;
+		}
+
+		$exhibition = $this->db->where('id', $exhibition_id)->where('is_deleted', 0)->get('es_exhibitions')->row();
+		if (!$exhibition) {
+			echo json_encode(array('status' => 'error', 'message' => 'Exhibition not found.'));
+			return;
+		}
+
+		$this->db->trans_start();
+
+		$insert_count = 0;
+		foreach ($import_rows as $row) {
+			if (($row['status'] ?? '') !== 'valid') {
+				continue;
+			}
+
+			$data = array(
+				'exhibition_id' => $exhibition_id,
+				'request_from_id' => $row['request_from_id'],
+				'request_to_id' => $row['request_to_id'],
+				'mou_sign_location' => $row['mou_sign_location'],
+				'exhibition_day' => $row['exhibition_day'],
+				'mou_sign_date' => $row['booking_date'],
+				'mou_sign_time' => date('H:i:s', strtotime($row['booking_time'])),
+				'user_type_from' => 'exhibitor',
+				'user_type_to' => 'exhibitor',
+				'description' => $row['description'],
+				'commercial_value' => $row['commercial_value'],
+				'is_approved' => $auto_approve,
+				'approved_by' => $auto_approve ? $this->userdata->id : null,
+				'approved_on' => $auto_approve ? date('Y-m-d H:i:s') : null,
+				'is_canceled' => 0,
+				'is_deleted' => 0,
+				'created_on' => date('Y-m-d H:i:s'),
+			);
+
+			$this->db->insert('es_exhibition_mou_sign', $data);
+			$insert_count++;
+		}
+
+		$this->db->trans_complete();
+
+		if ($this->db->trans_status() === FALSE) {
+			echo json_encode(array('status' => 'error', 'message' => 'Database transaction failed. Data was not saved.'));
+		} else {
+			$this->session->set_flashdata('message', "{$insert_count} MoU Signing records successfully imported.");
+			echo json_encode(array('status' => 'success', 'inserted' => $insert_count));
+		}
+	}
+
+	function get_mou_locations_json()
+	{
+		$exhibition_id = $this->input->post('exhibition_id');
+		$locations = $this->db->select('id, location')
+			->where('exhibition_id', $exhibition_id)
+			->where('type', 'mou_location')
+			->get('location_for_meeting')
+			->result();
+		echo json_encode($locations);
 	}
 }

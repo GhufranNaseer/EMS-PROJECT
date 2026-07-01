@@ -38,13 +38,19 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="mou_sign_location">MoU Sign Location *</label>
-                                        <input type="text" class="form-control" name="mou_sign_location" id="mou_sign_location" placeholder="e.g. Meeting Room A">
-                                    </div>
-                                </div>
-                            </div>
+                                 <div class="col-sm-6">
+                                     <div class="form-group">
+                                         <label for="mou_sign_location_select">MoU Sign Location *</label>
+                                         <select class="form-control" id="mou_sign_location_select" name="mou_sign_location">
+                                             <option value="">- select exhibition first -</option>
+                                         </select>
+                                         <div id="custom_location_wrapper" style="display: none; margin-top: 10px;">
+                                             <label for="mou_sign_location_custom">Custom MoU Sign Location *</label>
+                                             <input type="text" class="form-control" id="mou_sign_location_custom" placeholder="e.g. Meeting Room A">
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
 
                             <div class="row">
                                 <div class="col-sm-6">
@@ -169,6 +175,60 @@
             'urlValidator': "<?php echo base_url("mou_sign-validate.html"); ?>",
             'loadingImg':   "<?php echo base_url("assets/img/load-indicator.gif"); ?>"
         });
+
+        // Dynamic location loading based on selected Exhibition
+        $('#exhibition_id').change(function() {
+            var exhibition_id = $(this).val();
+            var select = $('#mou_sign_location_select');
+            
+            // Reset fields
+            select.html('<option value="">- loading locations... -</option>').val('');
+            $('#custom_location_wrapper').hide();
+            $('#mou_sign_location_custom').removeAttr('name').val('');
+            select.attr('name', 'mou_sign_location');
+
+            if (!exhibition_id) {
+                select.html('<option value="">- select exhibition first -</option>');
+                return;
+            }
+
+            $.ajax({
+                url: '<?= base_url("mou_sign-get-locations.html") ?>',
+                type: 'POST',
+                data: { exhibition_id: exhibition_id },
+                dataType: 'json',
+                success: function(locations) {
+                    var options = '<option value="">- select location -</option>';
+                    $.each(locations, function(i, loc) {
+                        options += '<option value="' + htmlEntities(loc.location) + '">' + htmlEntities(loc.location) + '</option>';
+                    });
+                    options += '<option value="_custom_">** Other (Type Custom Location) **</option>';
+                    select.html(options);
+                },
+                error: function() {
+                    select.html('<option value="">- error loading locations -</option>');
+                }
+            });
+        });
+
+        // Handle custom location input toggling
+        $('#mou_sign_location_select').change(function() {
+            var val = $(this).val();
+            if (val === '_custom_') {
+                $('#custom_location_wrapper').show();
+                $('#mou_sign_location_custom').attr('name', 'mou_sign_location').focus();
+                $(this).removeAttr('name');
+            } else {
+                $('#custom_location_wrapper').hide();
+                $('#mou_sign_location_custom').removeAttr('name').val('');
+                $(this).attr('name', 'mou_sign_location');
+            }
+        });
+
+        function htmlEntities(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
     });
 </script>
 </body>

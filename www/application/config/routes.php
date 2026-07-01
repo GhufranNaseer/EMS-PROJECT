@@ -768,3 +768,10 @@ $route['mou_re_schedule_submit.html']['post'] = "mou_report/mou_re_schedule_subm
 $route['mou_sign-add.html']['get'] = "mou_report/crd_add";
 $route['mou_sign-validate.html']['post'] = "mou_report/crd_add_validate/doError";
 $route['mou_sign-submit.html']['post'] = "mou_report/crd_add_submit";
+
+$route['mou_sign-download-template.html']['get'] = "mou_report/download_template";
+$route['mou_sign-import-validate.html']['post'] = "mou_report/bulk_import_validate";
+$route['mou_sign-import-confirm.html']['post'] = "mou_report/bulk_import_confirm";
+$route['mou_sign-get-locations.html']['post'] = "mou_report/get_mou_locations_json";
+
+
