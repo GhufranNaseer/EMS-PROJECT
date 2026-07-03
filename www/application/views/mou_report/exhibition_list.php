@@ -174,15 +174,25 @@ $exhibitions = $this->db->select('id, exhibition_title')->where('is_deleted', 0)
 
         var validatedRowsData = null;
 
+        // Reset modal validation state
+        function resetValidationState() {
+            validatedRowsData = null;
+            $('#btn-confirm-import').hide();
+            $('#btn-validate-upload').show().prop('disabled', false);
+            $('#import-preview-area').hide();
+            $('#preview-table tbody').html('');
+            $('#import-msgbox').html('');
+        }
+
+        // Reset validation state when input fields are changed
+        $('#import_file, #import_exhibition_id').on('change', function() {
+            resetValidationState();
+        });
+
         // Reset modal on close
         $('#import-modal').on('hidden.bs.modal', function () {
             $('#bulk-import-form')[0].reset();
-            $('#import-msgbox').html('');
-            $('#import-preview-area').hide();
-            $('#preview-table tbody').html('');
-            $('#btn-validate-upload').show().prop('disabled', false);
-            $('#btn-confirm-import').hide().prop('disabled', false);
-            validatedRowsData = null;
+            resetValidationState();
         });
 
         // Click Validate File

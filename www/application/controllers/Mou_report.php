@@ -126,6 +126,7 @@ class Mou_report extends MY_Controller
 			$check = $this->db
 				->where('exhibition_id', $mou_sign->exhibition_id)
 				->where('is_approved', 1)
+				->where('is_deleted', 0)
 				->where('mou_sign_date', $date)
 				->where('mou_sign_time', date('H:i:s', $i))
 				->where($condition)
@@ -149,6 +150,7 @@ class Mou_report extends MY_Controller
 				$other_user = $this->db
 					->where('exhibition_id', $mou_sign->exhibition_id)
 					->where('is_approved', 1)
+					->where('is_deleted', 0)
 					->where('mou_sign_date', $date)
 					->where('mou_sign_time', date('H:i:s', $i))
 					->where($condition_other)
@@ -493,6 +495,23 @@ class Mou_report extends MY_Controller
 			->get('es_exhibitions')
 			->row();
 
+		// Check for conflict before approving (Issue 6)
+		$condition = "((user_type_from = '{$data->user_type_from}' AND request_from_id = {$data->request_from_id}) OR (user_type_to = '{$data->user_type_to}' AND request_to_id = {$data->request_to_id}))";
+		$conflict_count = $this->db->where('exhibition_id', $data->exhibition_id)
+			->where('is_approved', 1)
+			->where('is_deleted', 0)
+			->where('id !=', $data->id)
+			->where('mou_sign_date', $data->mou_sign_date)
+			->where('mou_sign_time', $data->mou_sign_time)
+			->where($condition)
+			->count_all_results('es_exhibition_mou_sign');
+
+		if ($conflict_count > 0) {
+			$this->session->set_flashdata('error', 'Cannot approve: Either Sender or Receiver is already booked for another approved MoU at this date and time.');
+			redirect(base_url('mou_sign.html'));
+			return;
+		}
+
 		$this->db
 			->where(mycolumn(), $this->input->get('id'))
 			->update('es_exhibition_mou_sign', array(
@@ -811,6 +830,7 @@ class Mou_report extends MY_Controller
 
 			$validated_rows = array();
 			$has_errors = false;
+			$sheet_bookings = array();
 
 			for ($idx = 1; $idx < count($rows); $idx++) {
 				$row = $rows[$idx];
@@ -921,16 +941,40 @@ class Mou_report extends MY_Controller
 
 				if ($customer_from_id && $customer_to_id && $booking_date !== '' && $booking_time !== '') {
 					$formatted_time = date('H:i:s', strtotime($booking_time));
-					$condition = "((user_type_from = 'exhibitor' AND request_from_id = {$customer_from_id}) OR (user_type_to = 'exhibitor' AND request_to_id = {$customer_to_id}))";
-					$conflict_count = $this->db->where('exhibition_id', $exhibition_id)
-						->where('is_approved', 1)
-						->where('is_deleted', 0)
-						->where('mou_sign_date', $booking_date)
-						->where('mou_sign_time', $formatted_time)
-						->where($condition)
-						->count_all_results('es_exhibition_mou_sign');
-					if ($conflict_count > 0) {
-						$row_errors[] = 'Scheduling conflict: Either Sender or Receiver is already booked for an approved MoU at this date and time.';
+					
+					// Check for conflict within the spreadsheet itself
+					$timeslot_key = $booking_date . '_' . $formatted_time;
+					if (isset($sheet_bookings[$timeslot_key])) {
+						foreach ($sheet_bookings[$timeslot_key] as $booked_exhibitor_id) {
+							if ($booked_exhibitor_id === $customer_from_id || $booked_exhibitor_id === $customer_to_id) {
+								$row_errors[] = 'Spreadsheet conflict: Either Sender or Receiver has another MoU entry at this same date and time in the uploaded file.';
+								break;
+							}
+						}
+					}
+
+					// Check database conflict
+					if (empty($row_errors)) {
+						$condition = "((user_type_from = 'exhibitor' AND request_from_id = {$customer_from_id}) OR (user_type_to = 'exhibitor' AND request_to_id = {$customer_to_id}))";
+						$conflict_count = $this->db->where('exhibition_id', $exhibition_id)
+							->where('is_approved', 1)
+							->where('is_deleted', 0)
+							->where('mou_sign_date', $booking_date)
+							->where('mou_sign_time', $formatted_time)
+							->where($condition)
+							->count_all_results('es_exhibition_mou_sign');
+						if ($conflict_count > 0) {
+							$row_errors[] = 'Scheduling conflict: Either Sender or Receiver is already booked for an approved MoU at this date and time.';
+						}
+					}
+
+					// If no errors so far, log these bookings to detect intra-sheet conflicts for subsequent rows
+					if (empty($row_errors)) {
+						if (!isset($sheet_bookings[$timeslot_key])) {
+							$sheet_bookings[$timeslot_key] = array();
+						}
+						$sheet_bookings[$timeslot_key][] = $customer_from_id;
+						$sheet_bookings[$timeslot_key][] = $customer_to_id;
 					}
 				}
 
@@ -998,26 +1042,93 @@ class Mou_report extends MY_Controller
 			return;
 		}
 
-		$this->db->trans_start();
+		// Perform full server-side validation to prevent tampering (Issue 5)
+		$sheet_bookings = array();
+		$validated_inserts = array();
 
-		$insert_count = 0;
 		foreach ($import_rows as $row) {
 			if (($row['status'] ?? '') !== 'valid') {
 				continue;
 			}
 
-			$data = array(
+			$day = trim($row['exhibition_day'] ?? '');
+			$date = trim($row['booking_date'] ?? '');
+			$time = trim($row['booking_time'] ?? '');
+			$from_email = trim($row['request_from_email'] ?? '');
+			$to_email = trim($row['request_to_email'] ?? '');
+			$location = trim($row['mou_sign_location'] ?? '');
+			$value = trim($row['commercial_value'] ?? '');
+			$desc = trim($row['description'] ?? '');
+
+			// 1. Basic validation
+			if (empty($day) || empty($date) || empty($time) || empty($from_email) || empty($to_email) || empty($location)) {
+				echo json_encode(array('status' => 'error', 'message' => 'Validation failed: Missing required fields in some records.'));
+				return;
+			}
+
+			// 2. Sender email check
+			$cust_from = $this->db->select('id')->where('email', $from_email)->where('is_deleted', 0)->where('is_active', 1)->get('es_customers')->row();
+			if (!$cust_from) {
+				echo json_encode(array('status' => 'error', 'message' => "Validation failed: Email '{$from_email}' is not registered."));
+				return;
+			}
+
+			// 3. Receiver email check
+			$cust_to = $this->db->select('id')->where('email', $to_email)->where('is_deleted', 0)->where('is_active', 1)->get('es_customers')->row();
+			if (!$cust_to) {
+				echo json_encode(array('status' => 'error', 'message' => "Validation failed: Email '{$to_email}' is not registered."));
+				return;
+			}
+
+			$from_id = $cust_from->id;
+			$to_id = $cust_to->id;
+			$formatted_time = date('H:i:s', strtotime($time));
+			$timeslot_key = $date . '_' . $formatted_time;
+
+			// 4. Intra-sheet duplicate detection
+			if (isset($sheet_bookings[$timeslot_key])) {
+				foreach ($sheet_bookings[$timeslot_key] as $booked_id) {
+					if ($booked_id === $from_id || $booked_id === $to_id) {
+						echo json_encode(array('status' => 'error', 'message' => 'Validation failed: Conflicting booking times within the sheet.'));
+						return;
+					}
+				}
+			}
+
+			// 5. Database conflict check (including is_deleted = 0)
+			$condition = "((user_type_from = 'exhibitor' AND request_from_id = {$from_id}) OR (user_type_to = 'exhibitor' AND request_to_id = {$to_id}))";
+			$conflict_count = $this->db->where('exhibition_id', $exhibition_id)
+				->where('is_approved', 1)
+				->where('is_deleted', 0)
+				->where('mou_sign_date', $date)
+				->where('mou_sign_time', $formatted_time)
+				->where($condition)
+				->count_all_results('es_exhibition_mou_sign');
+
+			if ($conflict_count > 0) {
+				echo json_encode(array('status' => 'error', 'message' => 'Validation failed: Scheduling conflict exists for one of the exhibitors at the selected timeslots.'));
+				return;
+			}
+
+			// Track sheet bookings
+			if (!isset($sheet_bookings[$timeslot_key])) {
+				$sheet_bookings[$timeslot_key] = array();
+			}
+			$sheet_bookings[$timeslot_key][] = $from_id;
+			$sheet_bookings[$timeslot_key][] = $to_id;
+
+			$validated_inserts[] = array(
 				'exhibition_id' => $exhibition_id,
-				'request_from_id' => $row['request_from_id'],
-				'request_to_id' => $row['request_to_id'],
-				'mou_sign_location' => $row['mou_sign_location'],
-				'exhibition_day' => $row['exhibition_day'],
-				'mou_sign_date' => $row['booking_date'],
-				'mou_sign_time' => date('H:i:s', strtotime($row['booking_time'])),
+				'request_from_id' => $from_id,
+				'request_to_id' => $to_id,
+				'mou_sign_location' => $location,
+				'exhibition_day' => $day,
+				'mou_sign_date' => $date,
+				'mou_sign_time' => $formatted_time,
 				'user_type_from' => 'exhibitor',
 				'user_type_to' => 'exhibitor',
-				'description' => $row['description'],
-				'commercial_value' => $row['commercial_value'],
+				'description' => $desc,
+				'commercial_value' => $value,
 				'is_approved' => $auto_approve,
 				'approved_by' => $auto_approve ? $this->userdata->id : null,
 				'approved_on' => $auto_approve ? date('Y-m-d H:i:s') : null,
@@ -1025,11 +1136,13 @@ class Mou_report extends MY_Controller
 				'is_deleted' => 0,
 				'created_on' => date('Y-m-d H:i:s'),
 			);
-
-			$this->db->insert('es_exhibition_mou_sign', $data);
-			$insert_count++;
 		}
 
+		$this->db->trans_start();
+		foreach ($validated_inserts as $data) {
+			$this->db->insert('es_exhibition_mou_sign', $data);
+		}
+		$insert_count = count($validated_inserts);
 		$this->db->trans_complete();
 
 		if ($this->db->trans_status() === FALSE) {
