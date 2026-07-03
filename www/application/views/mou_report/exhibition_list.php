@@ -44,6 +44,14 @@
                                     </select>
                                 </div>
 
+                                <div class="col-sm-3">
+                                    <label>Sort By</label>
+                                    <select name="filter_sort" class="form-control">
+                                        <option value="newest" <?= (($this->input->get('filter_sort') && $this->input->get('filter_sort') == 'newest') || !$this->input->get('filter_sort') ? 'selected' : '') ?>>Newest</option>
+                                        <option value="oldest" <?= (($this->input->get('filter_sort') && $this->input->get('filter_sort') == 'oldest') ? 'selected' : '') ?>>Oldest</option>
+                                    </select>
+                                </div>
+
                                 <div class="col-sm-2">
                                     <label>&nbsp;</label>
                                     <button type="submit" class="btn btn-primary btn-block">Filter</button>
@@ -162,8 +170,12 @@ $exhibitions = $this->db->select('id, exhibition_title')->where('is_deleted', 0)
 
 <script type="text/javascript">
     $(document).ready(function() {
-        oTable = $('#crud-table').dataTable($.extend(datatable_settings, {
+        var filterSort = '<?= $this->input->get("filter_sort") ? $this->input->get("filter_sort") : "newest" ?>';
+        var defaultOrder = (filterSort === 'oldest') ? [[0, 'asc']] : [[0, 'desc']];
+
+        oTable = $('#crud-table').dataTable($.extend({}, datatable_settings, {
             "sAjaxSource": '<?php echo base_url('mou_sign-datatable.html'); ?>' + location.search,
+            "aaSorting": defaultOrder
         }));
         my_datatable(oTable, {
             exportable: true,
