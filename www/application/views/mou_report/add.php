@@ -55,24 +55,18 @@
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label for="request_from_id">Request From (Exhibitor) *</label>
-                                        <select class="form-control" name="request_from_id" id="request_from_id">
-                                            <option value="">- select customer -</option>
-                                            <?php foreach ($customers as $customer): ?>
-                                                <option value="<?= $customer->id; ?>"><?= html_escape($customer->company . ' ('.$customer->name.')'); ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
+                                         <label for="request_from_id">Request From (Exhibitor) *</label>
+                                         <select class="form-control" name="request_from_id" id="request_from_id">
+                                             <option value="">- select exhibition first -</option>
+                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label for="request_to_id">Request To (Exhibitor) *</label>
-                                        <select class="form-control" name="request_to_id" id="request_to_id">
-                                            <option value="">- select customer -</option>
-                                            <?php foreach ($customers as $customer): ?>
-                                                <option value="<?= $customer->id; ?>"><?= html_escape($customer->company . ' ('.$customer->name.')'); ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
+                                         <label for="request_to_id">Request To (Exhibitor) *</label>
+                                         <select class="form-control" name="request_to_id" id="request_to_id">
+                                             <option value="">- select exhibition first -</option>
+                                         </select>
                                     </div>
                                 </div>
                             </div>
@@ -82,12 +76,7 @@
                                     <div class="form-group">
                                         <label for="exhibition_day">Exhibition Day *</label>
                                         <select class="form-control" name="exhibition_day" id="exhibition_day">
-                                            <option value="">- select day -</option>
-                                            <option value="Day 1">Day 1</option>
-                                            <option value="Day 2">Day 2</option>
-                                            <option value="Day 3">Day 3</option>
-                                            <option value="Day 4">Day 4</option>
-                                            <option value="Day 5">Day 5</option>
+                                            <option value="">- select exhibition first -</option>
                                         </select>
                                     </div>
                                 </div>
@@ -111,14 +100,25 @@
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="commercial_value">Commercial Value *</label>
-                                        <input type="text" class="form-control" name="commercial_value" id="commercial_value" placeholder="e.g. 50000 USD">
-                                    </div>
-                                </div>
-                            </div>
+                             <div class="row">
+                                 <div class="col-sm-6">
+                                     <div class="form-group">
+                                         <label for="commercial_amount">Commercial Value *</label>
+                                         <div class="row">
+                                             <div class="col-xs-8" style="padding-right: 5px;">
+                                                 <input type="number" min="0" class="form-control" id="commercial_amount" placeholder="Amount (e.g. 50000)" required>
+                                             </div>
+                                             <div class="col-xs-4" style="padding-left: 5px;">
+                                                 <select class="form-control" id="commercial_currency">
+                                                     <option value="USD">USD</option>
+                                                     <option value="PKR">PKR</option>
+                                                 </select>
+                                             </div>
+                                         </div>
+                                         <input type="hidden" name="commercial_value" id="commercial_value">
+                                     </div>
+                                 </div>
+                             </div>
 
                             <div class="row">
                                 <div class="col-sm-12">
@@ -180,15 +180,25 @@
         $('#exhibition_id').change(function() {
             var exhibition_id = $(this).val();
             var select = $('#mou_sign_location_select');
+            var daySelect = $('#exhibition_day');
+            var fromCustomer = $('#request_from_id');
+            var toCustomer = $('#request_to_id');
             
             // Reset fields
             select.html('<option value="">- loading locations... -</option>').val('');
+            daySelect.html('<option value="">- loading days... -</option>').val('');
+            fromCustomer.html('<option value="">- loading exhibitors... -</option>').val('');
+            toCustomer.html('<option value="">- loading exhibitors... -</option>').val('');
+            $('#booking_date').val('').prop('readonly', false);
             $('#custom_location_wrapper').hide();
             $('#mou_sign_location_custom').removeAttr('name').val('');
             select.attr('name', 'mou_sign_location');
 
             if (!exhibition_id) {
                 select.html('<option value="">- select exhibition first -</option>');
+                daySelect.html('<option value="">- select day -</option>');
+                fromCustomer.html('<option value="">- select exhibition first -</option>');
+                toCustomer.html('<option value="">- select exhibition first -</option>');
                 return;
             }
 
@@ -197,18 +207,63 @@
                 type: 'POST',
                 data: { exhibition_id: exhibition_id },
                 dataType: 'json',
-                success: function(locations) {
+                success: function(response) {
+                    // Populate locations
                     var options = '<option value="">- select location -</option>';
-                    $.each(locations, function(i, loc) {
+                    $.each(response.locations, function(i, loc) {
                         options += '<option value="' + htmlEntities(loc.location) + '">' + htmlEntities(loc.location) + '</option>';
                     });
                     options += '<option value="_custom_">** Other (Type Custom Location) **</option>';
                     select.html(options);
+
+                    // Populate days dynamically
+                    var dayOptions = '<option value="">- select day -</option>';
+                    $.each(response.dates, function(i, date) {
+                        var dayVal = 'Day ' + (i + 1);
+                        dayOptions += '<option value="' + dayVal + '" data-date="' + date + '">' + dayVal + ' (' + date + ')</option>';
+                    });
+                    daySelect.html(dayOptions);
+
+                    // Populate exhibitors dynamically
+                    var exhibitorOptions = '<option value="">- select customer -</option>';
+                    $.each(response.exhibitors, function(i, cust) {
+                        exhibitorOptions += '<option value="' + cust.id + '">' + htmlEntities(cust.company) + ' (' + htmlEntities(cust.name) + ')</option>';
+                    });
+                    fromCustomer.html(exhibitorOptions);
+                    toCustomer.html(exhibitorOptions);
                 },
                 error: function() {
                     select.html('<option value="">- error loading locations -</option>');
+                    daySelect.html('<option value="">- error loading days -</option>');
+                    fromCustomer.html('<option value="">- error loading exhibitors -</option>');
+                    toCustomer.html('<option value="">- error loading exhibitors -</option>');
                 }
             });
+        });
+
+        // Auto-fill and lock date when Exhibition Day is selected
+        $('#exhibition_day').change(function() {
+            var selectedOption = $(this).find('option:selected');
+            var date = selectedOption.attr('data-date');
+            if (date) {
+                $('#booking_date').val(date).prop('readonly', true);
+            } else {
+                $('#booking_date').val('').prop('readonly', false);
+            }
+        });
+
+        // Handle commercial value amount & currency concatenation
+        function updateCommercialValue() {
+            var amount = $('#commercial_amount').val().trim();
+            var currency = $('#commercial_currency').val();
+            if (amount !== '') {
+                $('#commercial_value').val(amount + ' ' + currency);
+            } else {
+                $('#commercial_value').val('');
+            }
+        }
+        $('#commercial_amount, #commercial_currency').on('input change', function() {
+            updateCommercialValue();
         });
 
         // Handle custom location input toggling

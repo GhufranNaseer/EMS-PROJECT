@@ -128,7 +128,7 @@ $exhibitions = $this->db->select('id, exhibition_title')->where('is_deleted', 0)
                             </div>
                         </div>
                         <div class="col-md-6 text-right">
-                            <a href="<?= base_url('mou_sign-download-template.html'); ?>" class="btn btn-link"><i class="fa fa-download"></i> Download Sample Excel Template</a>
+                            <a href="<?= base_url('mou_sign-download-template.html'); ?>" class="btn btn-link" id="download-template-link"><i class="fa fa-download"></i> Download Sample Excel Template</a>
                         </div>
                     </div>
                     
@@ -199,6 +199,26 @@ $exhibitions = $this->db->select('id, exhibition_title')->where('is_deleted', 0)
         // Reset validation state when input fields are changed
         $('#import_file, #import_exhibition_id').on('change', function() {
             resetValidationState();
+        });
+
+        // Dynamic template download management
+        $('#download-template-link').click(function(e) {
+            var exhibition_id = $('#import_exhibition_id').val();
+            if (!exhibition_id) {
+                e.preventDefault();
+                alert('Please select an Exhibition first to download its template.');
+                return false;
+            }
+        });
+
+        $('#import_exhibition_id').on('change', function() {
+            var exhibition_id = $(this).val();
+            var baseUrl = '<?= base_url("mou_sign-download-template.html"); ?>';
+            if (exhibition_id) {
+                $('#download-template-link').attr('href', baseUrl + '?exhibition_id=' + exhibition_id);
+            } else {
+                $('#download-template-link').attr('href', baseUrl);
+            }
         });
 
         // Reset modal on close

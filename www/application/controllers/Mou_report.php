@@ -666,10 +666,113 @@ class Mou_report extends MY_Controller
 		$this->form_validation->set_rules('commercial_value', 'commercial_value*Commercial Value', 'trim|required');
 		$this->form_validation->set_rules('description', 'description*Description', 'trim|required');
 
-		if ($this->form_validation->run() == false)
+		if ($this->form_validation->run() == false) {
 			return $this->common->doError(func_num_args(), $this->common->getFVError());
-		else
-			return $this->common->doError(func_num_args(), "done", true);
+		}
+
+		$exhibition_id = $this->input->post('exhibition_id');
+		$from_id = $this->input->post('request_from_id');
+		$to_id = $this->input->post('request_to_id');
+		$day = $this->input->post('exhibition_day');
+		$date = $this->input->post('booking_date');
+		$time = $this->input->post('booking_time');
+		$location = $this->input->post('mou_sign_location');
+
+		// 1. Sender and Receiver check
+		if ($from_id == $to_id) {
+			return $this->common->doError(func_num_args(), "Request From and Request To customers must be different.");
+		}
+
+		// 2. Validate exhibition existence
+		$exhibition = $this->db->where('id', $exhibition_id)->where('is_deleted', 0)->get('es_exhibitions')->row();
+		if (!$exhibition) {
+			return $this->common->doError(func_num_args(), "Selected Exhibition does not exist.");
+		}
+
+		// 3. Verify event dates & days
+		$event_dates = $this->db->where('exhibition_id', $exhibition_id)->order_by('date', 'ASC')->get('es_exhibition_date')->result();
+		$valid_days_map = array();
+		$valid_dates_map = array();
+		$day_counter = 1;
+		foreach ($event_dates as $ed) {
+			$day_name = 'Day ' . $day_counter;
+			$valid_days_map[$day_name] = $ed->date;
+			
+			$open = !empty($ed->open_time) ? $ed->open_time : '09:00:00';
+			$close = !empty($ed->closing_time) ? $ed->closing_time : '18:00:00';
+			$valid_dates_map[$ed->date] = array('day' => $day_name, 'open' => $open, 'close' => $close);
+			$day_counter++;
+		}
+
+		if (!isset($valid_days_map[$day])) {
+			return $this->common->doError(func_num_args(), "Exhibition Day '{$day}' is invalid for this event. Maximum allowed day is Day " . count($valid_days_map) . ".");
+		}
+
+		if (!isset($valid_dates_map[$date])) {
+			return $this->common->doError(func_num_args(), "Date '{$date}' is not configured for this exhibition.");
+		}
+
+		if ($valid_days_map[$day] !== $date) {
+			return $this->common->doError(func_num_args(), "Mismatch: Exhibition Day '{$day}' is configured for date '{$valid_days_map[$day]}', but you selected date '{$date}'.");
+		}
+
+		// 4. Validate time range (operating hours)
+		$formatted_time = date('H:i:s', strtotime($time));
+		$open_time = $valid_dates_map[$date]['open'];
+		$close_time = $valid_dates_map[$date]['close'];
+		if ($formatted_time < $open_time || $formatted_time > $close_time) {
+			return $this->common->doError(func_num_args(), "Sign time '{$time}' is outside event operating hours (" . date('H:i', strtotime($open_time)) . " to " . date('H:i', strtotime($close_time)) . ").");
+		}
+
+		// 5. Validate location (map to database casing if it matches case-insensitively)
+		$event_locations = $this->db->select('location')
+			->where('exhibition_id', $exhibition_id)
+			->where('type', 'mou_location')
+			->get('location_for_meeting')
+			->result();
+		
+		$locations_map = array();
+		foreach ($event_locations as $el) {
+			$locations_map[strtolower(trim($el->location))] = $el->location;
+		}
+
+		$loc_key = strtolower(trim($location));
+		if (isset($locations_map[$loc_key])) {
+			$_POST['mou_sign_location'] = $locations_map[$loc_key];
+		}
+
+		// 6. Validate exhibitor bookings (event participation)
+		$from_booked = $this->db->where('exhibition_id', $exhibition_id)
+			->where('customer_id', $from_id)
+			->where('is_canceled', 0)
+			->count_all_results('es_exhibition_booking');
+		if ($from_booked === 0) {
+			return $this->common->doError(func_num_args(), "The 'Request From' customer is not a registered exhibitor for this exhibition.");
+		}
+
+		$to_booked = $this->db->where('exhibition_id', $exhibition_id)
+			->where('customer_id', $to_id)
+			->where('is_canceled', 0)
+			->count_all_results('es_exhibition_booking');
+		if ($to_booked === 0) {
+			return $this->common->doError(func_num_args(), "The 'Request To' customer is not a registered exhibitor for this exhibition.");
+		}
+
+		// 7. Check for approved conflicts
+		$condition = "((user_type_from = 'exhibitor' AND request_from_id = {$from_id}) OR (user_type_to = 'exhibitor' AND request_to_id = {$to_id}))";
+		$conflict_count = $this->db->where('exhibition_id', $exhibition_id)
+			->where('is_approved', 1)
+			->where('is_deleted', 0)
+			->where('mou_sign_date', $date)
+			->where('mou_sign_time', $formatted_time)
+			->where($condition)
+			->count_all_results('es_exhibition_mou_sign');
+
+		if ($conflict_count > 0) {
+			return $this->common->doError(func_num_args(), "Scheduling conflict: Either Sender or Receiver is already booked for an approved MoU at this date and time.");
+		}
+
+		return $this->common->doError(func_num_args(), "done", true);
 	}
 
 	function crd_add_submit()
@@ -703,11 +806,107 @@ class Mou_report extends MY_Controller
 
 	function download_template()
 	{
-		$lib_path = APPPATH . 'libraries' . DIRECTORY_SEPARATOR . 'SimpleXLSXGen.php';
-		$lib_path = str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $lib_path);
-		require_once($lib_path);
+		$exhibition_id = $this->input->get('exhibition_id');
+		if (empty($exhibition_id)) {
+			show_error('Exhibition ID is required to download the template.');
+		}
 
-		$headers = array(
+		$exhibition = $this->db->select('id, exhibition_title')
+			->where('id', $exhibition_id)
+			->where('is_deleted', 0)
+			->get('es_exhibitions')
+			->row();
+
+		if (!$exhibition) {
+			show_error('Selected Exhibition does not exist.');
+		}
+
+		// 1. Fetch active event exhibitors
+		$exhibitors = $this->db->select('C.company, C.name, C.email')
+			->from('es_exhibition_booking as B')
+			->join('es_customers as C', 'B.customer_id = C.id')
+			->where('B.exhibition_id', $exhibition_id)
+			->where('B.is_canceled', 0)
+			->where('C.is_deleted', 0)
+			->where('C.is_active', 1)
+			->group_by('C.id')
+			->get()
+			->result();
+
+		$exhibitors_data = array(
+			array('Company Name', 'Contact Person', 'Email Address')
+		);
+		$sample_sender_email = 'sender@example.com';
+		$sample_receiver_email = 'receiver@example.com';
+		if (count($exhibitors) > 0) {
+			$sample_sender_email = $exhibitors[0]->email;
+			if (isset($exhibitors[1])) {
+				$sample_receiver_email = $exhibitors[1]->email;
+			} else {
+				$sample_receiver_email = $exhibitors[0]->email;
+			}
+		}
+		foreach ($exhibitors as $e) {
+			$exhibitors_data[] = array(
+				$e->company,
+				$e->name,
+				$e->email
+			);
+		}
+
+		// 2. Fetch event dates
+		$dates = $this->db->select('date, open_time, closing_time')
+			->where('exhibition_id', $exhibition_id)
+			->order_by('date', 'ASC')
+			->get('es_exhibition_date')
+			->result();
+
+		$dates_data = array(
+			array('Exhibition Day', 'Sign Date', 'Operating Hours')
+		);
+		$day_counter = 1;
+		$sample_day = 'Day 1';
+		$sample_date = date('Y-m-d');
+		foreach ($dates as $d) {
+			$day_name = 'Day ' . $day_counter;
+			if ($day_counter === 1) {
+				$sample_date = $d->date;
+			}
+			$open = !empty($d->open_time) ? date('H:i', strtotime($d->open_time)) : '09:00';
+			$close = !empty($d->closing_time) ? date('H:i', strtotime($d->closing_time)) : '18:00';
+			$dates_data[] = array(
+				$day_name,
+				$d->date,
+				$open . ' - ' . $close
+			);
+			$day_counter++;
+		}
+
+		// 3. Fetch event locations
+		$locations = $this->db->select('location')
+			->where('exhibition_id', $exhibition_id)
+			->where('type', 'mou_location')
+			->get('location_for_meeting')
+			->result();
+
+		$locations_data = array(
+			array('Location Name')
+		);
+		$sample_location = 'Meeting Room A';
+		if (count($locations) > 0) {
+			$sample_location = $locations[0]->location;
+		}
+		foreach ($locations as $l) {
+			$locations_data[] = array(
+				$l->location
+			);
+		}
+
+		// 4. Generate Main Import Sheet
+		$main_sheet_data = array(
+			array('EVENT ID', (int)$exhibition_id),
+			array('EVENT NAME', $exhibition->exhibition_title),
+			array('INSTRUCTIONS: Please do not modify rows 1-3. Fill your MoU details from Row 5 onwards. Reference tabs at the bottom contain valid exhibitors, locations, and dates.'),
 			array(
 				'Exhibition Day', 
 				'Sign Date', 
@@ -719,19 +918,29 @@ class Mou_report extends MY_Controller
 				'Description'
 			),
 			array(
-				'Day 1',
-				'2026-07-01',
+				$sample_day,
+				$sample_date,
 				'12:00',
-				'sender@example.com',
-				'receiver@example.com',
-				'Meeting Room A',
+				$sample_sender_email,
+				$sample_receiver_email,
+				$sample_location,
 				'50000 USD',
 				"Sample MoU signing details.\nLine breaks within this cell are fully supported."
 			)
 		);
 
-		$xlsx = \Shuchkin\SimpleXLSXGen::fromArray($headers);
-		$xlsx->downloadAs('mou_bulk_import_template.xlsx');
+		$lib_path = APPPATH . 'libraries' . DIRECTORY_SEPARATOR . 'SimpleXLSXGen.php';
+		$lib_path = str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $lib_path);
+		require_once($lib_path);
+
+		$xlsx = \Shuchkin\SimpleXLSXGen::fromArray($main_sheet_data, 'MoU Sign Import');
+		$xlsx->addSheet($exhibitors_data, 'Valid Exhibitors');
+		$xlsx->addSheet($locations_data, 'Valid Locations');
+		$xlsx->addSheet($dates_data, 'Exhibition Dates & Days');
+
+		$safe_title = preg_replace('/[^A-Za-z0-9_\-]/', '_', $exhibition->exhibition_title);
+		$filename = 'mou_bulk_import_' . $safe_title . '.xlsx';
+		$xlsx->downloadAs($filename);
 		exit;
 	}
 
@@ -792,8 +1001,18 @@ class Mou_report extends MY_Controller
 				unlink($file_path);
 			}
 
-			if (count($rows) <= 1) {
-				echo json_encode(array('status' => 'error', 'message' => 'Excel file is empty or contains no records.'));
+			if (count($rows) <= 4) {
+				echo json_encode(array('status' => 'error', 'message' => 'Excel file is empty or contains no records. It must contain metadata in rows 1-3, headers in row 4, and data starting at row 5.'));
+				return;
+			}
+
+			// Validate Event ID metadata
+			$excel_event_id = isset($rows[0][1]) ? (int)trim($rows[0][1]) : 0;
+			if ($excel_event_id !== (int)$exhibition_id) {
+				echo json_encode(array(
+					'status' => 'error',
+					'message' => 'Event mismatch! The uploaded template belongs to Event ID ' . $excel_event_id . ', but you selected "' . $exhibition->exhibition_title . '" (ID: ' . $exhibition_id . '). Please upload the correct template for the selected event.'
+				));
 				return;
 			}
 
@@ -810,7 +1029,7 @@ class Mou_report extends MY_Controller
 
 			$file_headers = array_map(function($header) {
 				return trim(strtolower($header));
-			}, $rows[0]);
+			}, $rows[3]);
 
 			$header_errors = array();
 			for ($i = 0; $i < 8; $i++) {
@@ -822,17 +1041,72 @@ class Mou_report extends MY_Controller
 			if (!empty($header_errors)) {
 				echo json_encode(array(
 					'status' => 'error', 
-					'message' => 'Excel headers mismatch. Please use the downloaded template.', 
+					'message' => 'Excel headers mismatch in Row 4. Please use the downloaded template.', 
 					'details' => $header_errors
 				));
 				return;
+			}
+
+			// Fetch active exhibitors registered for this specific event
+			$event_exhibitors = $this->db->select('C.id, C.name, C.company, C.email')
+				->from('es_exhibition_booking as B')
+				->join('es_customers as C', 'B.customer_id = C.id')
+				->where('B.exhibition_id', $exhibition_id)
+				->where('B.is_canceled', 0)
+				->where('C.is_deleted', 0)
+				->where('C.is_active', 1)
+				->get()
+				->result();
+
+			$exhibitor_map = array();
+			foreach ($event_exhibitors as $ee) {
+				$exhibitor_map[strtolower(trim($ee->email))] = array(
+					'id' => $ee->id,
+					'name' => $ee->name,
+					'company' => $ee->company
+				);
+			}
+
+			// Fetch event dates and build maps for days and dates
+			$event_dates_db = $this->db->select('date, open_time, closing_time')
+				->where('exhibition_id', $exhibition_id)
+				->order_by('date', 'ASC')
+				->get('es_exhibition_date')
+				->result();
+
+			$valid_days_map = array();
+			$valid_dates_map = array();
+			$day_counter = 1;
+			foreach ($event_dates_db as $ed) {
+				$day_name = 'Day ' . $day_counter;
+				$open = !empty($ed->open_time) ? $ed->open_time : '09:00:00';
+				$close = !empty($ed->closing_time) ? $ed->closing_time : '18:00:00';
+				
+				$valid_days_map[$day_name] = $ed->date;
+				$valid_dates_map[$ed->date] = array('day' => $day_name, 'open' => $open, 'close' => $close);
+				$day_counter++;
+			}
+
+			// Fetch registered locations for this specific event
+			$event_locations_db = $this->db->select('location')
+				->where('exhibition_id', $exhibition_id)
+				->where('type', 'mou_location')
+				->get('location_for_meeting')
+				->result();
+
+			$valid_locations = array();
+			$locations_map = array();
+			foreach ($event_locations_db as $el) {
+				$loc_key = strtolower(trim($el->location));
+				$valid_locations[] = $loc_key;
+				$locations_map[$loc_key] = $el->location;
 			}
 
 			$validated_rows = array();
 			$has_errors = false;
 			$sheet_bookings = array();
 
-			for ($idx = 1; $idx < count($rows); $idx++) {
+			for ($idx = 4; $idx < count($rows); $idx++) {
 				$row = $rows[$idx];
 				
 				$is_empty_row = true;
@@ -870,9 +1144,9 @@ class Mou_report extends MY_Controller
 				$request_from_email = trim($row[3] ?? '');
 				$request_to_email = trim($row[4] ?? '');
 				$mou_sign_location = trim($row[5] ?? '');
+				$mou_sign_location_original = isset($locations_map[strtolower($mou_sign_location)]) ? $locations_map[strtolower($mou_sign_location)] : $mou_sign_location;
 				$commercial_value = trim($row[6] ?? '');
 				$description = trim($row[7] ?? '');
-
 
 				if ($exhibition_day === '') $row_errors[] = 'Exhibition Day is required.';
 				if ($booking_date === '') $row_errors[] = 'Sign Date is required.';
@@ -883,66 +1157,84 @@ class Mou_report extends MY_Controller
 				if ($commercial_value === '') $row_errors[] = 'Commercial Value is required.';
 				if ($description === '') $row_errors[] = 'Description is required.';
 
-				$valid_days = array('Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5');
-				if ($exhibition_day !== '' && !in_array($exhibition_day, $valid_days)) {
-					$row_errors[] = 'Exhibition Day must be Day 1, Day 2, Day 3, Day 4, or Day 5.';
+				// Validation: Day Index Check
+				if ($exhibition_day !== '') {
+					if (!isset($valid_days_map[$exhibition_day])) {
+						$row_errors[] = 'Exhibition Day "' . $exhibition_day . '" is invalid for this event. Max allowed day is Day ' . count($valid_days_map) . '.';
+					}
 				}
 
+				// Validation: Date Range and format check
 				if ($booking_date !== '') {
 					$dt = \DateTime::createFromFormat('Y-m-d', $booking_date);
 					if (!$dt || $dt->format('Y-m-d') !== $booking_date) {
 						$row_errors[] = 'Sign Date must be a valid date in YYYY-MM-DD format.';
+					} else {
+						if (!isset($valid_dates_map[$booking_date])) {
+							$row_errors[] = 'Sign Date "' . $booking_date . '" is not configured for this exhibition.';
+						} else if ($exhibition_day !== '' && isset($valid_days_map[$exhibition_day])) {
+							// Cross-validation: Day index must match configured date
+							if ($valid_days_map[$exhibition_day] !== $booking_date) {
+								$row_errors[] = 'Mismatch: "' . $exhibition_day . '" is configured for date ' . $valid_days_map[$exhibition_day] . ', but Excel lists date ' . $booking_date . '.';
+							}
+						}
 					}
 				}
 
+				// Validation: Location check
+				if ($mou_sign_location !== '') {
+					if (!in_array(strtolower($mou_sign_location), $valid_locations)) {
+						$row_errors[] = 'Location "' . $mou_sign_location . '" is not registered for this exhibition. See the "Valid Locations" reference sheet.';
+					}
+				}
+
+				// Validation: Operating hours and format check
 				if ($booking_time !== '') {
 					if (!preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d)?$/', $booking_time)) {
 						$row_errors[] = 'Sign Time must be in HH:MM format.';
+					} else if ($booking_date !== '' && isset($valid_dates_map[$booking_date])) {
+						$formatted_time = date('H:i:s', strtotime($booking_time));
+						$open_time = $valid_dates_map[$booking_date]['open'];
+						$close_time = $valid_dates_map[$booking_date]['close'];
+						if ($formatted_time < $open_time || $formatted_time > $close_time) {
+							$row_errors[] = 'Sign Time "' . $booking_time . '" is outside event operating hours (' . date('H:i', strtotime($open_time)) . ' to ' . date('H:i', strtotime($close_time)) . ').';
+						}
 					}
 				}
 
+				// Validation: Event-bound Exhibitor check
 				$customer_from_id = null;
 				$customer_from_name = '';
 				if ($request_from_email !== '') {
-					$cust_from = $this->db->select('id, name, company')
-						->where('email', $request_from_email)
-						->where('is_deleted', 0)
-						->where('is_active', 1)
-						->get('es_customers')
-						->row();
-					if ($cust_from) {
-						$customer_from_id = $cust_from->id;
-						$customer_from_name = $cust_from->company . ' (' . $cust_from->name . ')';
+					$from_email_key = strtolower($request_from_email);
+					if (isset($exhibitor_map[$from_email_key])) {
+						$customer_from_id = $exhibitor_map[$from_email_key]['id'];
+						$customer_from_name = $exhibitor_map[$from_email_key]['company'] . ' (' . $exhibitor_map[$from_email_key]['name'] . ')';
 					} else {
-						$row_errors[] = "Request From Email ('{$request_from_email}') is not registered as an active Exhibitor.";
+						$row_errors[] = "Request From Email ('{$request_from_email}') is not registered as an active Exhibitor for this specific exhibition.";
 					}
 				}
 
 				$customer_to_id = null;
 				$customer_to_name = '';
 				if ($request_to_email !== '') {
-					$cust_to = $this->db->select('id, name, company')
-						->where('email', $request_to_email)
-						->where('is_deleted', 0)
-						->where('is_active', 1)
-						->get('es_customers')
-						->row();
-					if ($cust_to) {
-						$customer_to_id = $cust_to->id;
-						$customer_to_name = $cust_to->company . ' (' . $cust_to->name . ')';
+					$to_email_key = strtolower($request_to_email);
+					if (isset($exhibitor_map[$to_email_key])) {
+						$customer_to_id = $exhibitor_map[$to_email_key]['id'];
+						$customer_to_name = $exhibitor_map[$to_email_key]['company'] . ' (' . $exhibitor_map[$to_email_key]['name'] . ')';
 					} else {
-						$row_errors[] = "Request To Email ('{$request_to_email}') is not registered as an active Exhibitor.";
+						$row_errors[] = "Request To Email ('{$request_to_email}') is not registered as an active Exhibitor for this specific exhibition.";
 					}
 				}
 
-				if ($request_from_email !== '' && $request_to_email !== '' && $request_from_email === $request_to_email) {
+				if ($request_from_email !== '' && $request_to_email !== '' && strtolower($request_from_email) === strtolower($request_to_email)) {
 					$row_errors[] = 'Sender and Receiver emails must be different.';
 				}
 
 				if ($customer_from_id && $customer_to_id && $booking_date !== '' && $booking_time !== '') {
 					$formatted_time = date('H:i:s', strtotime($booking_time));
 					
-					// Check for conflict within the spreadsheet itself
+					// Conflict within spreadsheet
 					$timeslot_key = $booking_date . '_' . $formatted_time;
 					if (isset($sheet_bookings[$timeslot_key])) {
 						foreach ($sheet_bookings[$timeslot_key] as $booked_exhibitor_id) {
@@ -953,7 +1245,7 @@ class Mou_report extends MY_Controller
 						}
 					}
 
-					// Check database conflict
+					// Database conflict (only check active, approved MoUs)
 					if (empty($row_errors)) {
 						$condition = "((user_type_from = 'exhibitor' AND request_from_id = {$customer_from_id}) OR (user_type_to = 'exhibitor' AND request_to_id = {$customer_to_id}))";
 						$conflict_count = $this->db->where('exhibition_id', $exhibition_id)
@@ -968,7 +1260,7 @@ class Mou_report extends MY_Controller
 						}
 					}
 
-					// If no errors so far, log these bookings to detect intra-sheet conflicts for subsequent rows
+					// Track bookings for sheet checks
 					if (empty($row_errors)) {
 						if (!isset($sheet_bookings[$timeslot_key])) {
 							$sheet_bookings[$timeslot_key] = array();
@@ -993,7 +1285,7 @@ class Mou_report extends MY_Controller
 					'request_to_email' => $request_to_email,
 					'request_to_id' => $customer_to_id,
 					'request_to_name' => $customer_to_name,
-					'mou_sign_location' => $mou_sign_location,
+					'mou_sign_location' => $mou_sign_location_original,
 					'commercial_value' => $commercial_value,
 					'description' => $description,
 					'status' => empty($row_errors) ? 'valid' : 'invalid',
@@ -1042,7 +1334,55 @@ class Mou_report extends MY_Controller
 			return;
 		}
 
-		// Perform full server-side validation to prevent tampering (Issue 5)
+		// Re-fetch all event-specific validation targets for full server-side verification (tamper prevention)
+		$event_exhibitors = $this->db->select('C.id, C.name, C.company, C.email')
+			->from('es_exhibition_booking as B')
+			->join('es_customers as C', 'B.customer_id = C.id')
+			->where('B.exhibition_id', $exhibition_id)
+			->where('B.is_canceled', 0)
+			->where('C.is_deleted', 0)
+			->where('C.is_active', 1)
+			->get()
+			->result();
+
+		$exhibitor_map = array();
+		foreach ($event_exhibitors as $ee) {
+			$exhibitor_map[strtolower(trim($ee->email))] = $ee->id;
+		}
+
+		$event_dates_db = $this->db->select('date, open_time, closing_time')
+			->where('exhibition_id', $exhibition_id)
+			->order_by('date', 'ASC')
+			->get('es_exhibition_date')
+			->result();
+
+		$valid_days_map = array();
+		$valid_dates_map = array();
+		$day_counter = 1;
+		foreach ($event_dates_db as $ed) {
+			$day_name = 'Day ' . $day_counter;
+			$open = !empty($ed->open_time) ? $ed->open_time : '09:00:00';
+			$close = !empty($ed->closing_time) ? $ed->closing_time : '18:00:00';
+			
+			$valid_days_map[$day_name] = $ed->date;
+			$valid_dates_map[$ed->date] = array('day' => $day_name, 'open' => $open, 'close' => $close);
+			$day_counter++;
+		}
+
+		$event_locations_db = $this->db->select('location')
+			->where('exhibition_id', $exhibition_id)
+			->where('type', 'mou_location')
+			->get('location_for_meeting')
+			->result();
+
+		$valid_locations = array();
+		$locations_map = array();
+		foreach ($event_locations_db as $el) {
+			$loc_key = strtolower(trim($el->location));
+			$valid_locations[] = $loc_key;
+			$locations_map[$loc_key] = $el->location;
+		}
+
 		$sheet_bookings = array();
 		$validated_inserts = array();
 
@@ -1057,35 +1397,74 @@ class Mou_report extends MY_Controller
 			$from_email = trim($row['request_from_email'] ?? '');
 			$to_email = trim($row['request_to_email'] ?? '');
 			$location = trim($row['mou_sign_location'] ?? '');
+			$location_original = isset($locations_map[strtolower($location)]) ? $locations_map[strtolower($location)] : $location;
 			$value = trim($row['commercial_value'] ?? '');
 			$desc = trim($row['description'] ?? '');
 
-			// 1. Basic validation
+			// 1. Check basic non-empty values
 			if (empty($day) || empty($date) || empty($time) || empty($from_email) || empty($to_email) || empty($location)) {
 				echo json_encode(array('status' => 'error', 'message' => 'Validation failed: Missing required fields in some records.'));
 				return;
 			}
 
-			// 2. Sender email check
-			$cust_from = $this->db->select('id')->where('email', $from_email)->where('is_deleted', 0)->where('is_active', 1)->get('es_customers')->row();
-			if (!$cust_from) {
-				echo json_encode(array('status' => 'error', 'message' => "Validation failed: Email '{$from_email}' is not registered."));
+			// 2. Check different email address requirement
+			if (strtolower($from_email) === strtolower($to_email)) {
+				echo json_encode(array('status' => 'error', 'message' => 'Validation failed: Sender and Receiver emails must be different.'));
 				return;
 			}
 
-			// 3. Receiver email check
-			$cust_to = $this->db->select('id')->where('email', $to_email)->where('is_deleted', 0)->where('is_active', 1)->get('es_customers')->row();
-			if (!$cust_to) {
-				echo json_encode(array('status' => 'error', 'message' => "Validation failed: Email '{$to_email}' is not registered."));
+			// 3. Check exhibition day index validity
+			if (!isset($valid_days_map[$day])) {
+				echo json_encode(array('status' => 'error', 'message' => "Validation failed: Exhibition Day '{$day}' is invalid for this event."));
 				return;
 			}
 
-			$from_id = $cust_from->id;
-			$to_id = $cust_to->id;
+			// 4. Check exhibition date configuration validity
+			if (!isset($valid_dates_map[$date])) {
+				echo json_encode(array('status' => 'error', 'message' => "Validation failed: Date '{$date}' is not configured for this exhibition."));
+				return;
+			}
+
+			// 5. Cross-validate that Day maps to that Date
+			if ($valid_days_map[$day] !== $date) {
+				echo json_encode(array('status' => 'error', 'message' => "Validation failed: Mismatch between Exhibition Day '{$day}' and Date '{$date}'."));
+				return;
+			}
+
+			// 6. Check meeting location validity
+			if (!in_array(strtolower($location), $valid_locations)) {
+				echo json_encode(array('status' => 'error', 'message' => "Validation failed: Location '{$location}' is not registered for this exhibition."));
+				return;
+			}
+
+			// 7. Check operational event hours
 			$formatted_time = date('H:i:s', strtotime($time));
+			$open_time = $valid_dates_map[$date]['open'];
+			$close_time = $valid_dates_map[$date]['close'];
+			if ($formatted_time < $open_time || $formatted_time > $close_time) {
+				echo json_encode(array('status' => 'error', 'message' => "Validation failed: Sign time '{$time}' is outside event operating hours."));
+				return;
+			}
+
+			// 8. Verify event registration mappings for emails
+			$from_email_key = strtolower($from_email);
+			$to_email_key = strtolower($to_email);
+
+			if (!isset($exhibitor_map[$from_email_key])) {
+				echo json_encode(array('status' => 'error', 'message' => "Validation failed: Sender '{$from_email}' is not a registered exhibitor for this exhibition."));
+				return;
+			}
+
+			if (!isset($exhibitor_map[$to_email_key])) {
+				echo json_encode(array('status' => 'error', 'message' => "Validation failed: Receiver '{$to_email}' is not a registered exhibitor for this exhibition."));
+				return;
+			}
+
+			$from_id = $exhibitor_map[$from_email_key];
+			$to_id = $exhibitor_map[$to_email_key];
 			$timeslot_key = $date . '_' . $formatted_time;
 
-			// 4. Intra-sheet duplicate detection
+			// 9. Re-check sheet conflicts
 			if (isset($sheet_bookings[$timeslot_key])) {
 				foreach ($sheet_bookings[$timeslot_key] as $booked_id) {
 					if ($booked_id === $from_id || $booked_id === $to_id) {
@@ -1095,7 +1474,7 @@ class Mou_report extends MY_Controller
 				}
 			}
 
-			// 5. Database conflict check (including is_deleted = 0)
+			// 10. Re-check database conflicts
 			$condition = "((user_type_from = 'exhibitor' AND request_from_id = {$from_id}) OR (user_type_to = 'exhibitor' AND request_to_id = {$to_id}))";
 			$conflict_count = $this->db->where('exhibition_id', $exhibition_id)
 				->where('is_approved', 1)
@@ -1110,10 +1489,6 @@ class Mou_report extends MY_Controller
 				return;
 			}
 
-			// Track sheet bookings
-			if (!isset($sheet_bookings[$timeslot_key])) {
-				$sheet_bookings[$timeslot_key] = array();
-			}
 			$sheet_bookings[$timeslot_key][] = $from_id;
 			$sheet_bookings[$timeslot_key][] = $to_id;
 
@@ -1121,7 +1496,7 @@ class Mou_report extends MY_Controller
 				'exhibition_id' => $exhibition_id,
 				'request_from_id' => $from_id,
 				'request_to_id' => $to_id,
-				'mou_sign_location' => $location,
+				'mou_sign_location' => $location_original,
 				'exhibition_day' => $day,
 				'mou_sign_date' => $date,
 				'mou_sign_time' => $formatted_time,
@@ -1161,6 +1536,28 @@ class Mou_report extends MY_Controller
 			->where('type', 'mou_location')
 			->get('location_for_meeting')
 			->result();
-		echo json_encode($locations);
+
+		$dates = $this->db->select('date')
+			->where('exhibition_id', $exhibition_id)
+			->order_by('date', 'ASC')
+			->get('es_exhibition_date')
+			->result();
+
+		$exhibitors = $this->db->select('C.id, C.name, C.company')
+			->from('es_exhibition_booking as B')
+			->join('es_customers as C', 'B.customer_id = C.id')
+			->where('B.exhibition_id', $exhibition_id)
+			->where('B.is_canceled', 0)
+			->where('C.is_deleted', 0)
+			->where('C.is_active', 1)
+			->group_by('C.id')
+			->get()
+			->result();
+
+		echo json_encode(array(
+			'locations' => $locations,
+			'dates' => array_map(function($d) { return $d->date; }, $dates),
+			'exhibitors' => $exhibitors
+		));
 	}
 }
