@@ -677,6 +677,13 @@ class Mou_report extends MY_Controller
 		$date = $this->input->post('booking_date');
 		$time = $this->input->post('booking_time');
 		$location = $this->input->post('mou_sign_location');
+		$commercial_value = $this->input->post('commercial_value');
+
+		// Validate Commercial Value currency format
+		if (!preg_match('/^(\d+(?:\.\d+)?)\s*(USD|PKR)$/i', $commercial_value, $matches)) {
+			return $this->common->doError(func_num_args(), "Commercial Value must be a numeric amount followed by USD or PKR.");
+		}
+		$_POST['commercial_value'] = $matches[1] . ' ' . strtoupper($matches[2]);
 
 		// 1. Sender and Receiver check
 		if ($from_id == $to_id) {
@@ -1154,7 +1161,15 @@ class Mou_report extends MY_Controller
 				if ($request_from_email === '') $row_errors[] = 'Request From Email is required.';
 				if ($request_to_email === '') $row_errors[] = 'Request To Email is required.';
 				if ($mou_sign_location === '') $row_errors[] = 'Location is required.';
-				if ($commercial_value === '') $row_errors[] = 'Commercial Value is required.';
+				if ($commercial_value === '') {
+					$row_errors[] = 'Commercial Value is required.';
+				} else {
+					if (preg_match('/^(\d+(?:\.\d+)?)\s*(USD|PKR)$/i', $commercial_value, $matches)) {
+						$commercial_value = $matches[1] . ' ' . strtoupper($matches[2]);
+					} else {
+						$row_errors[] = 'Commercial Value must be a numeric amount followed by USD or PKR (e.g., 5000 USD or 5000 PKR).';
+					}
+				}
 				if ($description === '') $row_errors[] = 'Description is required.';
 
 				// Validation: Day Index Check
@@ -1489,6 +1504,13 @@ class Mou_report extends MY_Controller
 				return;
 			}
 
+			// 11. Validate Commercial Value format
+			if (!preg_match('/^(\d+(?:\.\d+)?)\s*(USD|PKR)$/i', $value, $matches)) {
+				echo json_encode(array('status' => 'error', 'message' => "Validation failed: Commercial Value '{$value}' is invalid. It must be a numeric amount followed by USD or PKR."));
+				return;
+			}
+			$value_original = $matches[1] . ' ' . strtoupper($matches[2]);
+
 			$sheet_bookings[$timeslot_key][] = $from_id;
 			$sheet_bookings[$timeslot_key][] = $to_id;
 
@@ -1503,7 +1525,7 @@ class Mou_report extends MY_Controller
 				'user_type_from' => 'exhibitor',
 				'user_type_to' => 'exhibitor',
 				'description' => $desc,
-				'commercial_value' => $value,
+				'commercial_value' => $value_original,
 				'is_approved' => $auto_approve,
 				'approved_by' => $auto_approve ? $this->userdata->id : null,
 				'approved_on' => $auto_approve ? date('Y-m-d H:i:s') : null,
