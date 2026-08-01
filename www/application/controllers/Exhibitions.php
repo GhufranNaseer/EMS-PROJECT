@@ -174,8 +174,8 @@ class Exhibitions extends MY_Controller {
 
 		$this->form_validation->set_rules('location_halls[]', 'location_halls[]*location halls', 'trim|required');
 		$this->form_validation->set_rules('opening_closing[]', 'opening_closing[]*opening closing date', 'trim|required');
-		$this->form_validation->set_rules('stall_builder_contractors[]', 'stall_builder_contractors[]*stall builder contractors', 'trim|required');
-		$this->form_validation->set_rules('event_freight_forwarders[]', 'event_freight_forwarders[]*freight forwarders', 'trim|required');
+		$this->form_validation->set_rules('stall_builder_contractors[]', 'stall_builder_contractors[]*stall builder contractors', 'trim');
+		$this->form_validation->set_rules('event_freight_forwarders[]', 'event_freight_forwarders[]*freight forwarders', 'trim');
 		$this->form_validation->set_rules('networking_fields[]', 'networking_fields[]*networking fields', 'trim');
 
 
@@ -232,8 +232,8 @@ class Exhibitions extends MY_Controller {
 			'associate_logo_link' => $this->input->post('associate_logo_link'),
 			'manager_logo' => $this->input->post('event_manager_logo')[0],
 			'manager_logo_link' => $this->input->post('manager_logo_link'),
-			'stall_builder_contractors' => implode(',', $this->input->post('stall_builder_contractors')),
-			'event_freight_forwarders' => implode(',', $this->input->post('event_freight_forwarders')),
+			'stall_builder_contractors' => $this->input->post('stall_builder_contractors') ? implode(',', $this->input->post('stall_builder_contractors')) : '',
+			'event_freight_forwarders' => $this->input->post('event_freight_forwarders') ? implode(',', $this->input->post('event_freight_forwarders')) : '',
 			'networking_fields' => $this->input->post('networking_fields') ? implode(',', $this->input->post('networking_fields')) : '',
 			'created_on' => date('Y-m-d H:i:s'),
 		);
@@ -303,8 +303,8 @@ class Exhibitions extends MY_Controller {
 
 		$this->form_validation->set_rules('location_halls[]', 'location_halls[]*location halls', 'trim|required');
 		$this->form_validation->set_rules('opening_closing[]', 'opening_closing[]*opening closing date', 'trim|required');
-		$this->form_validation->set_rules('stall_builder_contractors[]', 'stall_builder_contractors[]*stall builder contractors', 'trim|required');
-		$this->form_validation->set_rules('event_freight_forwarders[]', 'event_freight_forwarders[]*freight forwarders', 'trim|required');
+		$this->form_validation->set_rules('stall_builder_contractors[]', 'stall_builder_contractors[]*stall builder contractors', 'trim');
+		$this->form_validation->set_rules('event_freight_forwarders[]', 'event_freight_forwarders[]*freight forwarders', 'trim');
 		$this->form_validation->set_rules('networking_fields[]', 'networking_fields[]*networking fields', 'trim');
 
 
@@ -356,8 +356,8 @@ class Exhibitions extends MY_Controller {
 			'associate_logo_link' => $this->input->post('associate_logo_link'),
 			'manager_logo' => $this->funcs->make_image_string($this->input->post('event_manager_logo')),
 			'manager_logo_link' => $this->input->post('manager_logo_link'),
-			'stall_builder_contractors' => implode(',', $this->input->post('stall_builder_contractors')),
-			'event_freight_forwarders' => implode(',', $this->input->post('event_freight_forwarders')),
+			'stall_builder_contractors' => $this->input->post('stall_builder_contractors') ? implode(',', $this->input->post('stall_builder_contractors')) : '',
+			'event_freight_forwarders' => $this->input->post('event_freight_forwarders') ? implode(',', $this->input->post('event_freight_forwarders')) : '',
 			'networking_fields' => $this->input->post('networking_fields') ? implode(',', $this->input->post('networking_fields')) : '',
 		);
 

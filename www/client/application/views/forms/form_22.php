@@ -245,7 +245,7 @@
                                             <label>Select Official Freight Forwarder</label>
                                             <select name="official_freight_forwarder" class="form-control">
 												<?php
-												if (isset($this->event->event_freight_forwarders) && !is_null($this->event->event_freight_forwarders)) {
+												if (isset($this->event->event_freight_forwarders) && !empty($this->event->event_freight_forwarders)) {
 													$event_freight_forwarders = explode(',', $this->event->event_freight_forwarders);
 
 													foreach ($event_freight_forwarders as $forwarder) {

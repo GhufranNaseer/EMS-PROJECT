@@ -472,15 +472,14 @@ class Badges_report extends MY_Controller {
 
 	private function download_qr($qr, $filename){
 		if (!file_exists('uploads/qr-codes')) {
-			mkdir('uploads/qr-codes');
+			@mkdir('uploads/qr-codes', 0777, true);
 		}
-		$size = file_put_contents('uploads/qr-codes/' . $filename, file_get_contents($qr));
-		if ($size > 0) {
-			return true;
-		} else {
+		$content = @file_get_contents($qr);
+		if ($content === false || strlen($content) === 0) {
 			return false;
-			// $this->download_qr($qr, $filename);
 		}
+		$size = @file_put_contents('uploads/qr-codes/' . $filename, $content);
+		return ($size > 0);
 	}
 
 	private function save_barcode_image($data, $filename){

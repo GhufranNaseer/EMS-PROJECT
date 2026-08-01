@@ -162,7 +162,7 @@ $stalls = $this->db
 		if (!is_null($this->formdata)) {
 			$even_child = 'light-bg';
 			$freight_forwarders = array();
-			if (isset($this->event->event_freight_forwarders) && !is_null($this->event->event_freight_forwarders)) {
+			if (isset($this->event->event_freight_forwarders) && !empty($this->event->event_freight_forwarders)) {
 				$event_freight_forwarders = explode(',', $this->event->event_freight_forwarders);
 				foreach ($event_freight_forwarders as $forwarder) {
 					$freight_forwarders[$forwarder] = str_replace('_', ' ', $forwarder);

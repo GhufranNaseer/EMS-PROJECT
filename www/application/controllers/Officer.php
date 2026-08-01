@@ -234,6 +234,13 @@ class Officer extends MY_Controller
         //$id = $this->db->insert_id();
         $this->db->trans_complete();
 
+        $this->_send_officer_credentials_email(
+            $this->input->post('officer_name'),
+            $this->input->post('officer_email'),
+            $this->input->post('login_password'),
+            'officer'
+        );
+
         $this->session->set_flashdata('message', 'officer has been created successfully');
 
         redirect(base_url('officer_exhibitor.html'));
@@ -462,6 +469,13 @@ class Officer extends MY_Controller
         //$id = $this->db->insert_id();
         $this->db->trans_complete();
 
+        $this->_send_officer_credentials_email(
+            $this->input->post('contact_person_name'),
+            $this->input->post('email'),
+            $this->input->post('password'),
+            'foreign_delegates'
+        );
+
         $this->session->set_flashdata('message', 'Foreign delegates has been created successfully');
 
         redirect(base_url('officer.html?id=' . myid($this->formdata->id)));
@@ -522,6 +536,13 @@ class Officer extends MY_Controller
         //$id = $this->db->insert_id();
         $this->db->trans_complete();
 
+        $this->_send_officer_credentials_email(
+            $this->input->post('contact_person_name'),
+            $this->input->post('email'),
+            $this->input->post('password'),
+            'local_delegates'
+        );
+
         $this->session->set_flashdata('message', 'Local delegates has been created successfully');
         redirect(base_url('officer.html?id=' . myid($this->formdata->id)));
     }
@@ -579,6 +600,13 @@ class Officer extends MY_Controller
             ->insert('es_officer');
         //$id = $this->db->insert_id();
         $this->db->trans_complete();
+
+        $this->_send_officer_credentials_email(
+            $this->input->post('contact_person_name'),
+            $this->input->post('email'),
+            $this->input->post('password'),
+            'chief_of_servicing'
+        );
 
         $this->session->set_flashdata('message', 'Chief of Servicing has been created successfully');
         redirect(base_url('officer.html?id=' . myid($this->formdata->id)));
@@ -912,6 +940,13 @@ class Officer extends MY_Controller
         //$id = $this->db->insert_id();
         $this->db->trans_complete();
 
+        $this->_send_officer_credentials_email(
+            $this->input->post('contact_person_name'),
+            $this->input->post('email'),
+            $this->input->post('password'),
+            'armed_force'
+        );
+
         $this->session->set_flashdata('message', 'Armed force officer has been created successfully');
         redirect(base_url('officer.html?id=' . myid($this->formdata->id)));
     }
@@ -1059,6 +1094,13 @@ class Officer extends MY_Controller
         //$id = $this->db->insert_id();
         $this->db->trans_complete();
 
+        $this->_send_officer_credentials_email(
+            $this->input->post('contact_person_name'),
+            $this->input->post('email'),
+            $this->input->post('password'),
+            'government_officials'
+        );
+
         $this->session->set_flashdata('message', 'Government official has been created successfully');
         redirect(base_url('officer.html?id=' . myid($this->formdata->id)));
     }
@@ -1202,6 +1244,13 @@ class Officer extends MY_Controller
         //$id = $this->db->insert_id();
         $this->db->trans_complete();
 
+        $this->_send_officer_credentials_email(
+            $this->input->post('contact_person_name'),
+            $this->input->post('email'),
+            $this->input->post('password'),
+            'organizer'
+        );
+
         $this->session->set_flashdata('message', 'Organizer has been created successfully');
         redirect(base_url('officer.html?id=' . myid($this->formdata->id)));
     }
@@ -1289,5 +1338,82 @@ class Officer extends MY_Controller
         $this->db->trans_complete();
         $this->session->set_flashdata('message', 'Organizer has been updated successfully');
         redirect(base_url('officer.html?id=' . myid($this->formdata->exhibition_id)));
+    }
+
+    private function _send_officer_credentials_email($receiver_name, $receiver_email, $password, $officer_type = '')
+    {
+        if (empty($receiver_email) || empty($password)) {
+            return false;
+        }
+
+        $type_labels = array(
+            'foreign_delegates'   => 'Foreign Delegate',
+            'local_delegates'     => 'Local Delegate',
+            'chief_of_servicing' => 'Gov. Chief of Servicing',
+            'armed_force'        => 'Armed Forces Officer',
+            'government_officials' => 'Government Official',
+            'organizer'           => 'Organizer',
+            'officer'             => 'Officer'
+        );
+
+        $officer_type_label = isset($type_labels[$officer_type]) ? $type_labels[$officer_type] : 'B2B User';
+
+        $this->load->model('email_configuration_model');
+        $settings = $this->email_configuration_model->get_mailer_settings();
+
+        $message_body = $this->load->view('officer/email_credentials_template', array(
+            'receiver_name'      => $receiver_name ?: 'Valued User',
+            'receiver_email'     => $receiver_email,
+            'password'           => $password,
+            'officer_type_label' => $officer_type_label
+        ), true);
+
+        $subject = PROJECT_NAME . ' - Your B2B Account Credentials';
+
+        if (isset($settings['enable_email_queue']) && $settings['enable_email_queue'] === 'no') {
+            // Direct SMTP dispatch if queue is explicitly disabled
+            $this->load->helper('phpmailer');
+            $sendResult = sendMail(
+                $receiver_name ?: 'B2B User',
+                $receiver_email,
+                $subject,
+                $message_body,
+                $settings['mail_from_name'],
+                $settings['mail_from_email'],
+                '',
+                array(
+                    'settings' => $settings,
+                    'echo'     => false,
+                    'debug'    => ($settings['smtp_debug'] === 'yes')
+                )
+            );
+
+            if (method_exists($this->email_configuration_model, 'log_email')) {
+                $this->email_configuration_model->log_email(array(
+                    'recipient_email' => $receiver_email,
+                    'recipient_name'  => $receiver_name,
+                    'subject'          => $subject,
+                    'message_body'     => $message_body,
+                    'status'           => (!empty($sendResult['success']) ? 'sent' : 'failed'),
+                    'error_message'    => (!empty($sendResult['error']) ? $sendResult['error'] : null),
+                    'sent_at'          => date('Y-m-d H:i:s')
+                ));
+            }
+
+            return $sendResult;
+        } else {
+            // Queue into es_emails_cron for instant non-blocking form save (0.001s response time)
+            $queue_data = array(
+                'type'       => 'B2B_CREDENTIALS',
+                'from_name'  => !empty($settings['mail_from_name']) ? $settings['mail_from_name'] : PROJECT_NAME,
+                'email'      => $receiver_email,
+                'subject'    => $subject,
+                'message'    => $message_body,
+                'status'     => 'pending',
+                'created_on' => date('Y-m-d H:i:s')
+            );
+
+            return $this->db->insert('es_emails_cron', $queue_data);
+        }
     }
 }

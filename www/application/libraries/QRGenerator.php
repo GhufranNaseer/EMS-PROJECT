@@ -19,21 +19,23 @@ class QRGenerator {
 	}
 
 	public function generate() {
+		$data_param = $this->data;
+		$host = 'ems_qr_service';
 
-		$link = 'http://ems_qr_service:8000/api?data=' . ($this->data);
-		return $link;
-		
-		// $QRLink = "https://chart.googleapis.com/chart?cht=qr&chs=" . $this->size . "x" . $this->size . "&chl=" . $this->data .
-		// 	"&choe=" . $this->encoding .
-		// 	"&chld=" . $this->errorCorrectionLevel . "|" . $this->marginInRows;
-
-		$QRLink = "https://zxing.org/w/chart?cht=qr&chs=" . $this->size . "x" . $this->size . "&chl=" . $this->data .
-			"&choe=" . $this->encoding .
-			"&chld=" . $this->errorCorrectionLevel;
-			
-		if ($this->debug) {
-			echo $QRLink;
+		// Check if ems_qr_service host is resolved in DNS (Docker VPS environment)
+		$ip = @gethostbyname($host);
+		if ($ip !== $host) {
+			return 'http://ems_qr_service:8000/api?data=' . $data_param;
 		}
-		return $QRLink;
+
+		// Check if local docker port 8005 is mapped on host
+		$fp = @fsockopen('127.0.0.1', 8005, $errno, $errstr, 0.2);
+		if ($fp) {
+			fclose($fp);
+			return 'http://127.0.0.1:8005/api?data=' . $data_param;
+		}
+
+		// Fallback for local Windows / non-Docker environments
+		return "https://api.qrserver.com/v1/create-qr-code/?size=" . $this->size . "x" . $this->size . "&data=" . $data_param;
 	}
 }

@@ -18,7 +18,7 @@ if ($tab == 'bare') {
 	$has_bare_stall = true;
 }
 
-$event_contractors = explode(',', $this->event->stall_builder_contractors);
+$event_contractors = !empty($this->event->stall_builder_contractors) ? explode(',', $this->event->stall_builder_contractors) : array();
 
 $all_contractors = $this->db
 	->where('is_active', 1)

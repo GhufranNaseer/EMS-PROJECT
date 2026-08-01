@@ -177,7 +177,7 @@
 			$contractor_checked = 'checked';
 
 			if (isset($edit_data)) {
-			    $old_contractors = explode(',', $edit_data->stall_builder_contractors);
+			    $old_contractors = !empty($edit_data->stall_builder_contractors) ? explode(',', $edit_data->stall_builder_contractors) : array();
 
 				$contractor_checked = (in_array(str_replace(' ', '_', $contractor->company_name), $old_contractors)) ? 'checked' : '';
             }
@@ -245,7 +245,7 @@
 			$contractor_checked = 'checked';
 
 			if (isset($edit_data)) {
-			    $old_contractors = explode(',', $edit_data->event_freight_forwarders);
+			    $old_contractors = !empty($edit_data->event_freight_forwarders) ? explode(',', $edit_data->event_freight_forwarders) : array();
 
 				$contractor_checked = (in_array(str_replace(' ', '_', $freight_forwarder->company_name), $old_contractors)) ? 'checked' : '';
             }
