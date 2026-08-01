@@ -125,6 +125,7 @@ class Form_10 extends MY_Controller {
 			'badge_type' => 'visitor',
 			'full_name' => $this->input->post('visitor_name'),
 			'designation' => $this->input->post('visitor_job_title'),
+			'company' => $this->input->post('company_name'),
 			'mobile' => $this->input->post('visitor_mobile'),
 			'nationality' => (($this->input->post('visitor_country') == 'Pakistan') ? 'Pakistani' : $this->input->post('visitor_country')),
 			'cnic' => $this->input->post('visitor_cnic'),

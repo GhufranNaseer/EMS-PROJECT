@@ -93,9 +93,23 @@
         <tr>
             <td style="width: 100%;">
                 <br>
-                <div style="margin-bottom: 0; font-size: 13px; font-family: Helvetica, Arial, sans-serif;"><?= $this->badge->full_name ?></div>
-                <?= $this->badge->designation ?><br>
-                <?= $company ?><br>
+                <div style="margin-bottom: 0; font-size: 13px; font-family: Helvetica, Arial, sans-serif;"><?= html_escape($this->badge->full_name) ?></div>
+                <?php if (!empty($this->badge->designation)): ?>
+                    <?= html_escape($this->badge->designation) ?><br>
+                <?php endif; ?>
+                <?php
+                $badge_org = !empty($this->badge->company) ? trim($this->badge->company) : '';
+                $customer_comp = !empty($company) ? trim($company) : '';
+
+                if (!empty($badge_org) && !empty($customer_comp) && strtolower($badge_org) !== strtolower($customer_comp)) {
+                    echo html_escape($badge_org) . '<br>';
+                    echo 'Care of ' . html_escape($customer_comp) . '<br>';
+                } elseif (!empty($badge_org)) {
+                    echo html_escape($badge_org) . '<br>';
+                } elseif (!empty($customer_comp)) {
+                    echo html_escape($customer_comp) . '<br>';
+                }
+                ?>
                 <?php
                 // echo '<img src="data:image/png;base64,' . base64_encode($barcode_data) . '" style="width: 180px; height: 25px; margin: 3px 0 0;">';
                 echo '<img src="' . LOCAL_EXHIBIT_URL . ($barcode_link) . '" style="width: 180px; height: 25px; margin: 3px 0 0;">';
