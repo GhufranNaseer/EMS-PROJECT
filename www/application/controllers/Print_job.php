@@ -251,6 +251,26 @@ class Print_job extends MY_Controller {
 				die();
 			}
 
+			if (empty($badge->company) && !empty($badge->booking_id)) {
+				$form10_data = $this->db
+					->where('booking_id', $badge->booking_id)
+					->where('form_id', 10)
+					->get('es_exhibition_booking_forms_data')
+					->row();
+
+				if ($form10_data && !empty($form10_data->form_data)) {
+					$json = json_decode($form10_data->form_data);
+					if (!empty($json->badge)) {
+						foreach ($json->badge as $b_item) {
+							if (isset($b_item->badge_id) && $b_item->badge_id == $badge->id && !empty($b_item->company_name)) {
+								$badge->company = $b_item->company_name;
+								break;
+							}
+						}
+					}
+				}
+			}
+
 			if ($badge->badge_type == 'trade_visitor') {
 				$company = $badge->company;
 			} else {
@@ -258,11 +278,15 @@ class Print_job extends MY_Controller {
 					->where('id', $badge->booking_id)
 					->get('es_exhibition_booking')
 					->row();
-				$company_data = $this->db
-					->where('id', $booking->customer_id)
-					->get('es_customers')
-					->row();
-				$company = $company_data->company;
+				if ($booking) {
+					$company_data = $this->db
+						->where('id', $booking->customer_id)
+						->get('es_customers')
+						->row();
+					$company = ($company_data) ? $company_data->company : '';
+				} else {
+					$company = '';
+				}
 			}
 			$this->load->library('QRGenerator');
 			// $qr_data = $badge->id . ' - ' . $badge->full_name . ' - ' . $booking->customer_id . ' - ';
