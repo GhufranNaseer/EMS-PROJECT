@@ -59,16 +59,17 @@
                 </div>
             </div>
 
+            <?php $login_url = !empty($portal_url) ? $portal_url : base_url('meeting/'); ?>
             <p style="font-family:Verdana, Geneva, sans-serif; font-size:13px; color:#ddd;">
                 You can access the portal using the link below:
             </p>
             <p style="font-family:Verdana, Geneva, sans-serif; font-size:13px; margin: 15px 0;">
-                &raquo; <a style="color:#E14D57; font-weight: bold; text-decoration: none;" href="<?= base_url('meeting/') ?>" target="_blank">Access B2B Portal</a>
+                &raquo; <a style="color:#E14D57; font-weight: bold; text-decoration: none;" href="<?= $login_url ?>" target="_blank">Access B2B Portal</a>
             </p>
             <p style="font-family:Verdana, Geneva, sans-serif; font-size:11px; color:#aaa;">
                 If you cannot click the button, copy and paste the following link into your browser:
                 <br/>
-                <span class="link" style="color:#E14D57;"><?= base_url('meeting/') ?></span>
+                <span class="link" style="color:#E14D57;"><?= $login_url ?></span>
             </p>
         </td>
     </tr>

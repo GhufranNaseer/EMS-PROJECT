@@ -238,7 +238,9 @@ class Officer extends MY_Controller
             $this->input->post('officer_name'),
             $this->input->post('officer_email'),
             $this->input->post('login_password'),
-            'officer'
+            'officer',
+            isset($this->formdata->id) ? $this->formdata->id : null,
+            isset($this->formdata->exhibition_title) ? $this->formdata->exhibition_title : null
         );
 
         $this->session->set_flashdata('message', 'officer has been created successfully');
@@ -473,7 +475,9 @@ class Officer extends MY_Controller
             $this->input->post('contact_person_name'),
             $this->input->post('email'),
             $this->input->post('password'),
-            'foreign_delegates'
+            'foreign_delegates',
+            isset($this->formdata->id) ? $this->formdata->id : null,
+            isset($this->formdata->exhibition_title) ? $this->formdata->exhibition_title : null
         );
 
         $this->session->set_flashdata('message', 'Foreign delegates has been created successfully');
@@ -540,7 +544,9 @@ class Officer extends MY_Controller
             $this->input->post('contact_person_name'),
             $this->input->post('email'),
             $this->input->post('password'),
-            'local_delegates'
+            'local_delegates',
+            isset($this->formdata->id) ? $this->formdata->id : null,
+            isset($this->formdata->exhibition_title) ? $this->formdata->exhibition_title : null
         );
 
         $this->session->set_flashdata('message', 'Local delegates has been created successfully');
@@ -605,7 +611,9 @@ class Officer extends MY_Controller
             $this->input->post('contact_person_name'),
             $this->input->post('email'),
             $this->input->post('password'),
-            'chief_of_servicing'
+            'chief_of_servicing',
+            isset($this->formdata->id) ? $this->formdata->id : null,
+            isset($this->formdata->exhibition_title) ? $this->formdata->exhibition_title : null
         );
 
         $this->session->set_flashdata('message', 'Chief of Servicing has been created successfully');
@@ -944,7 +952,9 @@ class Officer extends MY_Controller
             $this->input->post('contact_person_name'),
             $this->input->post('email'),
             $this->input->post('password'),
-            'armed_force'
+            'armed_force',
+            isset($this->formdata->id) ? $this->formdata->id : null,
+            isset($this->formdata->exhibition_title) ? $this->formdata->exhibition_title : null
         );
 
         $this->session->set_flashdata('message', 'Armed force officer has been created successfully');
@@ -1098,7 +1108,9 @@ class Officer extends MY_Controller
             $this->input->post('contact_person_name'),
             $this->input->post('email'),
             $this->input->post('password'),
-            'government_officials'
+            'government_officials',
+            isset($this->formdata->id) ? $this->formdata->id : null,
+            isset($this->formdata->exhibition_title) ? $this->formdata->exhibition_title : null
         );
 
         $this->session->set_flashdata('message', 'Government official has been created successfully');
@@ -1248,7 +1260,9 @@ class Officer extends MY_Controller
             $this->input->post('contact_person_name'),
             $this->input->post('email'),
             $this->input->post('password'),
-            'organizer'
+            'organizer',
+            isset($this->formdata->id) ? $this->formdata->id : null,
+            isset($this->formdata->exhibition_title) ? $this->formdata->exhibition_title : null
         );
 
         $this->session->set_flashdata('message', 'Organizer has been created successfully');
@@ -1340,7 +1354,7 @@ class Officer extends MY_Controller
         redirect(base_url('officer.html?id=' . myid($this->formdata->exhibition_id)));
     }
 
-    private function _send_officer_credentials_email($receiver_name, $receiver_email, $password, $officer_type = '')
+    private function _send_officer_credentials_email($receiver_name, $receiver_email, $password, $officer_type = '', $exhibition_id = null, $exhibition_title = null)
     {
         if (empty($receiver_email) || empty($password)) {
             return false;
@@ -1358,6 +1372,22 @@ class Officer extends MY_Controller
 
         $officer_type_label = isset($type_labels[$officer_type]) ? $type_labels[$officer_type] : 'B2B User';
 
+        // Auto-resolve exhibition title if missing but exhibition_id is present
+        if (!empty($exhibition_id) && empty($exhibition_title)) {
+            $exh = $this->db->select('exhibition_title')->where('id', $exhibition_id)->get('es_exhibitions')->row();
+            if ($exh) {
+                $exhibition_title = $exh->exhibition_title;
+            }
+        }
+
+        // Construct dynamic meeting portal login URL (e.g. meeting/login/27-Dummy-Event-2)
+        if (!empty($exhibition_id) && !empty($exhibition_title)) {
+            $slug_title = str_replace(' ', '-', trim($exhibition_title));
+            $portal_url = base_url('meeting/login/' . $exhibition_id . '-' . $slug_title);
+        } else {
+            $portal_url = base_url('meeting/');
+        }
+
         $this->load->model('email_configuration_model');
         $settings = $this->email_configuration_model->get_mailer_settings();
 
@@ -1365,7 +1395,8 @@ class Officer extends MY_Controller
             'receiver_name'      => $receiver_name ?: 'Valued User',
             'receiver_email'     => $receiver_email,
             'password'           => $password,
-            'officer_type_label' => $officer_type_label
+            'officer_type_label' => $officer_type_label,
+            'portal_url'         => $portal_url
         ), true);
 
         $subject = PROJECT_NAME . ' - Your B2B Account Credentials';
