@@ -368,7 +368,7 @@ $hall_data = $this->db
                                         <div class="business_selected_area">
                                             <table class="table table-bordered" id="selected_business_area">
                                                 <?php
-                                               if ((!is_null($this->formdata)) && isset($this->formdata->products) && count((array)$this->formdata->products->main) > 0) {
+                                               if ((!is_null($this->formdata)) && isset($this->formdata->products) && property_exists($this->formdata->products, 'main') && count((array)$this->formdata->products->main) > 0) {
                                                     foreach ($this->formdata->products->main as $key => $main_business) {
 														echo '<tr>
                                                         <td>'. $main_business->area .'</td>
@@ -457,7 +457,7 @@ $hall_data = $this->db
                                             <div class="product_selected_area">
                                                 <table class="table table-bordered" id="product_selected_area">
 													<?php
-													if ((!is_null($this->formdata)) && isset($this->formdata->products) && count((array)$this->formdata->products->product) > 0) {
+													if ((!is_null($this->formdata)) && isset($this->formdata->products) && property_exists($this->formdata->products, 'product') && count((array)$this->formdata->products->product) > 0) {
 														foreach ($this->formdata->products->product as $key => $product) {
 															echo '<tr>
                                                             <td>'. $product->name .'</td>

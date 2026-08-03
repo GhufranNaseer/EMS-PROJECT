@@ -215,6 +215,21 @@ class Welcome extends Initialize {
 	}
 
 	function forget_password_submit() {
+		// S Rate Limiting check (60 seconds session cooldown)
+		$last_request = $this->session->userdata('last_client_fp_request_time');
+		$current_time = time();
+		if ($last_request && ($current_time - $last_request) < 60) {
+			$remaining = 60 - ($current_time - $last_request);
+			$this->session->set_flashdata('message', 'Too Many Requests! Please wait ' . $remaining . ' seconds before requesting password reset again.');
+			if (isset($this->forget_event)) {
+				redirect(base_url ('login/' . $this->forget_event->id . '-' . str_replace(' ', '-', $this->forget_event->exhibition_title)));
+			} else {
+				redirect(base_url());
+			}
+			return;
+		}
+		// E Rate Limiting check
+
 		if ($this->forget_password_validate() !== true)
 			show_404 ();
 
@@ -252,21 +267,57 @@ class Welcome extends Initialize {
 		$message = str_replace('{CUSTOMER_EMAIL}', $this->forget_customer->email, $message);
 		$message = str_replace('{EVENT_NAME}', $this->forget_event->exhibition_title, $message);
 
+		// Direct Instant SMTP Mailer & Log (Queue Bypass)
+		$main_app_path = FCPATH . 'application/';
+		if (file_exists($main_app_path . 'models/Email_configuration_model.php') && file_exists($main_app_path . 'helpers/phpmailer_helper.php')) {
+			require_once $main_app_path . 'models/Email_configuration_model.php';
+			require_once $main_app_path . 'helpers/phpmailer_helper.php';
 
-		$this->db->insert('es_emails_cron', array(
-			'type' => 'RESET_PASSWORD_LINK',
-			'data' => null,
-			'from_name' => $this->forget_event->exhibition_title,
-			'email' => $this->forget_customer->email,
-			'subject' => $subject,
-			'message' => $message,
-			'created_on' => date('Y-m-d H:i:s'),
-		));
+			$email_model = new Email_configuration_model();
+			$settings = $email_model->get_mailer_settings();
 
+			$sendResult = sendMail(
+				($this->forget_customer->name ? $this->forget_customer->name : $this->forget_customer->company),
+				$this->forget_customer->email,
+				$subject,
+				$message,
+				$this->forget_event->exhibition_title,
+				$settings['mail_from_email'],
+				'',
+				array(
+					'settings' => $settings,
+					'echo' => false,
+					'debug' => (isset($settings['smtp_debug']) && $settings['smtp_debug'] === 'yes')
+				)
+			);
+
+			$email_model->log_email(array(
+				'email_type' => 'RESET_PASSWORD_LINK',
+				'recipient_email' => $this->forget_customer->email,
+				'subject' => $subject,
+				'driver' => $settings['mail_driver'],
+				'status' => (isset($sendResult['success']) && $sendResult['success']) ? 'sent' : 'failed',
+				'attempts' => 1,
+				'error_message' => (isset($sendResult['success']) && $sendResult['success']) ? null : (isset($sendResult['error']) ? $sendResult['error'] : 'Unknown error'),
+				'debug_message' => (isset($settings['smtp_debug']) && $settings['smtp_debug'] === 'yes' && isset($sendResult['debug'])) ? $sendResult['debug'] : null,
+			));
+		} else {
+			$this->db->insert('es_emails_cron', array(
+				'type' => 'RESET_PASSWORD_LINK',
+				'data' => null,
+				'from_name' => $this->forget_event->exhibition_title,
+				'email' => $this->forget_customer->email,
+				'subject' => $subject,
+				'message' => $message,
+				'created_on' => date('Y-m-d H:i:s'),
+			));
+		}
+
+		// Set rate limit timestamp
+		$this->session->set_userdata('last_client_fp_request_time', time());
 
 		$this->session->set_flashdata('message', 'Please check your email ('.$this->forget_customer->email.') where we have sent you the link to change the password');
 		redirect(base_url ('login/' . $this->forget_event->id . '-' . str_replace(' ', '-', $this->forget_event->exhibition_title)));
-
 	}
 
 	function recover_account($booking_id) {
