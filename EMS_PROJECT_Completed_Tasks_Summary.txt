@@ -2,6 +2,7 @@
                     EMS-PROJECT (Event Management System)
                   COMPLETE WORK SUMMARY & TASKS LOG
                        (June 2026 – August 2026)
+                        Developer : Muhammad Sufyan
 ================================================================================
 
 This document provides a comprehensive report of all features, enhancements,
