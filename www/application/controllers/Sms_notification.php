@@ -5,10 +5,10 @@ class Sms_notification extends MY_Controller {
     protected function rule() {
         $this->activateRightsSystem();
         $crd = array(
-            'crd_add,crd_add_submit,crd_add_email,crd_add_email_submit,get_main_company_detail,crd_add_individual,crd_add_submit_individual' => array(
+            'crd_add,crd_add_submit,crd_add_email,crd_add_email_submit,get_main_company_detail,crd_add_individual,crd_add_submit_individual,crd_add_promotional_email,crd_add_promotional_email_submit' => array(
                 'rule' => '@'
             ),
-            'crd_add_validate,crd_add_email_validate,crd_add_validate_individual' => array(
+            'crd_add_validate,crd_add_email_validate,crd_add_validate_individual,crd_add_promotional_email_validate,get_all_past_exhibitors_count' => array(
                 'rule' => '@',
                 'ajaxOnly' => true
             )
@@ -167,7 +167,7 @@ class Sms_notification extends MY_Controller {
             return $this->common->doError(func_num_args(), "done", true);
     }
 
-	function crd_add_email() {
+    function crd_add_email() {
         $this->load->view('includes/after_login/head');
         $this->load->view('sms_notification/add_email');
     }
@@ -267,15 +267,149 @@ class Sms_notification extends MY_Controller {
     function crd_add_email_validate() {
 
         $this->form_validation->set_rules('event', 'event*event', 'trim|required');
-        $this->form_validation->set_rules('exhibit_companies', 'exhibit_companies*Exhibit companies', 'trim|required');
+        if (is_null($this->input->post('select_all'))) {
+            $this->form_validation->set_rules('exhibit_companies', 'exhibit_companies*Exhibit companies', 'trim|required');
+        }
         $this->form_validation->set_rules('status', 'status*Status', 'trim|required');
         $this->form_validation->set_rules('email_subject', 'email_subject*Email Subject', 'trim|required');
-        // $this->form_validation->set_rules('email_message', 'email_message*Email Message', 'trim|required');
 
         if ($this->form_validation->run() == false)
             return $this->common->doError(func_num_args(), $this->common->getFVError());
         else
             return $this->common->doError(func_num_args(), "done", true);
+    }
+
+    function crd_add_promotional_email() {
+        $this->load->view('includes/after_login/head');
+        $this->load->view('sms_notification/add_promotional_email');
+    }
+
+    function crd_add_promotional_email_submit() {
+        if ($this->crd_add_promotional_email_validate() !== true)
+            show_404();
+
+		$exhibition = $this->db->select('id, exhibition_title')->where('id', $this->input->post('event'))->get('es_exhibitions')->row();
+
+        // Get all unique customers who have at least one booking in any exhibition
+        $companies = $this->db
+            ->select('C.*')
+            ->where('C.is_deleted', 0)
+            ->join('es_exhibition_booking as B', 'C.id = B.customer_id')
+            ->where('B.is_canceled', 0)
+            ->group_by('C.id')
+            ->get('es_customers as C')
+            ->result();
+
+        $event_name = (isset($exhibition)) ? $exhibition->exhibition_title : '';
+        $portal_url = (isset($exhibition)) ? base_url('meeting/login/' . $exhibition->id) : base_url('meeting/');
+        $raw_subject = $this->input->post('email_subject');
+        $raw_message = $this->input->post('email_message');
+
+        foreach ($companies as $contact) {
+            $company_name = (isset($contact->company) && !empty($contact->company)) ? $contact->company : 'Exhibitor';
+
+            $custom_subject = str_replace(
+                array('{COMPANY_NAME}', '{EVENT_NAME}', '{PORTAL_URL}'),
+                array($company_name, $event_name, $portal_url),
+                $raw_subject
+            );
+
+            $custom_message = str_replace(
+                array('{COMPANY_NAME}', '{EVENT_NAME}', '{PORTAL_URL}'),
+                array($company_name, $event_name, $portal_url),
+                $raw_message
+            );
+
+            if ($this->input->post('status') == 'Executive') {
+                if ($contact->email && $contact->email != '' && $contact->email != null) {
+					$this->db->insert('es_emails_cron', array(
+						'type' => 'PROMOTIONAL_CAMPAIGN',
+						'data' => json_encode(array(
+							'customer_id' => $contact->id,
+							'exhibition_id' => $this->input->post('event'),
+						)),
+						'from_name' => (isset($exhibition)) ? $exhibition->exhibition_title : null,
+						'email' => $contact->email,
+						'subject' => $custom_subject,
+						'message' => $custom_message,
+						'created_on' => date('Y-m-d H:i:s'),
+					));
+                }
+            } else if ($this->input->post('status') == 'Contact Person') {
+                if ($contact->contact_person_email && $contact->contact_person_email != '' && $contact->contact_person_email != null) {
+                    $this->db->insert('es_emails_cron', array(
+						'type' => 'PROMOTIONAL_CAMPAIGN',
+						'data' => json_encode(array(
+							'customer_id' => $contact->id,
+							'exhibition_id' => $this->input->post('event'),
+						)),
+						'from_name' => (isset($exhibition)) ? $exhibition->exhibition_title : null,
+						'email' => $contact->contact_person_email,
+						'subject' => $custom_subject,
+						'message' => $custom_message,
+						'created_on' => date('Y-m-d H:i:s'),
+					));
+                }
+            } else {
+                if ($contact->email && $contact->email != '' && $contact->email != null) {
+					$this->db->insert('es_emails_cron', array(
+						'type' => 'PROMOTIONAL_CAMPAIGN',
+						'data' => json_encode(array(
+							'customer_id' => $contact->id,
+							'exhibition_id' => $this->input->post('event'),
+						)),
+						'from_name' => (isset($exhibition)) ? $exhibition->exhibition_title : null,
+						'email' => $contact->email,
+						'subject' => $custom_subject,
+						'message' => $custom_message,
+						'created_on' => date('Y-m-d H:i:s'),
+					));
+                }
+                if ($contact->contact_person_email && $contact->contact_person_email != '' && $contact->contact_person_email != null) {
+                    $this->db->insert('es_emails_cron', array(
+						'type' => 'PROMOTIONAL_CAMPAIGN',
+						'data' => json_encode(array(
+							'customer_id' => $contact->id,
+							'exhibition_id' => $this->input->post('event'),
+						)),
+						'from_name' => (isset($exhibition)) ? $exhibition->exhibition_title : null,
+						'email' => $contact->contact_person_email,
+						'subject' => $custom_subject,
+						'message' => $custom_message,
+						'created_on' => date('Y-m-d H:i:s'),
+					));
+                }
+            }
+        }
+
+        $this->session->set_flashdata('message', 'Promotional Email Campaign successfully queued for processing!');
+        redirect(base_url('promotional-email-campaign'));
+    }
+
+    function crd_add_promotional_email_validate() {
+        $this->form_validation->set_rules('event', 'event*Target Event', 'trim|required');
+        $this->form_validation->set_rules('status', 'status*Recipient Type', 'trim|required');
+        $this->form_validation->set_rules('email_subject', 'email_subject*Email Subject', 'trim|required');
+
+        if ($this->form_validation->run() == false)
+            return $this->common->doError(func_num_args(), $this->common->getFVError());
+        else
+            return $this->common->doError(func_num_args(), "done", true);
+    }
+
+    function get_all_past_exhibitors_count() {
+        $count = $this->db
+            ->select('COUNT(DISTINCT C.id) as total')
+            ->where('C.is_deleted', 0)
+            ->join('es_exhibition_booking as B', 'C.id = B.customer_id')
+            ->where('B.is_canceled', 0)
+            ->get('es_customers as C')
+            ->row()->total;
+
+        echo json_encode(array(
+            'error' => false,
+            'total' => (int)$count
+        ));
     }
 
 

@@ -169,6 +169,52 @@ class Exhibitors_report extends MY_Controller
                 }
                 return rtrim($hall_name,',');
                 }, NULL)
+            ->add_column('sector_name', function ($row) {
+                $form03_data = $this->db
+                    ->where('exhibition_id', $row['exhibition_id'])
+                    ->where('booking_id', $row['id'])
+                    ->where('form_id', 3)
+                    ->get('es_exhibition_booking_forms_data')
+                    ->row();
+
+                $sectors = array();
+                if ($form03_data && !empty($form03_data->form_data)) {
+                    $json = json_decode($form03_data->form_data);
+                    if ($json && isset($json->products)) {
+                        if (isset($json->products->main) && (is_array($json->products->main) || is_object($json->products->main))) {
+                            foreach ($json->products->main as $m) {
+                                if (isset($m->sector) && !empty($m->sector) && !in_array($m->sector, $sectors)) {
+                                    $sectors[] = trim($m->sector);
+                                }
+                            }
+                        }
+                        if (isset($json->products->other) && (is_array($json->products->other) || is_object($json->products->other))) {
+                            foreach ($json->products->other as $o) {
+                                if (isset($o->sector) && !empty($o->sector) && !in_array($o->sector, $sectors)) {
+                                    $sectors[] = trim($o->sector);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (empty($sectors)) {
+                    return '<span class="text-muted">N/A</span>';
+                }
+
+                $total_count = count($sectors);
+                $first_two = array_slice($sectors, 0, 2);
+                $display_str = html_escape(implode(', ', $first_two));
+
+                if ($total_count > 2) {
+                    $sectors_json = html_escape(json_encode($sectors), ENT_QUOTES, 'UTF-8');
+                    $html = '<span>' . $display_str . ', </span>';
+                    $html .= '<a href="javascript:void(0)" class="view-sectors-btn label label-default" style="color: #337ab7; background-color: #f4f4f4; border: 1px solid #d2d6de; padding: 2px 5px; font-weight: 600; font-size: 11px; text-decoration: none;" data-company="' . html_escape($row['company']) . '" data-sectors=\'' . $sectors_json . '\'>View All (' . $total_count . ')</a>';
+                    return $html;
+                } else {
+                    return '<span>' . $display_str . '</span>';
+                }
+            }, NULL)
 
             ->unset_column('B.exhibition_id')
             ->where('B.exhibition_id', $this->formdata->id)

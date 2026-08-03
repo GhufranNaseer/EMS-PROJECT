@@ -7,6 +7,17 @@ class Form_19 extends MY_Controller {
 
 
 	function index() {
+		if (!$this->db->field_exists('allow_invitation_edit', 'es_exhibition_booking')) {
+			$this->load->dbforge();
+			$this->dbforge->add_column('es_exhibition_booking', array(
+				'allow_invitation_edit' => array(
+					'type' => 'TINYINT',
+					'constraint' => 1,
+					'default' => 0
+				)
+			));
+		}
+
 		$this->formdata = null;
 
 		$check = $this->db

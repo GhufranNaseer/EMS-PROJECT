@@ -415,6 +415,12 @@
                                 <span>Send Emails To companies</span>
                             </a>
                         </li>
+						<li data-page="promotional_email_campaign">
+                            <a href="<?= base_url('promotional-email-campaign'); ?>">
+                                <i class="fa fa-bullhorn"></i>
+                                <span>Promotional Email Campaign</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
             <?php } ?>

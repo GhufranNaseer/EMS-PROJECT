@@ -193,7 +193,7 @@ class Event_inventory extends MY_Controller {
 				->get('es_inventory_item_global')
 				->row();
 
-			$is_active = (is_null($item['is_active']) ? 0 : 1);
+			$is_active = (isset($item['is_active']) && !empty($item['is_active'])) ? 1 : 0;
 
         	$data = array(
         		'exhibition_id' => $exhibition_id,
@@ -201,14 +201,14 @@ class Event_inventory extends MY_Controller {
 				'global_item_id' => $item_data->id,
 				'item_title' => $item_data->item_title,
 				'item_image' => $item_data->item_image,
-				'item_stock' => $item['stock'],
-				'item_price_usd' => $item['price_usd'],
-				'item_price_pkr' => $item['price_pkr'],
+				'item_stock' => (isset($item['stock']) ? $item['stock'] : 0),
+				'item_price_usd' => (isset($item['price_usd']) ? $item['price_usd'] : 0),
+				'item_price_pkr' => (isset($item['price_pkr']) ? $item['price_pkr'] : 0),
 				'is_active' => $is_active,
 				'created_on' => date('Y-m-d H:i:s')
 			);
 
-        	if ($item['is_old_item'] == 1) {
+        	if (isset($item['is_old_item']) && $item['is_old_item'] == 1) {
 				$this->db
 					->where('exhibition_id', $this->formdata->id)
 					->where('global_item_id', $item_data->id)

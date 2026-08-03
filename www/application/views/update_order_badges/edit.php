@@ -35,7 +35,7 @@
                               method="post" id="crd_form" enctype="multipart/form-data">
 
                             <div class="row">
-                                <div class="col-sm-6">
+                                <div class="col-sm-4">
                                     <div class="form-group">
                                         <label>Badges total limit</label>
                                         <input type="text" class="form-control" name="badges_total_limit"
@@ -43,12 +43,23 @@
                                                placeholder="Badges total limit">
                                     </div>
                                 </div>
-                                <div class="col-sm-6">
+                                <div class="col-sm-4">
                                     <div class="form-group">
                                         <label>Visitor badges limit</label>
                                         <input type="text" class="form-control" name="visitor_badges_limit"
                                                value="<?= $this->order_data->visitor_badges_limit ?>"
                                                placeholder="Visitor badges limit">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Form 19 Edit Permission</label>
+                                        <div class="checkbox">
+                                            <label style="font-weight: bold; color: #3c8dbc;">
+                                                <input type="checkbox" name="allow_invitation_edit" value="1" <?= (isset($this->order_data->allow_invitation_edit) && $this->order_data->allow_invitation_edit == 1) ? 'checked' : '' ?>>
+                                                Enable Edit Button in Form 19
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

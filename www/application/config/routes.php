@@ -774,4 +774,9 @@ $route['mou_sign-import-validate.html']['post'] = "mou_report/bulk_import_valida
 $route['mou_sign-import-confirm.html']['post'] = "mou_report/bulk_import_confirm";
 $route['mou_sign-get-locations.html']['post'] = "mou_report/get_mou_locations_json";
 
+# Promotional Email Campaign
+$route['promotional-email-campaign']['get'] = "sms_notification/crd_add_promotional_email";
+$route['promotional-email-campaign-submit']['post'] = "sms_notification/crd_add_promotional_email_submit";
+$route['promotional-email-campaign-validate']['post'] = "sms_notification/crd_add_promotional_email_validate/doError";
+
 

@@ -961,7 +961,11 @@ $active_invitation_types = $this->db
                     // html += ((data.data[i].invitations.indexOf('gala_dinner') >= 0) ? '<td class="bg-success"><i class="fa fa-check text-success"></i></td>' : '<td class="bg-danger"><i class="fa fa-times text-danger"></i></td>');
                     // html += ((data.data[i].invitations.indexOf('karachi_air_show') >= 0) ? '<td class="bg-success"><i class="fa fa-check text-success"></i></td>' : '<td class="bg-danger"><i class="fa fa-times text-danger"></i></td>');
                     // html += ((data.data[i].invitations.indexOf('cm_reception') >= 0) ? '<td class="bg-success"><i class="fa fa-check text-success"></i></td>' : '<td class="bg-danger"><i class="fa fa-times text-danger"></i></td>');
+					<?php if (isset($this->booking->allow_invitation_edit) && $this->booking->allow_invitation_edit == 1) { ?>
                     html += '<td><a href="javascript:void(0)" class="edit_invitation_btn" data-id="'+data.data[i].id+'">Edit</a></td>';
+					<?php } else { ?>
+                    html += '<td>-</td>';
+					<?php } ?>
 					html += '</tr>';
 					$('#exhibitor_invited_list').append(html);
                 }
