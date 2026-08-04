@@ -10,6 +10,7 @@ class Email_configuration_model extends CI_Model
     private $defaults = array(
         'mail_from_name' => 'Event Management System',
         'mail_from_email' => 'donotreply@exhibit.com.pk',
+        'cc_email' => null,
         'enable_email_queue' => 'yes',
         'mail_driver' => 'mail',
         'mail_host' => null,
@@ -83,6 +84,7 @@ class Email_configuration_model extends CI_Model
         $settings = array(
             'mail_from_name' => trim($data['mail_from_name']),
             'mail_from_email' => trim($data['mail_from_email']),
+            'cc_email' => isset($data['cc_email']) && trim($data['cc_email']) !== '' ? trim($data['cc_email']) : null,
             'enable_email_queue' => $data['enable_email_queue'],
             'mail_driver' => $data['mail_driver'],
             'mail_host' => $data['mail_driver'] === 'smtp' ? trim($data['mail_host']) : null,
@@ -272,36 +274,40 @@ class Email_configuration_model extends CI_Model
 
     private function ensure_table()
     {
-        if ($this->db->table_exists(self::TABLE)) {
-            return;
+        if (!$this->db->table_exists(self::TABLE)) {
+            $this->db->query("
+                CREATE TABLE IF NOT EXISTS `" . self::TABLE . "` (
+                    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+                    `mail_from_name` VARCHAR(255) NOT NULL DEFAULT 'Event Management System',
+                    `mail_from_email` VARCHAR(255) NOT NULL DEFAULT 'donotreply@exhibit.com.pk',
+                    `cc_email` VARCHAR(255) DEFAULT NULL,
+                    `enable_email_queue` ENUM('yes','no') NOT NULL DEFAULT 'yes',
+                    `mail_driver` ENUM('mail','smtp') NOT NULL DEFAULT 'mail',
+                    `mail_host` VARCHAR(255) DEFAULT NULL,
+                    `mail_port` INT UNSIGNED DEFAULT NULL,
+                    `mail_encryption` ENUM('ssl','tls','starttls') DEFAULT 'ssl',
+                    `mail_username` VARCHAR(255) DEFAULT NULL,
+                    `mail_password` TEXT DEFAULT NULL,
+                    `emails_per_cron` INT UNSIGNED NOT NULL DEFAULT 10,
+                    `retry_attempts` INT UNSIGNED NOT NULL DEFAULT 3,
+                    `enable_logging` ENUM('yes','no') NOT NULL DEFAULT 'yes',
+                    `smtp_debug` ENUM('yes','no') NOT NULL DEFAULT 'no',
+                    `test_email_address` VARCHAR(255) DEFAULT NULL,
+                    `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+                    `created_by` INT DEFAULT NULL,
+                    `updated_by` INT DEFAULT NULL,
+                    `created_on` DATETIME DEFAULT NULL,
+                    `updated_on` DATETIME DEFAULT NULL,
+                    PRIMARY KEY (`id`),
+                    KEY `idx_email_configurations_is_active` (`is_active`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+            ");
+        } else {
+            $fields = $this->db->list_fields(self::TABLE);
+            if (!in_array('cc_email', $fields)) {
+                $this->db->query("ALTER TABLE `" . self::TABLE . "` ADD COLUMN `cc_email` VARCHAR(255) DEFAULT NULL AFTER `mail_from_email`");
+            }
         }
-
-        $this->db->query("
-            CREATE TABLE IF NOT EXISTS `" . self::TABLE . "` (
-                `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-                `mail_from_name` VARCHAR(255) NOT NULL DEFAULT 'Event Management System',
-                `mail_from_email` VARCHAR(255) NOT NULL DEFAULT 'donotreply@exhibit.com.pk',
-                `enable_email_queue` ENUM('yes','no') NOT NULL DEFAULT 'yes',
-                `mail_driver` ENUM('mail','smtp') NOT NULL DEFAULT 'mail',
-                `mail_host` VARCHAR(255) DEFAULT NULL,
-                `mail_port` INT UNSIGNED DEFAULT NULL,
-                `mail_encryption` ENUM('ssl','tls','starttls') DEFAULT 'ssl',
-                `mail_username` VARCHAR(255) DEFAULT NULL,
-                `mail_password` TEXT DEFAULT NULL,
-                `emails_per_cron` INT UNSIGNED NOT NULL DEFAULT 10,
-                `retry_attempts` INT UNSIGNED NOT NULL DEFAULT 3,
-                `enable_logging` ENUM('yes','no') NOT NULL DEFAULT 'yes',
-                `smtp_debug` ENUM('yes','no') NOT NULL DEFAULT 'no',
-                `test_email_address` VARCHAR(255) DEFAULT NULL,
-                `is_active` TINYINT(1) NOT NULL DEFAULT 1,
-                `created_by` INT DEFAULT NULL,
-                `updated_by` INT DEFAULT NULL,
-                `created_on` DATETIME DEFAULT NULL,
-                `updated_on` DATETIME DEFAULT NULL,
-                PRIMARY KEY (`id`),
-                KEY `idx_email_configurations_is_active` (`is_active`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-        ");
     }
 
     private function ensure_log_table()
@@ -355,6 +361,10 @@ class Email_configuration_model extends CI_Model
 
         if (!in_array('from_name', $fields)) {
             $this->db->query("ALTER TABLE `" . self::QUEUE_TABLE . "` ADD COLUMN `from_name` VARCHAR(255) NULL DEFAULT 'Event Management System' AFTER `data`");
+        }
+
+        if (!in_array('cc_email', $fields)) {
+            $this->db->query("ALTER TABLE `" . self::QUEUE_TABLE . "` ADD COLUMN `cc_email` VARCHAR(255) NULL DEFAULT NULL AFTER `email`");
         }
 
         $this->db->query("

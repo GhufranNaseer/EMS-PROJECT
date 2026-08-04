@@ -51,7 +51,7 @@ class Cron_email extends Initialize {
 			$SenderEmail = $settings['mail_from_email'];
 			$Subject = $email->subject;
 			$Message = $message_text;
-			$CcEmail = '';
+			$CcEmail = (!empty($email->cc_email)) ? $email->cc_email : (!empty($settings['cc_email']) ? $settings['cc_email'] : '');
 			$attempts = isset($email->attempts) ? ((int) $email->attempts + 1) : 1;
 			$result = array('success' => false, 'error' => 'Receiver email is empty', 'debug' => '');
 

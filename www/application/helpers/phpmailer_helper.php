@@ -56,8 +56,15 @@ function sendMail($ReceiverName, $ReceiverEmail, $Subject, $Message, $SenderName
 	$mail->FromName = !empty($SenderName) ? $SenderName : $settings['mail_from_name'];
 	$mail->addAddress($ReceiverEmail, $ReceiverName);
 
-	if ($CcEmail != "") {
-		$mail->addCC($CcEmail);
+	$finalCc = !empty($CcEmail) ? $CcEmail : (!empty($settings['cc_email']) ? $settings['cc_email'] : '');
+	if (!empty($finalCc)) {
+		$ccAddresses = preg_split('/[,;]+/', $finalCc);
+		foreach ($ccAddresses as $ccAddr) {
+			$ccAddr = trim($ccAddr);
+			if (!empty($ccAddr)) {
+				$mail->addCC($ccAddr);
+			}
+		}
 	}
 
 	$mail->addReplyTo($settings['mail_from_email'], $settings['mail_from_name']);

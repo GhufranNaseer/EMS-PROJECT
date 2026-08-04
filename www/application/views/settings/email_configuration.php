@@ -56,16 +56,22 @@ $email_config = array_merge(array(
                         <form action="<?= base_url('email-configuration-submit.html'); ?>" method="post" id="email_config_form" class="email-config-form">
                             <div class="js-msgbox"></div>
                             <div class="row">
-                                <div class="col-sm-6">
+                                <div class="col-sm-4">
                                     <div class="form-group">
                                         <label for="mail_from_name">Mail From Name *</label>
                                         <input type="text" class="form-control" id="mail_from_name" name="mail_from_name" placeholder="e.g. My Company Name" value="<?= html_escape($email_config['mail_from_name']); ?>">
                                     </div>
                                 </div>
-                                <div class="col-sm-6">
+                                <div class="col-sm-4">
                                     <div class="form-group">
                                         <label for="mail_from_email">Mail From Email *</label>
                                         <input type="email" class="form-control" id="mail_from_email" name="mail_from_email" placeholder="e.g. noreply@example.com" value="<?= html_escape($email_config['mail_from_email']); ?>">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="cc_email">CC Email (Optional)</label>
+                                        <input type="text" class="form-control" id="cc_email" name="cc_email" placeholder="e.g. cc@example.com" value="<?= html_escape(isset($email_config['cc_email']) ? $email_config['cc_email'] : ''); ?>">
                                     </div>
                                 </div>
                             </div>

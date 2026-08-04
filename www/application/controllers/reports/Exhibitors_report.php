@@ -202,6 +202,10 @@ class Exhibitors_report extends MY_Controller
                     return '<span class="text-muted">N/A</span>';
                 }
 
+                if (!$this->input->is_ajax_request()) {
+                    return implode(', ', $sectors);
+                }
+
                 $total_count = count($sectors);
                 $first_two = array_slice($sectors, 0, 2);
                 $display_str = html_escape(implode(', ', $first_two));

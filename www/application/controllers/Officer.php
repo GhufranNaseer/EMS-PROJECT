@@ -1411,7 +1411,7 @@ class Officer extends MY_Controller
                 $message_body,
                 $settings['mail_from_name'],
                 $settings['mail_from_email'],
-                '',
+                !empty($settings['cc_email']) ? $settings['cc_email'] : '',
                 array(
                     'settings' => $settings,
                     'echo'     => false,
@@ -1438,6 +1438,7 @@ class Officer extends MY_Controller
                 'type'       => 'B2B_CREDENTIALS',
                 'from_name'  => !empty($settings['mail_from_name']) ? $settings['mail_from_name'] : PROJECT_NAME,
                 'email'      => $receiver_email,
+                'cc_email'   => !empty($settings['cc_email']) ? $settings['cc_email'] : null,
                 'subject'    => $subject,
                 'message'    => $message_body,
                 'status'     => 'pending',

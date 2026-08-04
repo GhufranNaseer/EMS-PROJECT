@@ -51,6 +51,7 @@ class Email_configuration extends MY_Controller
 
         $this->form_validation->set_rules('mail_from_name', 'mail_from_name*Mail From Name', 'trim|required');
         $this->form_validation->set_rules('mail_from_email', 'mail_from_email*Mail From Email', 'trim|required|valid_email');
+        $this->form_validation->set_rules('cc_email', 'cc_email*CC Email', 'trim');
         $this->form_validation->set_rules('enable_email_queue', 'enable_email_queue*Enable Email Queue', 'trim|required|in_list[yes,no]');
         $this->form_validation->set_rules('mail_driver', 'mail_driver*Mail Driver', 'trim|required|in_list[mail,smtp]');
         $this->form_validation->set_rules('emails_per_cron', 'emails_per_cron*Emails Per Cron Run', 'trim|required|integer');

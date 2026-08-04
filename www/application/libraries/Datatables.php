@@ -501,9 +501,26 @@ class Datatables
 		$records = $this->produce_output($charset);
 		$record = json_decode($records)->aaData;
 
+		$col_map_str = $this->ci->input->get('col_map');
+		$col_map = ($col_map_str !== null && $col_map_str !== '') ? explode(',', $col_map_str) : null;
+
 		foreach ($record as $key => $row) {
 			if (is_callable($callback))
 				$row = $callback($row);
+
+			if (is_array($col_map) && !empty($col_map)) {
+				$ordered_row = array();
+				foreach ($col_map as $c_idx) {
+					if (is_object($row) && isset($row->$c_idx)) {
+						$ordered_row[] = $row->$c_idx;
+					} else if (is_array($row) && isset($row[$c_idx])) {
+						$ordered_row[] = $row[$c_idx];
+					} else {
+						$ordered_row[] = '';
+					}
+				}
+				$row = $ordered_row;
+			}
 
 			if ($header && $header[0] == 'S.no') {
 				$row[0] = ($key + 1);
@@ -577,9 +594,26 @@ class Datatables
 		}
 		$html .= '</tr></thead><tbody>';
 
+		$col_map_str = $this->ci->input->get('col_map');
+		$col_map = ($col_map_str !== null && $col_map_str !== '') ? explode(',', $col_map_str) : null;
+
 		foreach ($record as $key => $row) {
 			if (is_callable($callback))
 				$row = $callback($row);
+
+			if (is_array($col_map) && !empty($col_map)) {
+				$ordered_row = array();
+				foreach ($col_map as $c_idx) {
+					if (is_object($row) && isset($row->$c_idx)) {
+						$ordered_row[] = $row->$c_idx;
+					} else if (is_array($row) && isset($row[$c_idx])) {
+						$ordered_row[] = $row[$c_idx];
+					} else {
+						$ordered_row[] = '';
+					}
+				}
+				$row = $ordered_row;
+			}
 
 			$html .= '<tr>';
 			foreach ($row as $k => $r) {

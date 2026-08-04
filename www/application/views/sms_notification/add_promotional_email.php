@@ -37,52 +37,9 @@
                                 </p>
                             </div>
 
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <?php
-                                        $events = $this->db
-                                            ->where('is_deleted', 0)
-                                            ->order_by('id', 'DESC')
-                                            ->get('es_exhibitions')
-                                            ->result();
-                                        ?>
-                                        <label for="event">Select Target Event to Promote <span class="text-red">*</span></label>
-                                        <select class="form-control" name="event" id="event">
-                                            <option value="">-Select Event-</option>
-                                            <?php
-                                            foreach ($events as $event) {
-                                            ?>
-                                        <option value="<?=$event->id ?>"><?=$event->exhibition_title ?></option>
-                                            <?php } ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="status">Recipient Type <span class="text-red">*</span></label>
-                                        <select class="form-control" id="status" name="status">
-                                            <option value="Both">Both (Executive & Contact Person)</option>
-                                            <option value="Executive">Executive Only</option>
-                                            <option value="Contact Person">Contact Person Only</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="alert alert-info" id="placeholder_guide_box" style="margin-top: 10px; margin-bottom: 20px;">
-                                <strong><i class="fa fa-info-circle"></i> Dynamic Placeholders Available:</strong>
-                                You can use the following dynamic tags in your Subject & Message:
-                                <ul style="margin-bottom: 0; padding-left: 20px;">
-                                    <li><code>{COMPANY_NAME}</code> &mdash; Automatically replaced with Exhibitor's Company Name.</li>
-                                    <li><code>{EVENT_NAME}</code> &mdash; Automatically replaced with the Selected Target Event Title.</li>
-                                    <li><code>{PORTAL_URL}</code> &mdash; Automatically replaced with the B2B Meeting Portal Link.</li>
-                                </ul>
-                            </div>
-
                             <div class="form-group">
                                 <label>Email Subject <span class="text-red">*</span></label>
-								<input type="text" name="email_subject" class="form-control" id="email_subject" placeholder="e.g. Exclusive Invitation: Stall Bookings Now Open for {EVENT_NAME}!">
+								<input type="text" name="email_subject" class="form-control" id="email_subject" placeholder="Enter Promotional Email Subject">
                             </div>
                             <div class="form-group">
                                 <label>Email Message <span class="text-red">*</span></label>
