@@ -24,7 +24,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 $protocol = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on' || $_SERVER['HTTPS'] == 1)) || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ? 'https://' : 'http://';
-$config['base_url'] = env('BASE_URL_MEETING', $protocol.$_SERVER['HTTP_HOST'].'/meeting/');
+$script_path = str_replace(basename($_SERVER['SCRIPT_NAME'] ?? ''), '', $_SERVER['SCRIPT_NAME'] ?? '/meeting/');
+$default_base_url = rtrim($protocol . ($_SERVER['HTTP_HOST'] ?? 'localhost') . $script_path, '/') . '/';
+$base_url_env = env('BASE_URL_MEETING');
+$config['base_url'] = !empty($base_url_env) ? $base_url_env : $default_base_url;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,7 +39,7 @@ $config['base_url'] = env('BASE_URL_MEETING', $protocol.$_SERVER['HTTP_HOST'].'/
 | variable so that it is blank.
 |
 */
-$config['index_page'] = 'index.php';
+$config['index_page'] = env('INDEX_PAGE', '');
 
 /*
 |--------------------------------------------------------------------------

@@ -24,7 +24,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
 |
 */
 $protocol = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on' || $_SERVER['HTTPS'] == 1)) || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ? 'https://' : 'http://';
-$config['base_url'] = env('BASE_URL', $protocol . $_SERVER['HTTP_HOST'] . '/EMS-PROJECT/www/');
+$script_path = str_replace(basename($_SERVER['SCRIPT_NAME'] ?? ''), '', $_SERVER['SCRIPT_NAME'] ?? '/');
+$default_base_url = rtrim($protocol . ($_SERVER['HTTP_HOST'] ?? 'localhost') . $script_path, '/') . '/';
+$base_url_env = env('BASE_URL');
+$config['base_url'] = !empty($base_url_env) ? $base_url_env : $default_base_url;
 
 
 /*
@@ -37,7 +40,7 @@ $config['base_url'] = env('BASE_URL', $protocol . $_SERVER['HTTP_HOST'] . '/EMS-
 | variable so that it is blank.
 |
 */
-$config['index_page'] = 'index.php';
+$config['index_page'] = env('INDEX_PAGE', '');
 
 /*
 |--------------------------------------------------------------------------
