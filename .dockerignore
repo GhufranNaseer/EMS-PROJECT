@@ -1,0 +1,24 @@
+# Exclude git & metadata
+.git
+.gitignore
+.github
+*.md
+*.txt
+ai_rules.md
+
+# Exclude heavy database dumps & zips
+*.sql
+*.sql.gz
+*.zip
+
+# Exclude uploaded files (since www is mounted as a volume)
+www/uploads/*
+!www/uploads/index.html
+
+# Exclude cache directories
+www/application/cache/*
+!www/application/cache/index.html
+www/client/application/cache/*
+!www/client/application/cache/index.html
+www/meeting/application/cache/*
+!www/meeting/application/cache/index.html
