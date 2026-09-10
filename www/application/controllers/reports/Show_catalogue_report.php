@@ -110,9 +110,16 @@ class Show_catalogue_report extends MY_Controller
 
 			->unset_column('F.booking_id')
 			->add_column('col_action', function ($row) {
-				$id = $row['id'];
-				$html = '<a href="' . base_url() . 'show_catalogue-report-export?id=' . urlencode(myid($id)) . '">View</a>';
-				return "<div class='text-center'>{$html}</div>";
+				$id = urlencode(myid($row['id']));
+				$pdfUrl  = base_url('show_catalogue-report-export?id=' . $id . '&type=pdf');
+				$wordUrl = base_url('show_catalogue-report-export?id=' . $id . '&type=word');
+				$pptUrl  = base_url('show_catalogue-report-export?id=' . $id . '&type=ppt');
+
+				$html = '<a href="' . $pdfUrl . '" target="_blank" class="btn btn-xs btn-danger" title="Download PDF" style="margin-right:3px;"><i class="fa fa-file-pdf-o"></i> PDF</a>' .
+					'<a href="' . $wordUrl . '" class="btn btn-xs btn-primary" title="Download Word (.docx)" style="margin-right:3px;"><i class="fa fa-file-word-o"></i> Word</a>' .
+					'<a href="' . $pptUrl . '" class="btn btn-xs btn-warning" title="Download PowerPoint (.pptx)"><i class="fa fa-file-powerpoint-o"></i> PPT</a>';
+
+				return "<div class='text-center' style='white-space:nowrap;'>{$html}</div>";
 			}, NULL)
 
 			->add_column('company_logo', function ($row) {
@@ -444,8 +451,25 @@ class Show_catalogue_report extends MY_Controller
 	}
 
 	function catalogue_report_export(){
+		$type = strtolower($this->input->get('type') ?? 'pdf');
 
+		// Handle Word (.docx) Export
+		if ($type === 'word' || $type === 'docx') {
+			$this->load->library('Catalogue_docx');
+			$payload = $this->getCataloguePayload($this->input->get('id'));
+			$this->catalogue_docx->export($payload);
+			return;
+		}
 
+		// Handle PowerPoint (.pptx) Export
+		if ($type === 'ppt' || $type === 'pptx') {
+			$this->load->library('Catalogue_pptx');
+			$payload = $this->getCataloguePayload($this->input->get('id'));
+			$this->catalogue_pptx->export($payload);
+			return;
+		}
+
+		// Default: Existing PDF Export (100% untouched backward-compatibility)
 		$html = $this->load->view('show_catalogue_report/print_catalogue', array(
 
 		), true);
@@ -470,6 +494,119 @@ class Show_catalogue_report extends MY_Controller
 			print_r($msg);
 		}
 
+	}
+
+	/**
+	 * Extract and normalize complete catalogue data payload for Word & PPTX exporters.
+	 */
+	protected function getCataloguePayload($id)
+	{
+		if (empty($id)) {
+			show_404();
+		}
+
+		$event = $this->db
+			->select('E.*')
+			->where(mycolumn('B.id'), $id)
+			->join('es_exhibitions as E', 'E.id = B.exhibition_id')
+			->get('es_exhibition_booking as B')
+			->row();
+
+		if (!$event) {
+			show_404();
+		}
+
+		$organizer = $this->db
+			->where('id', $event->event_organizer)
+			->get('es_organizer')
+			->row();
+
+		$rows = $this->db
+			->select('F.*, C.company')
+			->where(mycolumn('F.booking_id'), $id)
+			->where('F.form_id', 3)
+			->join('es_exhibition_booking as B', 'F.booking_id = B.id', 'LEFT')
+			->join('es_customers as C', 'B.customer_id = C.id', 'LEFT')
+			->get('es_exhibition_booking_forms_data as F')
+			->row();
+
+		$data = (isset($rows->form_data)) ? json_decode($rows->form_data, false) : null;
+
+		$firstLogo = '';
+		if (!empty($data->exhibit->company_logo) && is_array($data->exhibit->company_logo)) {
+			$firstLogo = $data->exhibit->company_logo[0];
+		}
+
+		$principalsList = array();
+		if (!empty($data->principle->principles_list) && is_array($data->principle->principles_list)) {
+			foreach ($data->principle->principles_list as $p) {
+				$pLogo = isset($p->company_logo) ? $p->company_logo : '';
+				$principalsList[] = array(
+					'name'      => isset($p->full_name) ? str_replace('+', ' ', $p->full_name) : '',
+					'country'   => isset($p->country) ? $p->country : '',
+					'phone'     => isset($p->phone) ? $p->phone : '',
+					'email'     => isset($p->email) ? $p->email : '',
+					'logo_path' => $this->resolveLocalImagePath($pLogo),
+				);
+			}
+		}
+
+		return array(
+			'company'             => (isset($rows->company)) ? $rows->company : 'Exhibitor',
+			'exhibition_title'    => (isset($event->exhibition_title)) ? $event->exhibition_title : '',
+			'event_color'         => (isset($event->event_color)) ? $event->event_color : '#1F497D',
+			'event_logo_path'     => $this->resolveLocalImagePath(isset($event->event_logo) ? $event->event_logo : ''),
+			'associate_logo_path' => $this->resolveLocalImagePath(isset($event->associate_logo) ? $event->associate_logo : ''),
+			'organizer_logo_path' => $this->resolveLocalImagePath(isset($organizer->organizer_image) ? $organizer->organizer_image : ''),
+			'organizer_url'       => 'www.ideaspakistan.gov.pk',
+			'address'             => (isset($data->exhibit->address)) ? $data->exhibit->address : '',
+			'country'             => (isset($data->exhibit->country)) ? $data->exhibit->country : '',
+			'telephone'           => (isset($data->exhibit->telephone)) ? $data->exhibit->telephone : '',
+			'fax'                 => (isset($data->exhibit->fax)) ? $data->exhibit->fax : '',
+			'email'               => (isset($data->exhibit->email)) ? $data->exhibit->email : '',
+			'website'             => (isset($data->exhibit->website)) ? $data->exhibit->website : '',
+			'contact_name'        => (isset($data->exhibit->contact_person->name)) ? $data->exhibit->contact_person->name : '',
+			'contact_designation' => (isset($data->exhibit->contact_person->designation)) ? $data->exhibit->contact_person->designation : '',
+			'company_logo_path'   => $this->resolveLocalImagePath($firstLogo),
+			'profile'             => (isset($data->profile)) ? $data->profile : '',
+			'principals_active'   => (isset($data->principle->is_active) && $data->principle->is_active == 1) ? 1 : 0,
+			'principals'          => $principalsList,
+		);
+	}
+
+	/**
+	 * Cross-platform image path resolver adhering to ai_rules.md.
+	 */
+	protected function resolveLocalImagePath($path)
+	{
+		if (empty($path)) {
+			return '';
+		}
+		$path = str_replace('uploaded:', '', $path);
+		$path = trim($path);
+
+		if ($path === '../uploads/client_form_3/17307949755956729d5df526dc.png') {
+			return '';
+		}
+
+		$candidates = array(
+			FCPATH . $path,
+			FCPATH . 'client/' . $path,
+			FCPATH . ltrim($path, '/\\'),
+		);
+
+		foreach ($candidates as $cand) {
+			$norm = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $cand);
+			if (is_file($norm)) {
+				return $norm;
+			}
+			$real = @realpath($norm);
+			if ($real && is_file($real)) {
+				return $real;
+			}
+		}
+
+		return '';
 	}
 
 }

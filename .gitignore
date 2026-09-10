@@ -15,4 +15,6 @@
 /www/application/third_party/htmltopdf/_tcpdf_6.3.2/cache/*
 /www/.env
 *_dump_*.sql
-*.sql.gz
+*.sql.gz
+tickets/
+
