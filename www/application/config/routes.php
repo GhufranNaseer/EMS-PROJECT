@@ -711,6 +711,10 @@ $route['meeting-report-datatable.html']['post'] = "reports/meeting_report/crd_li
 $route['meeting-report_status-list.html']['get'] = "reports/meeting_report/crd_exhibition_list";
 $route['meeting-report_status-datatable.html'] = "reports/meeting_report/crd_exhibition_list_datatable";
 $route['meeting-report_status-details.html'] = "reports/meeting_report/get_meeting_details_ajax";
+$route['meeting-download-template.html']['get'] = "reports/meeting_report/download_template";
+$route['meeting-import-validate.html']['post'] = "reports/meeting_report/bulk_import_validate";
+$route['meeting-import-confirm.html']['post'] = "reports/meeting_report/bulk_import_confirm";
+
 
 
 $route['show_catalogue-report.html']['get'] = "reports/show_catalogue_report/crd_list";

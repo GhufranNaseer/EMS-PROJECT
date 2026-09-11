@@ -1,17 +1,17 @@
-name: Deploy Production to VPS
+name: Deploy Staging to VPS
 
 on:
   push:
     branches:
-      - main
+      - developer
 
 jobs:
   deploy:
-    name: Deploy to Live Production
+    name: Deploy to Staging (Beta)
     runs-on: ubuntu-latest
 
     steps:
-      - name: SSH into VPS and Pull Latest Code
+      - name: SSH into VPS and Pull Latest Staging Code
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -19,17 +19,19 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT }}
           script: |
-            echo "🚀 Starting Production Deployment..."
-            cd /var/www/exhibition_system_prod
+            echo "🚀 Starting Staging Deployment (developer branch)..."
             
-            # Pull latest changes from main branch
-            git pull origin main
+            # Navigate to Staging codebase directory
+            cd /var/www/exhibition_system_stage
+            
+            # Pull latest changes from developer branch
+            git pull origin developer
             
             # Ensure proper folder permissions for cache & uploads
             chmod -R 775 www/application/cache www/uploads || true
             
             # Execute Safe, Conflict-Free Database Migrations
-            echo "🔄 Checking and executing database migrations..."
+            echo "🔄 Checking and executing database migrations on staging..."
             php db/migrate.php || true
             
-            echo "✅ Production Deployed Successfully!"
+            echo "✅ Staging Deployed Successfully!"

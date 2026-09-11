@@ -5,6 +5,9 @@
 
 /db/*
 !/db/.gitignore
+!/db/migrations/
+!/db/migrations/**
+!/db/migrate.php
 
 /www/uploads/*
 !/www/uploads/.gitignore

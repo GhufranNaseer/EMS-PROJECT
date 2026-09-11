@@ -41,6 +41,14 @@ Whenever debugging, writing new features, or fixing errors, **the solution must 
 * **Practice:**
   * Ensure table names in SQL queries exactly match the casing in the database schema (e.g., `es_officer` vs `ES_OFFICER`).
 
+### 5. Automated Database Migrations (Laravel-style Workflow)
+* **Rule:** Whenever ANY feature, bug fix, or user task requires a database change (new table, added column, modified index, or seed data), the AI agent must handle it **fully automatically without asking the user to manually create migrations or write queries**.
+* **Practice:**
+  1. **Create Migration First:** Write a new idempotent `.sql` file in `db/migrations/` using timestamp naming (e.g., `YYYYMMDD_HHMMSS_action_name.sql`).
+  2. **Safe Syntax:** Always use `CREATE TABLE IF NOT EXISTS`, and never use `DROP TABLE` or `TRUNCATE`.
+  3. **Run Automatically:** Execute `php db/migrate.php` locally via terminal tool to apply it immediately to the local database and verify success.
+  4. **Commit Together:** Include the migration file in git so that GitHub Actions CI/CD automatically applies it to Live Production during deployment.
+
 ---
 
 ## 🎯 Verification Checklist Before Completing Work
@@ -49,4 +57,6 @@ Before concluding any task, verify:
 * [ ] Does this code rely on Windows-specific or Linux-specific paths? (If yes, make it dynamic).
 * [ ] Are all path slashes handled safely for both `\` (Windows) and `/` (Linux)?
 * [ ] Are class/file loads case-sensitive safe?
+* [ ] If database changes were needed, was a migration `.sql` created in `db/migrations/` and executed via `php db/migrate.php`?
 * [ ] Have changes been tested or verified conceptually to ensure no live production environment variables/ports are conflicted?
+
