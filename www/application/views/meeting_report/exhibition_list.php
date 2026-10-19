@@ -34,9 +34,9 @@
                     <div class="box-body">
 
                         <!-- Summary Metrics Dashboard -->
-                        <div class="row" style="margin-bottom: 20px;">
+                        <div class="row" style="margin-bottom: 15px;">
                             <!-- Total Meetings Card -->
-                            <div class="col-md-3 col-sm-6 col-xs-12">
+                            <div class="col-md-4 col-sm-6 col-xs-12">
                                 <div class="info-box bg-aqua">
                                     <span class="info-box-icon"><i class="fa fa-calendar-check-o"></i></span>
                                     <div class="info-box-content">
@@ -51,7 +51,7 @@
                             </div>
 
                             <!-- Approved Meetings Card -->
-                            <div class="col-md-3 col-sm-6 col-xs-12">
+                            <div class="col-md-4 col-sm-6 col-xs-12">
                                 <div class="info-box bg-green">
                                     <span class="info-box-icon"><i class="fa fa-check-circle-o"></i></span>
                                     <div class="info-box-content">
@@ -71,8 +71,30 @@
                                 </div>
                             </div>
 
+                            <!-- Pending Meetings Card -->
+                            <div class="col-md-4 col-sm-6 col-xs-12">
+                                <div class="info-box bg-red">
+                                    <span class="info-box-icon"><i class="fa fa-hourglass-half"></i></span>
+                                    <div class="info-box-content">
+                                        <span class="info-box-text">Pending Meetings</span>
+                                        <span class="info-box-number" style="font-size: 24px;"><?= number_format(isset($summary_stats['pending']) ? $summary_stats['pending'] : 0); ?></span>
+                                        <div class="progress">
+                                            <?php 
+                                            $pnd_pct = round(((isset($summary_stats['pending']) ? $summary_stats['pending'] : 0) / $total_m) * 100);
+                                            ?>
+                                            <div class="progress-bar" style="width: <?= $pnd_pct; ?>%"></div>
+                                        </div>
+                                        <span class="progress-description" style="font-size: 12px;">
+                                            <?= $pnd_pct; ?>% pending approval / response
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-bottom: 20px;">
                             <!-- Day-wise Breakdown Card -->
-                            <div class="col-md-3 col-sm-6 col-xs-12">
+                            <div class="col-md-4 col-sm-6 col-xs-12">
                                 <div class="info-box bg-yellow">
                                     <span class="info-box-icon"><i class="fa fa-clock-o"></i></span>
                                     <div class="info-box-content">
@@ -96,16 +118,35 @@
                                 </div>
                             </div>
 
-                            <!-- Hall-wise Breakdown Card -->
-                            <div class="col-md-3 col-sm-6 col-xs-12">
+                            <!-- Category-wise Breakdown Card -->
+                            <div class="col-md-4 col-sm-6 col-xs-12">
                                 <div class="info-box bg-purple">
+                                    <span class="info-box-icon"><i class="fa fa-tags"></i></span>
+                                    <div class="info-box-content">
+                                        <span class="info-box-text">Category-wise Meetings</span>
+                                        <div style="margin-top: 4px; max-height: 52px; overflow-y: auto;">
+                                            <?php if (!empty($summary_stats['categories_breakdown'])): ?>
+                                                <?php foreach ($summary_stats['categories_breakdown'] as $cb_item): ?>
+                                                    <span class="badge bg-black" style="margin-bottom: 3px; font-size: 11px; padding: 3px 6px;"><?= html_escape($cb_item['category']); ?>: <strong><?= $cb_item['count']; ?></strong></span>
+                                                <?php endforeach; ?>
+                                            <?php else: ?>
+                                                <span class="small" style="color: #fff;">No category records</span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hall-wise Breakdown Card -->
+                            <div class="col-md-4 col-sm-6 col-xs-12">
+                                <div class="info-box bg-teal">
                                     <span class="info-box-icon"><i class="fa fa-building-o"></i></span>
                                     <div class="info-box-content">
                                         <span class="info-box-text">Hall-wise Meetings</span>
                                         <div style="margin-top: 4px; max-height: 52px; overflow-y: auto;">
                                             <?php if (!empty($summary_stats['halls_breakdown'])): ?>
                                                 <?php foreach ($summary_stats['halls_breakdown'] as $hb_item): ?>
-                                                    <span class="badge bg-black" style="margin-bottom: 3px; font-size: 11px; padding: 3px 6px;"><?= html_escape($hb_item['hall_title']); ?>: <strong><?= $hb_item['count']; ?></strong></span>
+                                                    <span class="badge bg-navy" style="margin-bottom: 3px; font-size: 11px; padding: 3px 6px;"><?= html_escape($hb_item['hall_title']); ?>: <strong><?= $hb_item['count']; ?></strong></span>
                                                 <?php endforeach; ?>
                                             <?php else: ?>
                                                 <span class="small" style="color: #fff;">No hall records</span>
@@ -129,11 +170,16 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-3">
-                                    <label>User Type</label>
-                                    <select name="filter_user_type" class="form-control">
-                                        <option value="">- all user types -</option>
-                                        <option value="exhibitor_exhibitor" <?= (($this->input->get('filter_user_type') && $this->input->get('filter_user_type') == 'exhibitor_exhibitor') ? 'selected' : '') ?>>Exhibitor To Exhibitor</option>
-                                        <option value="exhibitor_others" <?= (($this->input->get('filter_user_type') && $this->input->get('filter_user_type') == 'exhibitor_others') ? 'selected' : '') ?>>Exhibitor To Others</option>
+                                    <label>Category</label>
+                                    <select name="filter_category" class="form-control">
+                                        <option value="">- all categories -</option>
+                                        <option value="exhibitor_exhibitor" <?= ($this->input->get('filter_category') == 'exhibitor_exhibitor' || $this->input->get('filter_user_type') == 'exhibitor_exhibitor') ? 'selected' : '' ?>>Exhibitor To Exhibitor</option>
+                                        <option value="foreign_delegates" <?= ($this->input->get('filter_category') == 'foreign_delegates') ? 'selected' : '' ?>>Foreign Delegates</option>
+                                        <option value="local_delegates" <?= ($this->input->get('filter_category') == 'local_delegates') ? 'selected' : '' ?>>Local Delegates</option>
+                                        <option value="armed_force" <?= ($this->input->get('filter_category') == 'armed_force') ? 'selected' : '' ?>>Armed Forces (Pakistan)</option>
+                                        <option value="government_officials" <?= ($this->input->get('filter_category') == 'government_officials') ? 'selected' : '' ?>>Government Officials</option>
+                                        <option value="organizer" <?= ($this->input->get('filter_category') == 'organizer') ? 'selected' : '' ?>>Organizers</option>
+                                        <option value="chief_of_servicing" <?= ($this->input->get('filter_category') == 'chief_of_servicing') ? 'selected' : '' ?>>Gov. Services Chief</option>
                                     </select>
                                 </div>
                                 <div class="col-sm-2">
@@ -175,9 +221,10 @@
                         <table width="100%" class="table table-bordered table-striped" id="crud-table">
                             <thead>
                             <tr class="">
-                                <th class="text-center col-srialno"  >#</th>
+                                <th class="text-center col-srialno">#</th>
                                 <th>Meeting From</th>
                                 <th>Meeting To</th>
+                                <th>Category</th>
                                 <th>Exhibition Day</th>
                                 <th>Meeting Date</th>
                                 <th>Meeting Time</th>
@@ -323,6 +370,7 @@
 				'S.no',
 				'Meeting From',
 				'Meeting To',
+				'Category',
 				'Exhibition Day',
 				'Meeting Date',
 				'Meeting Time',

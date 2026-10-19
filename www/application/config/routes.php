@@ -373,7 +373,7 @@ $route['officer_exhibitor.html']['get'] = "officer/exhibitor_crd_list";
 $route['officer_exhibitor-datatable.html']['post'] = "officer/exhibitor_crd_list_datatable";
 
 $route['officer.html']['get'] = "officer/crd_list";
-$route['officer-datatable.html']['post'] = "officer/crd_list_datatable";
+$route['officer-datatable.html'] = "officer/crd_list_datatable";
 
 $route['officer-add.html']['get'] = "officer/crd_add";
 $route['officer-validate.html']['post'] = "officer/crd_add_validate/doError";
@@ -433,6 +433,10 @@ $route['officer-organizer-submit.html']['post'] = "officer/organizer_add_submit"
 $route['officer-edit-organizer.html']['get'] = "officer/organizer_edit";
 $route['officer-edit-organizer-validate.html']['post'] = "officer/organizer_edit_validate/doError";
 $route['officer-edit-organizer-submit.html']['post'] = "officer/organizer_edit_submit";
+
+$route['officer-download-template.html']['get'] = "officer/download_template";
+$route['officer-import-validate.html']['post'] = "officer/bulk_import_validate";
+$route['officer-import-confirm.html']['post'] = "officer/bulk_import_confirm";
 #E officer
 
 #S Sms Notification

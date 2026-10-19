@@ -190,13 +190,33 @@ class Meeting_report extends MY_Controller
 			}
 		}
 
+        $category_expr = "IF(user_type_to = 'officer', 
+            (SELECT IF(officer_type='foreign_delegates', 'Foreign Delegate', 
+                    IF(officer_type='local_delegates', 'Local Delegate', 
+                    IF(officer_type='armed_force', 'Armed Force (Pakistan)', 
+                    IF(officer_type LIKE 'government_official%', 'Government Official', 
+                    IF(officer_type='organizer', 'Organizer', 
+                    IF(officer_type='chief_of_servicing', 'Gov. Services Chief', 'Officer')))))) 
+             FROM es_officer WHERE id = appointment_to),
+            IF(user_type_from = 'officer',
+                (SELECT IF(officer_type='foreign_delegates', 'Foreign Delegate', 
+                        IF(officer_type='local_delegates', 'Local Delegate', 
+                        IF(officer_type='armed_force', 'Armed Force (Pakistan)', 
+                        IF(officer_type LIKE 'government_official%', 'Government Official', 
+                        IF(officer_type='organizer', 'Organizer', 
+                        IF(officer_type='chief_of_servicing', 'Gov. Services Chief', 'Officer')))))) 
+                 FROM es_officer WHERE id = appointment_from),
+                'Exhibitor to Exhibitor'
+            )
+        )";
+
         $this->load->library('datatables');
         $this->datatables
             ->select('id,
             		exhibition_id,
-                   
                   appointment_from_company_name,
                   appointment_to_company_name,
+                  ' . $category_expr . ' as category,
                      exhibition_day,
                      appointment_date,
                      appointment_time,
@@ -229,26 +249,24 @@ class Meeting_report extends MY_Controller
 				return '<div class="text-center"><button type="button" class="btn btn-link" onclick="show_agenda(\''.myid($id).'\')">View Details</button></div>';
 			}, NULL)
 
-			// ->add_column('col_conducted', function ($row) {
-			// 	$id = $row['id'];
-			// 	$is_conducted = $row['is_conducted'];
-				
-			// 	if ($row['is_approved'] == 1) {
-			// 		if ($row['is_conducted'] == 1) {
-			// 			return '<div class="text-left small">'.$row['appointment_feedback'].'</div>';
-			// 		} else {
-			// 			return '<div class="text-center small">N/A</div>';
-			// 		}
-			// 	} else {
-			// 		return '<div class="text-center">-</div>';
-			// 	}
-			// }, NULL)
-
-            //->where('is_approved', 1)
-			->where('is_deleted', 0)
+            ->where('is_deleted', 0)
 			->where('is_canceled', 0)
             ->where(mycolumn('exhibition_id'), $this->input->get('id'))
             ->from('my_appointments_datatable');
+
+        if (!$this->input->get('export_type')) {
+            $this->datatables->edit_column('category', function ($row) {
+                $cat = $row['category'];
+                $badge_class = 'label-default';
+                if ($cat == 'Foreign Delegate') $badge_class = 'label-primary';
+                else if ($cat == 'Local Delegate') $badge_class = 'label-info';
+                else if ($cat == 'Armed Force (Pakistan)') $badge_class = 'label-success';
+                else if ($cat == 'Government Official') $badge_class = 'label-warning';
+                else if ($cat == 'Organizer') $badge_class = 'label-danger';
+                else if ($cat == 'Gov. Services Chief') $badge_class = 'bg-purple';
+                return '<span class="label ' . $badge_class . '" style="font-size: 11px;">' . html_escape($cat) . '</span>';
+            }, 'category');
+        }
 
 		if ($this->input->get('export_type') && $this->input->get('export_type') != '') {
 			
@@ -288,7 +306,21 @@ class Meeting_report extends MY_Controller
 				$this->datatables->where('is_approved', 0);
 			}
 		}
-        if ($this->input->get('filter_user_type') && $this->input->get('filter_user_type') != '') {
+
+        if ($this->input->get('filter_category') && $this->input->get('filter_category') != '') {
+            $f_cat = trim($this->input->get('filter_category'));
+            if ($f_cat == 'exhibitor_exhibitor') {
+                $this->datatables->where('user_type_from', 'exhibitor');
+                $this->datatables->where('user_type_to', 'exhibitor');
+            } else {
+                $safe_cat = $this->db->escape($f_cat);
+                $this->datatables->where("(
+                    (user_type_to = 'officer' AND appointment_to IN (SELECT id FROM es_officer WHERE officer_type = $safe_cat OR (officer_type LIKE 'government_official%' AND $safe_cat = 'government_officials')))
+                    OR
+                    (user_type_from = 'officer' AND appointment_from IN (SELECT id FROM es_officer WHERE officer_type = $safe_cat OR (officer_type LIKE 'government_official%' AND $safe_cat = 'government_officials')))
+                )", NULL, FALSE);
+            }
+        } elseif ($this->input->get('filter_user_type') && $this->input->get('filter_user_type') != '') {
 			if ($this->input->get('filter_user_type') == 'exhibitor_exhibitor') {
 				$this->datatables->where('user_type_from', 'exhibitor');
                 $this->datatables->where('user_type_to' , 'exhibitor');
@@ -412,12 +444,44 @@ class Meeting_report extends MY_Controller
 			);
 		}
 
+		// Category breakdown query
+		$cat_sql = "SELECT 
+			IF(user_type_to = 'officer', 
+				(SELECT IF(officer_type='foreign_delegates', 'Foreign Delegate', 
+						IF(officer_type='local_delegates', 'Local Delegate', 
+						IF(officer_type='armed_force', 'Armed Force (Pakistan)', 
+						IF(officer_type LIKE 'government_official%', 'Government Official', 
+						IF(officer_type='organizer', 'Organizer', 
+						IF(officer_type='chief_of_servicing', 'Gov. Services Chief', 'Officer')))))) 
+				 FROM es_officer WHERE id = appointment_to),
+				IF(user_type_from = 'officer',
+					(SELECT IF(officer_type='foreign_delegates', 'Foreign Delegate', 
+							IF(officer_type='local_delegates', 'Local Delegate', 
+							IF(officer_type='armed_force', 'Armed Force (Pakistan)', 
+							IF(officer_type LIKE 'government_official%', 'Government Official', 
+							IF(officer_type='organizer', 'Organizer', 
+							IF(officer_type='chief_of_servicing', 'Gov. Services Chief', 'Officer')))))) 
+					 FROM es_officer WHERE id = appointment_from),
+					'Exhibitor to Exhibitor'
+				)
+			) as category,
+			COUNT(*) as count
+			FROM es_exhibition_appointments
+			WHERE exhibition_id = " . (int)$exhibition_id . "
+			AND is_deleted = 0
+			AND is_canceled = 0
+			GROUP BY category
+			ORDER BY count DESC";
+
+		$categories_breakdown = $this->db->query($cat_sql)->result_array();
+
 		return array(
-			'total'           => $total,
-			'approved'        => $approved,
-			'pending'         => $pending,
-			'days_breakdown'  => $days_breakdown,
-			'halls_breakdown' => $halls_breakdown,
+			'total'                => $total,
+			'approved'             => $approved,
+			'pending'              => $pending,
+			'days_breakdown'       => $days_breakdown,
+			'halls_breakdown'      => $halls_breakdown,
+			'categories_breakdown' => $categories_breakdown,
 		);
 	}
 
